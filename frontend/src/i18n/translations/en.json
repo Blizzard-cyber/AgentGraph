@@ -19,7 +19,9 @@
     "page": "page",
     "submit": "Submit",
     "reset": "Reset",
-    "deleteConfirm": "Are you sure you want to delete this item?"
+    "deleteConfirm": "Are you sure you want to delete this item?",
+    "thinkingProcess": "Thinking Process",
+    "lines": "lines"
   },
   "pages": {
     "login": {
@@ -80,6 +82,7 @@
       "goToChat": "Go to Chat",
       "userMenuSubtitle": "Account Settings",
       "userSettings": "User Settings",
+      "adminPanel": "Admin Panel",
       "logout": "Logout",
       "logoutConfirmTitle": "Confirm Logout",
       "logoutConfirmMessage": "Are you sure you want to logout?",

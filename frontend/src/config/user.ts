@@ -16,3 +16,9 @@ export const getCurrentUserDisplayName = (): string => {
   const userInfo = getUserInfo();
   return userInfo?.user_id || 'default_user';
 };
+
+// 获取当前用户角色
+export const getCurrentUserRole = (): 'super_admin' | 'admin' | 'user' | null => {
+  const userInfo = getUserInfo();
+  return userInfo?.role || null;
+};

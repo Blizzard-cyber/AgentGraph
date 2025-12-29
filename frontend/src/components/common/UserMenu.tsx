@@ -3,10 +3,10 @@ import React from 'react';
 import { Dropdown, App, message } from 'antd';
 import type { MenuProps } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, Settings, Languages } from 'lucide-react';
+import { LogOut, Settings, Languages, Shield } from 'lucide-react';
 import { useT } from '../../i18n/hooks';
 import { useI18n } from '../../i18n';
-import { getCurrentUserDisplayName } from '../../config/user';
+import { getCurrentUserDisplayName, getCurrentUserRole } from '../../config/user';
 import { logout as logoutAPI } from '../../services/authService';
 import { removeToken } from '../../utils/auth';
 import { setUserLanguage } from '../../services/userSettingsService';
@@ -35,6 +35,7 @@ const UserMenu: React.FC<UserMenuProps> = ({
   const { locale, setLocale } = useI18n();
   const { modal } = App.useApp();
   const currentUserDisplayName = getCurrentUserDisplayName();
+  const currentUserRole = getCurrentUserRole();
 
   const handleLogout = () => {
     modal.confirm({
@@ -147,8 +148,19 @@ const UserMenu: React.FC<UserMenuProps> = ({
       label: t('pages.workspace.userSettings'),
       disabled: true,
     },
+    ...(currentUserRole === 'admin' || currentUserRole === 'super_admin' ? [
+      {
+        type: 'divider' as const,
+      },
+      {
+        key: 'admin',
+        icon: <Shield size={16} strokeWidth={1.5} />,
+        label: t('pages.workspace.adminPanel'),
+        onClick: () => navigate('/admin'),
+      }
+    ] : []),
     {
-      type: 'divider',
+      type: 'divider' as const,
     },
     {
       key: 'language',
@@ -176,7 +188,7 @@ const UserMenu: React.FC<UserMenuProps> = ({
       ]
     },
     {
-      type: 'divider',
+      type: 'divider' as const,
     },
     {
       key: 'logout',
