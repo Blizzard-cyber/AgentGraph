@@ -124,11 +124,16 @@ async def health_check():
     return {"status": "healthy", "app_name": settings.APP_NAME, "version": settings.APP_VERSION}
 
 
-# 静态文件服务配置
-FRONTEND_DIST_DIR = Path(__file__).parent / "dist"
+# === 静态文件服务（可通过环境变量控制） ===
+# MAG_INTERNAL_STATIC： 是否由 FastAPI 内部提供静态资源（默认 true）
+# MAG_FRONTEND_DIST  ： 前端构建产物目录（默认 <project>/mag/dist）
+import os
 
-# 如果前端构建文件存在，则提供静态文件服务
-if FRONTEND_DIST_DIR.exists() and FRONTEND_DIST_DIR.is_dir():
+STATIC_SERVE_ENABLED = os.getenv("MAG_INTERNAL_STATIC", "true").lower() == "true"
+FRONTEND_DIST_DIR = Path(os.getenv("MAG_FRONTEND_DIST", str(Path(__file__).parent.parent / "dist")))
+
+# 仅当启用了内部静态服务、且目录存在时挂载
+if STATIC_SERVE_ENABLED and FRONTEND_DIST_DIR.exists() and FRONTEND_DIST_DIR.is_dir():
     logger.info(f"前端静态文件目录存在: {FRONTEND_DIST_DIR}")
 
     # 挂载静态资源目录（CSS, JS, images等）
@@ -157,8 +162,11 @@ if FRONTEND_DIST_DIR.exists() and FRONTEND_DIST_DIR.is_dir():
             content={"detail": "Frontend not found"}
         )
 else:
-    logger.warning(f"前端静态文件目录不存在: {FRONTEND_DIST_DIR}")
-    logger.warning("如需使用集成前端，请先运行 'npm run build' 构建前端应用")
+    if STATIC_SERVE_ENABLED:
+        logger.warning(f"前端静态文件目录不存在: {FRONTEND_DIST_DIR}")
+        logger.warning("如需使用集成前端，请先运行 'npm run build' 构建前端应用")
+    else:
+        logger.info("已禁用 FastAPI 内部静态资源服务 (MAG_INTERNAL_STATIC=false)，由外部 Nginx/CDN 提供")
 
 
 if __name__ == "__main__":
