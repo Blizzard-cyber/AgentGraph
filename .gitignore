@@ -19,6 +19,7 @@ experimental/
 .qoder/
 
 .claude
-.github/
-
+app.log
+mag/dist*
+fronted/dist
 spec/

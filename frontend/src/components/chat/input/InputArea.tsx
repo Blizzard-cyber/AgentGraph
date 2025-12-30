@@ -55,7 +55,7 @@ const InputArea: React.FC<InputAreaProps> = ({
   const [selectedSystemTools, setSelectedSystemTools] = useState<string[]>([]);
   const [maxIterations, setMaxIterations] = useState<number | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  
+
   // 标记是否已经初始化过配置
   const [isConfigInitialized, setIsConfigInitialized] = useState(false);
 
@@ -70,6 +70,16 @@ const InputArea: React.FC<InputAreaProps> = ({
     });
   }, [mcpConfig]);
 
+  // 获取模式显示名称
+  const getModeDisplayName = () => {
+    switch (mode) {
+      case 'agent': return t('pages.chatSystem.modeSelector.agentMode');
+      case 'graph': return t('pages.chatSystem.modeSelector.graphMode');
+      case 'planning': return '任务规划';
+      default: return mode;
+    }
+  };
+
   const getServerConnectionStatus = React.useCallback((serverName: string) => {
     const status = mcpStatus[serverName];
     return status?.connected || false;
@@ -80,29 +90,29 @@ const InputArea: React.FC<InputAreaProps> = ({
     if (!isConfigInitialized || Object.keys(inheritedConfig).length > 0) {
       // 设置模型（如果为 undefined 则清空）
       setSelectedModel(inheritedConfig.selectedModel || '');
-      
+
       // 设置图（如果为 undefined 则清空）
       setSelectedGraph(inheritedConfig.selectedGraph || '');
-      
+
       // 设置系统提示词（如果为 undefined 则清空）
       setSystemPrompt(inheritedConfig.systemPrompt || '');
-      
+
       // 设置 Agent（如果为 undefined 则清空）
       setSelectedAgent(inheritedConfig.selectedAgent !== undefined ? inheritedConfig.selectedAgent : null);
-      
+
       // 设置系统工具（如果为 undefined 或空数组则清空）
       setSelectedSystemTools(inheritedConfig.selectedSystemTools || []);
-      
+
       // 设置最大迭代次数（如果为 undefined 则清空）
       setMaxIterations(inheritedConfig.maxIterations !== undefined ? inheritedConfig.maxIterations : null);
-      
+
       // 设置 MCP 服务器
       const initialStates: Record<string, boolean> = {};
       availableMCPServers.forEach(serverName => {
         initialStates[serverName] = inheritedConfig.selectedMCPServers?.includes(serverName) || false;
       });
       setSelectedMCPServers(initialStates);
-      
+
       setIsConfigInitialized(true);
     }
   }, [inheritedConfig, availableMCPServers, isConfigInitialized]);
@@ -261,6 +271,31 @@ const InputArea: React.FC<InputAreaProps> = ({
         margin: '0 auto',
         width: '100%'
       }}>
+        {/* 当前模式指示器 */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: '8px',
+          padding: '0 4px'
+        }}>
+          <div style={{
+            fontSize: '12px',
+            color: 'rgba(139, 115, 85, 0.65)',
+            letterSpacing: '0.3px',
+            fontWeight: 500
+          }}>
+            {t('pages.chatSystem.currentMode')}: <span style={{ color: '#b85845' }}>{getModeDisplayName()}</span>
+          </div>
+          <div style={{
+            fontSize: '11px',
+            color: 'rgba(139, 115, 85, 0.45)',
+            letterSpacing: '0.2px'
+          }}>
+            {t('pages.chatSystem.switchModeHint')}
+          </div>
+        </div>
+
         <div style={{
           position: 'relative',
           background: 'linear-gradient(to bottom, rgba(245, 243, 240, 0.6), rgba(250, 248, 245, 0.4))',

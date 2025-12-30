@@ -28,7 +28,7 @@ interface MessageItemProps {
   reasoningContent?: string;
   isGraphMode?: boolean;
   isFirstMessageInRound?: boolean;
-  renderingMode: 'agent' | 'graph';
+  renderingMode: 'chat' | 'agent' | 'graph_run';
   conversationId?: string;
 }
 
@@ -102,7 +102,7 @@ const MessageItem: React.FC<MessageItemProps> = ({
   }
 
   // Graph执行模式下的特殊处理：如果是用户消息且没有节点信息，则不显示
-  if (renderingMode === 'graph' && isUser && !nodeInfo) {
+  if (renderingMode === 'graph_run' && isUser && !nodeInfo) {
     return null;
   }
 
@@ -116,7 +116,7 @@ const MessageItem: React.FC<MessageItemProps> = ({
       fontFamily: "Cambria, Georgia, 'Times New Roman', serif, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', serif"
     }}>
       {/* 呼吸灯指示器 - 改为墨点效果 */}
-      {isFirstMessageInRound && renderingMode !== 'graph' && (
+      {isFirstMessageInRound && renderingMode !== 'graph_run' && (
         <div style={{
           display: 'flex',
           alignItems: 'center',
