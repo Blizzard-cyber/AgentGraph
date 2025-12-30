@@ -1,4 +1,5 @@
 """流式响应处理器 - 负责处理SSE流式响应"""
+
 import json
 import logging
 from typing import AsyncGenerator, Dict, Any
@@ -29,11 +30,11 @@ class StreamAccumulator:
                 self.accumulated_content += delta.content
 
             # 累积reasoning_content
-            if hasattr(delta, 'reasoning_content') and delta.reasoning_content:
+            if hasattr(delta, "reasoning_content") and delta.reasoning_content:
                 self.accumulated_reasoning += delta.reasoning_content
 
-            # 累积reasoning
-            if hasattr(delta, 'reasoning') and delta.reasoning:
+            # 累积reasoning_content
+            if hasattr(delta, "reasoning") and delta.reasonin:
                 self.accumulated_reasoning += delta.reasoning
 
             # 累积tool_calls
@@ -45,7 +46,7 @@ class StreamAccumulator:
                         self.tool_calls_dict[index] = {
                             "id": tool_call_delta.id or "",
                             "type": "function",
-                            "function": {"name": "", "arguments": ""}
+                            "function": {"name": "", "arguments": ""},
                         }
 
                     if tool_call_delta.id:
@@ -53,16 +54,20 @@ class StreamAccumulator:
 
                     if tool_call_delta.function:
                         if tool_call_delta.function.name:
-                            self.tool_calls_dict[index]["function"]["name"] += tool_call_delta.function.name
+                            self.tool_calls_dict[index]["function"][
+                                "name"
+                            ] += tool_call_delta.function.name
                         if tool_call_delta.function.arguments:
-                            self.tool_calls_dict[index]["function"]["arguments"] += tool_call_delta.function.arguments
+                            self.tool_calls_dict[index]["function"][
+                                "arguments"
+                            ] += tool_call_delta.function.arguments
 
         # 收集usage信息
         if hasattr(chunk, "usage") and chunk.usage is not None:
             self.api_usage = {
                 "total_tokens": chunk.usage.total_tokens,
                 "prompt_tokens": chunk.usage.prompt_tokens,
-                "completion_tokens": chunk.usage.completion_tokens
+                "completion_tokens": chunk.usage.completion_tokens,
             }
 
     def get_tool_calls_list(self):
@@ -76,7 +81,7 @@ class StreamAccumulator:
             "accumulated_reasoning": self.accumulated_reasoning,
             "tool_calls_dict": self.tool_calls_dict,
             "tool_calls_list": self.get_tool_calls_list(),
-            "api_usage": self.api_usage
+            "api_usage": self.api_usage,
         }
 
 
@@ -84,8 +89,9 @@ class StreamHandler:
     """流式响应处理器"""
 
     @staticmethod
-    async def stream_and_accumulate(stream,
-                                    yield_chunks: bool = True) -> AsyncGenerator[str | Dict[str, Any], None]:
+    async def stream_and_accumulate(
+        stream, yield_chunks: bool = True
+    ) -> AsyncGenerator[str | Dict[str, Any], None]:
         """处理流式响应，实时yield chunk并累积结果
 
         Args:
@@ -108,14 +114,16 @@ class StreamHandler:
             accumulator.process_chunk(chunk)
 
             if chunk.choices and chunk.choices[0].finish_reason:
-                logger.debug(f"流式响应完成，finish_reason: {chunk.choices[0].finish_reason}")
+                logger.debug(
+                    f"流式响应完成，finish_reason: {chunk.choices[0].finish_reason}"
+                )
 
         # 返回累积的结果
         result = {
             "accumulated_content": accumulator.accumulated_content,
             "accumulated_reasoning": accumulator.accumulated_reasoning,
             "tool_calls": accumulator.get_tool_calls_list(),
-            "api_usage": accumulator.api_usage
+            "api_usage": accumulator.api_usage,
         }
 
         yield result

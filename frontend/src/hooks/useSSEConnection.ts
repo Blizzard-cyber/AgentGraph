@@ -219,6 +219,51 @@ export function useSSEConnection() {
             return { ...newState, blocks };
           }
 
+          // 处理 Planning 模式事件
+          if (message.type === 'planning_start') {
+            console.log('Planning started:', message.execution_id);
+            const planningBlock: StreamingBlock = {
+              id: generateBlockId(),
+              type: 'assistant',
+              content: message.message || '开始任务规划...',
+              isComplete: false,
+              timestamp: Date.now()
+            };
+            blocks = [...blocks, planningBlock];
+            return { ...newState, blocks };
+          }
+
+          if (message.type === 'dag_generated') {
+            console.log('DAG generated:', message.dag);
+            const dagBlock: StreamingBlock = {
+              id: generateBlockId(),
+              type: 'assistant',
+              content: `**任务计划已生成**\n\n**目标**: ${message.dag?.目标 || ''}\n\n**步骤**: ${message.dag?.步骤?.length || 0} 个\n\n开始执行...`,
+              isComplete: true,
+              timestamp: Date.now()
+            };
+            blocks = [...blocks, dagBlock];
+            return { ...newState, blocks };
+          }
+
+          if (message.type === 'execution_start') {
+            console.log('Execution started:', message.execution_id);
+            return { ...newState, blocks };
+          }
+
+          if (message.type === 'execution_complete') {
+            console.log('Execution completed:', message.status);
+            const resultBlock: StreamingBlock = {
+              id: generateBlockId(),
+              type: 'assistant',
+              content: `**任务执行完成**\n\n状态: ${message.status?.status || ''}\n进度: ${message.status?.progress?.completed || 0}/${message.status?.progress?.total || 0}`,
+              isComplete: true,
+              timestamp: Date.now()
+            };
+            blocks = [...blocks, resultBlock];
+            return { ...newState, blocks };
+          }
+
           // 处理节点事件（Graph执行模式）
           if (message.type === 'node_start') {
             // 在开始新节点之前，确保所有之前的块都已完成
@@ -279,24 +324,23 @@ export function useSSEConnection() {
           // 处理带 task_id 的普通消息（Sub Agent 的思考和工具调用）
           if (message.task_id && message.choices && message.choices[0]) {
             const delta = message.choices[0].delta;
-
-            // 处理 Sub Agent 的 reasoning_content 和 reasoning
-            if (delta?.reasoning_content || delta?.reasoning) {
-              const reasoningText = delta?.reasoning_content || delta?.reasoning || '';
+            
+            // 处理 Sub Agent 的 reasoning_content
+            if (delta?.reasoning_content) {
               const currentReasoningBlockIndex = blocks.findIndex(block =>
                 block.type === 'reasoning' && !block.isComplete && block.taskId === message.task_id
               );
 
               if (currentReasoningBlockIndex === -1) {
                 // 创建新的推理块（属于 Task）
-                const newReasoningBlock = createStreamingBlock('reasoning', reasoningText);
+                const newReasoningBlock = createStreamingBlock('reasoning', delta.reasoning_content);
                 newReasoningBlock.taskId = message.task_id;
                 blocks = [...blocks, newReasoningBlock];
               } else {
                 // 更新现有推理块
                 blocks = blocks.map((block, index) =>
                   index === currentReasoningBlockIndex
-                    ? { ...block, content: block.content + reasoningText }
+                    ? { ...block, content: block.content + delta.reasoning_content }
                     : block
                 );
               }
@@ -393,22 +437,21 @@ export function useSSEConnection() {
           if (message.choices && message.choices[0]) {
             const delta = message.choices[0].delta;
 
-            // 处理reasoning_content和reasoning（推理内容）
-            if (delta?.reasoning_content || delta?.reasoning) {
-              const reasoningText = delta?.reasoning_content || delta?.reasoning || '';
+            // 处理reasoning_content（推理内容）
+            if (delta?.reasoning_content) {
               const currentReasoningBlockIndex = blocks.findIndex(block =>
                 block.type === 'reasoning' && !block.isComplete
               );
 
               if (currentReasoningBlockIndex === -1) {
                 // 创建新的推理块
-                const newReasoningBlock = createStreamingBlock('reasoning', reasoningText);
+                const newReasoningBlock = createStreamingBlock('reasoning', delta.reasoning_content);
                 blocks = [...blocks, newReasoningBlock];
               } else {
                 // 更新现有推理块
                 blocks = blocks.map((block, index) =>
                   index === currentReasoningBlockIndex
-                    ? { ...block, content: block.content + reasoningText }
+                    ? { ...block, content: block.content + delta.reasoning_content }
                     : block
                 );
               }
@@ -594,6 +637,19 @@ export function useSSEConnection() {
             continue_from_checkpoint: options.continue_from_checkpoint || false
           };
           reader = await ConversationService.createGraphSSE(request);
+          break;
+        }
+
+        case 'planning': {
+          console.log('Creating Planning Mode SSE connection');
+          const request = {
+            user_query: inputText,
+            conversation_id: conversationId,
+            plan_agent_name: options.plan_agent_name || 'plan_agent',
+            max_concurrent: options.max_concurrent || 5,
+            include_agents: options.include_agents || []
+          };
+          reader = await ConversationService.createPlanningModeSSE(request);
           break;
         }
 

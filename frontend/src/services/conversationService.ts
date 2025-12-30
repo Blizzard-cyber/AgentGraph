@@ -177,6 +177,56 @@ export class ConversationService {
     }
   }
 
+  // Planning Mode - 创建SSE连接
+  static async createPlanningModeSSE(request: {
+    user_query: string;
+    conversation_id?: string;
+    plan_agent_name?: string;
+    max_concurrent?: number;
+    include_agents?: string[];
+  }): Promise<ReadableStreamDefaultReader<Uint8Array>> {
+    const token = localStorage.getItem('auth_token');
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      'Accept': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+    };
+
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    try {
+      const response = await fetch(`${api.defaults.baseURL}/agent/planning-mode`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(request)
+      });
+
+      if (!response.ok) {
+        let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+        try {
+          const errorData = await response.json();
+          if (errorData.detail) {
+            errorMessage = errorData.detail;
+          }
+        } catch {
+          // 如果无法解析JSON，使用默认错误消息
+        }
+        throw new Error(errorMessage);
+      }
+
+      if (!response.body) {
+        throw new Error('Response body is null');
+      }
+
+      return response.body.getReader();
+    } catch (error) {
+      console.error('创建 Planning Mode SSE 连接失败:', error);
+      throw error;
+    }
+  }
+
   // 分享相关API
   // 创建分享链接
   static async createShare(conversationId: string): Promise<CreateShareResponse> {

@@ -34,17 +34,19 @@ const MessageDisplay: React.FC<MessageDisplayProps> = React.memo(({
   const t = useT();
 
   // 根据前端当前模式确定渲染模式
-  const getRenderingMode = (): 'agent' | 'graph' => {
-    if (currentMode === 'agent') {
+  const getRenderingMode = (): 'chat' | 'agent' | 'graph_run' => {
+    if (currentMode === 'chat') {
+      return 'chat';
+    } else if (currentMode === 'agent') {
       return 'agent';
     } else if (currentMode === 'graph') {
-      return 'graph';
+      return 'graph_run';
     }
 
     if (conversation.type === 'agent') {
       return 'agent';
     } else if (conversation.type === 'graph') {
-      return 'graph';
+      return 'graph_run';
     }
 
     return 'agent';
@@ -74,7 +76,7 @@ const MessageDisplay: React.FC<MessageDisplayProps> = React.memo(({
     );
   }
 
-  const isGraphExecution = renderingMode === 'graph';
+  const isGraphExecution = renderingMode === 'graph_run';
   const toolResults = buildToolResultsMap(conversation.rounds || []);
   const taskRoundDataMap = buildTaskRoundDataMap(conversation.tasks);
 
@@ -230,7 +232,7 @@ const MessageDisplay: React.FC<MessageDisplayProps> = React.memo(({
         fontFamily: "Cambria, Georgia, 'Times New Roman', serif, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', serif"
       }}>
         {/* 呼吸灯指示器 */}
-        {renderingMode !== 'graph' && (
+        {renderingMode !== 'graph_run' && (
           <div style={{
             display: 'flex',
             alignItems: 'center',

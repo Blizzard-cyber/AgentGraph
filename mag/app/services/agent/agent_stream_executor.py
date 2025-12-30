@@ -2,12 +2,14 @@
 Agent 流式执行器
 实现 Agent 调用的流式执行逻辑（支持多轮对话）
 """
+
 import asyncio
 import json
 import logging
 from typing import Dict, List, Any, Optional, AsyncGenerator
-
+import requests
 from app.services.model.model_service import model_service
+from memory_client import MEMORY_CLIENT
 from app.services.tool_execution import ToolExecutor
 from app.services.system_tools import get_system_tools_by_names
 
@@ -22,16 +24,16 @@ class AgentStreamExecutor:
         self.tool_executor = ToolExecutor()
 
     async def run_agent_stream(
-            self,
-            agent_name: Optional[str],
-            user_prompt: str,
-            user_id: str,
-            conversation_id: str,
-            model_name: Optional[str] = None,
-            system_prompt: Optional[str] = None,
-            mcp_servers: Optional[List[str]] = None,
-            system_tools: Optional[List[str]] = None,
-            max_iterations: Optional[int] = None
+        self,
+        agent_name: Optional[str],
+        user_prompt: str,
+        user_id: str,
+        conversation_id: str,
+        model_name: Optional[str] = None,
+        system_prompt: Optional[str] = None,
+        mcp_servers: Optional[List[str]] = None,
+        system_tools: Optional[List[str]] = None,
+        max_iterations: Optional[int] = None,
     ) -> AsyncGenerator[str, None]:
         """
         Agent 流式运行（主入口，支持多轮对话）
@@ -55,9 +57,13 @@ class AgentStreamExecutor:
             from app.services.system_tools.registry import set_user_language_context
 
             # 获取用户语言并设置到上下文
-            user_language = await mongodb_client.user_repository.get_user_language(user_id)
+            user_language = await mongodb_client.user_repository.get_user_language(
+                user_id
+            )
             set_user_language_context(user_language)
-            logger.info(f"设置用户语言上下文: user_id={user_id}, language={user_language}")
+            logger.info(
+                f"设置用户语言上下文: user_id={user_id}, language={user_language}"
+            )
 
             # 加载有效配置
             effective_config = await self._load_effective_config(
@@ -67,7 +73,7 @@ class AgentStreamExecutor:
                 system_prompt=system_prompt,
                 mcp_servers=mcp_servers,
                 system_tools=system_tools,
-                max_iterations=max_iterations
+                max_iterations=max_iterations,
             )
 
             if not effective_config:
@@ -80,7 +86,9 @@ class AgentStreamExecutor:
             messages = await self._build_messages(
                 conversation_id=conversation_id,
                 user_prompt=user_prompt,
-                system_prompt=effective_config["system_prompt"]
+                agent_id=agent_name,
+                user_id=user_id,
+                system_prompt=effective_config["system_prompt"],
             )
 
             # 准备工具
@@ -88,20 +96,20 @@ class AgentStreamExecutor:
                 mcp_servers=effective_config["mcp_servers"],
                 system_tools=effective_config["system_tools"],
                 user_id=user_id,
-                conversation_id=conversation_id
+                conversation_id=conversation_id,
             )
 
             # 执行完整流程
             final_result = None
             async for item in self.run_agent_loop(
-                    agent_name=effective_config["agent_name"],
-                    model_name=effective_config["model_name"],
-                    messages=messages,
-                    tools=tools,
-                    mcp_servers=effective_config["mcp_servers"],
-                    max_iterations=effective_config["max_iterations"],
-                    user_id=user_id,
-                    conversation_id=conversation_id
+                agent_name=effective_config["agent_name"],
+                model_name=effective_config["model_name"],
+                messages=messages,
+                tools=tools,
+                mcp_servers=effective_config["mcp_servers"],
+                max_iterations=effective_config["max_iterations"],
+                user_id=user_id,
+                conversation_id=conversation_id,
             ):
                 if isinstance(item, str):
                     # SSE 字符串，直接转发给客户端
@@ -120,8 +128,29 @@ class AgentStreamExecutor:
                     user_prompt=user_prompt,
                     model_name=effective_config["model_name"],
                     tools=tools,
-                    is_graph_node=False
+                    is_graph_node=False,
                 )
+                memory_info = await self.extract_memory_info(
+                    final_result.get("round_messages", [])
+                )
+                try:
+                    memory_result = await MEMORY_CLIENT.add_memory(
+                        user_id=user_id,
+                        agent_id=effective_config["agent_name"],
+                        session_id=conversation_id,
+                        memory_info=memory_info,
+                    )
+                    if memory_result.get("success"):
+                        logger.info(
+                            f"记忆保存成功: user_id={user_id}, agent_id={effective_config['agent_name']}, session_id={conversation_id}"
+                        )
+                    else:
+                        logger.warning(
+                            f"记忆保存失败: {memory_result.get('error', '未知错误')}"
+                        )
+                except Exception as e:
+                    logger.error(f"记忆保存异常: {str(e)}")
+                    # 记忆保存失败不应该影响主流程，继续执行
 
             # 发送完成信号
             yield "data: [DONE]\n\n"
@@ -133,10 +162,12 @@ class AgentStreamExecutor:
             yield "data: [DONE]\n\n"
 
     async def _build_messages(
-            self,
-            conversation_id: str,
-            user_prompt: str,
-            system_prompt: str
+        self,
+        agent_id: str,
+        conversation_id: str,
+        user_prompt: str,
+        system_prompt: str,
+        user_id: str,
     ) -> List[Dict[str, Any]]:
         """
         构建包含历史消息的完整消息列表
@@ -156,10 +187,7 @@ class AgentStreamExecutor:
         try:
             # 1. 添加系统提示词
             if system_prompt and system_prompt.strip():
-                messages.append({
-                    "role": "system",
-                    "content": system_prompt.strip()
-                })
+                messages.append({"role": "system", "content": system_prompt.strip()})
 
             # 2. 获取并添加历史消息
             agent_run_doc = await mongodb_client.agent_run_repository.get_agent_run(
@@ -178,12 +206,24 @@ class AgentStreamExecutor:
             else:
                 logger.debug(f"新对话，无历史消息: {conversation_id}")
 
+            # 3.记忆查询
+            SearchMemoryRequest = await MEMORY_CLIENT.search_memory(
+                user_id=user_id,
+                agent_id=agent_id,
+                session_id=conversation_id,
+                query=user_prompt,
+            )
+
+            logger.info(f"记忆查询结果: {SearchMemoryRequest}")
             # 3. 添加当前用户消息
             if user_prompt and user_prompt.strip():
-                messages.append({
-                    "role": "user",
-                    "content": user_prompt.strip()
-                })
+                messages.append(
+                    {
+                        "role": "user",
+                        "content": user_prompt.strip(),
+                        "memory": SearchMemoryRequest["data"],
+                    }
+                )
 
             logger.info(f"✓ 构建消息完成，共 {len(messages)} 条（包含历史）")
             return messages
@@ -193,26 +233,78 @@ class AgentStreamExecutor:
             # 出错时至少返回当前消息
             fallback_messages = []
             if system_prompt and system_prompt.strip():
-                fallback_messages.append({
-                    "role": "system",
-                    "content": system_prompt.strip()
-                })
+                fallback_messages.append(
+                    {"role": "system", "content": system_prompt.strip()}
+                )
             if user_prompt and user_prompt.strip():
-                fallback_messages.append({
-                    "role": "user",
-                    "content": user_prompt.strip()
-                })
+                fallback_messages.append(
+                    {"role": "user", "content": user_prompt.strip()}
+                )
             return fallback_messages
 
+    async def extract_memory_info(
+        self, messages: List[Dict[str, Any]]
+    ) -> List[Dict[str, Any]]:
+        """
+        从对话消息列表中提取可写入 memory 的条目。
+
+        输入（messages）:
+            List[Dict[str, Any]]
+            - 对话消息列表（如 round_messages / messages）
+            - 每个元素通常包含：
+                {
+                    "role": str,        # "system" | "user" | "assistant"
+                    "content": Any,     # 通常为 str
+                    ...                 # 可能包含 memory / token / metadata 等字段
+                }
+
+        输出（return）:
+            List[Dict[str, Any]]
+            - 可直接作为 add_memory 接口的 memory_info 字段
+            - 每个元素结构为：
+                {
+                    "content": str,     # 非空文本内容
+                    "role": str,        # "user" 或 "assistant"
+                    "metadata": dict    # 预留扩展字段（默认空）
+                }
+
+        过滤规则:
+            - 仅保留 role 为 "user" 或 "assistant" 的消息
+            - content 必须是非空字符串
+            - 自动丢弃 system 消息、空消息、非文本内容
+            - 不会引入任何递归或执行态字段（memory / token 等）
+
+        使用场景:
+            - 在 agent 执行结束后，将对话中的关键信息写入长期记忆
+            - 避免将 round_messages / final_result 原样写入 memory
+        """
+        memory_info = []
+
+        for msg in messages:
+            role = msg.get("role")
+            content = msg.get("content")
+
+            # 只允许 user / assistant
+            if role not in ("user", "assistant"):
+                continue
+
+            # content 必须是非空字符串
+            if not isinstance(content, str) or not content.strip():
+                continue
+
+            memory_info.append({"content": content, "role": role, "metadata": {}})
+
+        return memory_info
+
     async def _load_effective_config(
-            self,
-            agent_name: Optional[str],
-            user_id: str,
-            model_name: Optional[str] = None,
-            system_prompt: Optional[str] = None,
-            mcp_servers: Optional[List[str]] = None,
-            system_tools: Optional[List[str]] = None,
-            max_iterations: Optional[int] = None
+        self,
+        agent_name: Optional[str],
+        user_id: str,
+        model_name: Optional[str] = None,
+        system_prompt: Optional[str] = None,
+        mcp_servers: Optional[List[str]] = None,
+        system_tools: Optional[List[str]] = None,
+        max_iterations: Optional[int] = None,
     ) -> Optional[Dict[str, Any]]:
         """
         加载有效配置（智能合并策略）
@@ -242,7 +334,7 @@ class AgentStreamExecutor:
             "system_prompt": "",
             "mcp_servers": [],
             "system_tools": [],
-            "max_iterations": 50
+            "max_iterations": 50,
         }
 
         # === 场景1：无 Agent，纯手动配置 ===
@@ -308,17 +400,17 @@ class AgentStreamExecutor:
         return config
 
     async def run_agent_loop(
-            self,
-            agent_name: str,
-            model_name: str,
-            messages: List[Dict[str, Any]],
-            tools: List[Dict[str, Any]],
-            mcp_servers: List[str],
-            max_iterations: int,
-            user_id: str,
-            conversation_id: str,
-            task_id: Optional[str] = None,
-            is_graph_node: bool = False
+        self,
+        agent_name: str,
+        model_name: str,
+        messages: List[Dict[str, Any]],
+        tools: List[Dict[str, Any]],
+        mcp_servers: List[str],
+        max_iterations: int,
+        user_id: str,
+        conversation_id: str,
+        task_id: Optional[str] = None,
+        is_graph_node: bool = False,
     ) -> AsyncGenerator[str | Dict[str, Any], None]:
         """
         运行 Agent 循环（含工具调用循环）
@@ -345,39 +437,47 @@ class AgentStreamExecutor:
         round_token_usage = {
             "total_tokens": 0,
             "prompt_tokens": 0,
-            "completion_tokens": 0
+            "completion_tokens": 0,
         }
 
         # 标识是否为 Sub Agent
         is_sub_agent = task_id is not None
-        
+
         # 记录 Graph 节点调用
         if is_graph_node:
-            logger.debug(f"Graph 节点调用 Agent: {agent_name}, conversation_id={conversation_id}")
+            logger.debug(
+                f"Graph 节点调用 Agent: {agent_name}, conversation_id={conversation_id}"
+            )
 
         try:
             while iteration < max_iterations:
                 iteration += 1
-                logger.info(f"Agent {agent_name} - 第 {iteration} 轮执行 (task_id={task_id})")
+                logger.info(
+                    f"Agent {agent_name} - 第 {iteration} 轮执行 (task_id={task_id})"
+                )
 
                 # 过滤 reasoning_content
-                filtered_messages = model_service.filter_reasoning_content(current_messages)
+                filtered_messages = model_service.filter_reasoning_content(
+                    current_messages
+                )
 
                 # 调用模型进行流式生成
                 accumulated_result = None
                 async for item in model_service.stream_chat_with_tools(
-                        model_name=model_name,
-                        messages=filtered_messages,
-                        tools=tools,
-                        yield_chunks=True,
-                        user_id=user_id
+                    model_name=model_name,
+                    messages=filtered_messages,
+                    tools=tools,
+                    yield_chunks=True,
+                    user_id=user_id,
                 ):
                     if isinstance(item, str):
                         # SSE chunk
                         # 如果是 Sub Agent，添加 task_id 标识
                         if is_sub_agent:
                             # 解析 SSE 数据
-                            if item.startswith("data: ") and not item.startswith("data: [DONE]"):
+                            if item.startswith("data: ") and not item.startswith(
+                                "data: [DONE]"
+                            ):
                                 try:
                                     data_str = item[6:].strip()
                                     data = json.loads(data_str)
@@ -395,12 +495,16 @@ class AgentStreamExecutor:
                         accumulated_result = item
 
                 if not accumulated_result:
-                    logger.error(f"Agent {agent_name} - 第 {iteration} 轮未收到累积结果")
+                    logger.error(
+                        f"Agent {agent_name} - 第 {iteration} 轮未收到累积结果"
+                    )
                     break
 
                 # 提取累积的结果
                 accumulated_content = accumulated_result["accumulated_content"]
-                accumulated_reasoning = accumulated_result.get("accumulated_reasoning", "")
+                accumulated_reasoning = accumulated_result.get(
+                    "accumulated_reasoning", ""
+                )
                 current_tool_calls = accumulated_result.get("tool_calls", [])
                 api_usage = accumulated_result.get("api_usage")
 
@@ -408,12 +512,12 @@ class AgentStreamExecutor:
                 if api_usage:
                     round_token_usage["total_tokens"] += api_usage["total_tokens"]
                     round_token_usage["prompt_tokens"] += api_usage["prompt_tokens"]
-                    round_token_usage["completion_tokens"] += api_usage["completion_tokens"]
+                    round_token_usage["completion_tokens"] += api_usage[
+                        "completion_tokens"
+                    ]
 
                 # 构建 assistant 消息
-                assistant_message = {
-                    "role": "assistant"
-                }
+                assistant_message = {"role": "assistant"}
 
                 if accumulated_reasoning:
                     assistant_message["reasoning_content"] = accumulated_reasoning
@@ -437,14 +541,19 @@ class AgentStreamExecutor:
 
                 # 如果没有工具调用，结束循环
                 if not current_tool_calls:
-                    logger.info(f"Agent {agent_name} - 第 {iteration} 轮无工具调用，执行完成")
+                    logger.info(
+                        f"Agent {agent_name} - 第 {iteration} 轮无工具调用，执行完成"
+                    )
                     break
 
                 # 执行工具调用
-                logger.info(f"Agent {agent_name} - 执行 {len(current_tool_calls)} 个工具调用")
+                logger.info(
+                    f"Agent {agent_name} - 执行 {len(current_tool_calls)} 个工具调用"
+                )
 
                 # 检查是否有流式系统工具调用
                 from app.services.system_tools import is_streaming_tool
+
                 has_streaming_tool = any(
                     is_streaming_tool(tc.get("function", {}).get("name"))
                     for tc in current_tool_calls
@@ -458,13 +567,15 @@ class AgentStreamExecutor:
                         mcp_servers=mcp_servers,
                         user_id=user_id,
                         conversation_id=conversation_id,
-                        agent_id=agent_name
+                        agent_id=agent_name,
                     ):
                         if isinstance(item, str):
                             # SSE 事件，直接转发
                             if is_sub_agent:
                                 # 如果当前也是 Sub Agent，添加 task_id
-                                if item.startswith("data: ") and not item.startswith("data: [DONE]"):
+                                if item.startswith("data: ") and not item.startswith(
+                                    "data: [DONE]"
+                                ):
                                     try:
                                         data_str = item[6:].strip()
                                         data = json.loads(data_str)
@@ -486,7 +597,7 @@ class AgentStreamExecutor:
                         mcp_servers=mcp_servers,
                         user_id=user_id,
                         conversation_id=conversation_id,
-                        agent_id=agent_name
+                        agent_id=agent_name,
                     )
 
                 # 添加工具结果到消息列表并实时发送
@@ -494,7 +605,7 @@ class AgentStreamExecutor:
                     tool_message = {
                         "role": "tool",
                         "tool_call_id": tool_result["tool_call_id"],
-                        "content": tool_result["content"]
+                        "content": tool_result["content"],
                     }
                     current_messages.append(tool_message)
                     round_messages.append(tool_message)
@@ -505,14 +616,16 @@ class AgentStreamExecutor:
                     yield f"data: {json.dumps(tool_message)}\n\n"
 
             if iteration >= max_iterations:
-                logger.warning(f"Agent {agent_name} - 达到最大迭代次数 {max_iterations}")
+                logger.warning(
+                    f"Agent {agent_name} - 达到最大迭代次数 {max_iterations}"
+                )
 
             # 返回完整结果
             result = {
                 "round_messages": round_messages,
                 "round_token_usage": round_token_usage,
                 "iteration_count": iteration,
-                "agent_name": agent_name
+                "agent_name": agent_name,
             }
 
             if is_sub_agent:
@@ -525,11 +638,11 @@ class AgentStreamExecutor:
             raise
 
     async def _prepare_agent_tools(
-            self,
-            mcp_servers: List[str],
-            system_tools: List[str],
-            user_id: str,
-            conversation_id: str
+        self,
+        mcp_servers: List[str],
+        system_tools: List[str],
+        user_id: str,
+        conversation_id: str,
     ) -> List[Dict[str, Any]]:
         """
         准备 Agent 工具
@@ -548,6 +661,7 @@ class AgentStreamExecutor:
         # 加载 MCP 工具
         if mcp_servers:
             from app.services.mcp.mcp_service import mcp_service
+
             try:
                 mcp_tools = await mcp_service.prepare_chat_tools(mcp_servers)
                 tools.extend(mcp_tools)
@@ -562,15 +676,15 @@ class AgentStreamExecutor:
         return tools
 
     async def _save_agent_run_result(
-            self,
-            conversation_id: str,
-            agent_name: str,
-            result: Dict[str, Any],
-            user_id: str,
-            user_prompt: str,
-            model_name: str,
-            tools: Optional[List[Dict[str, Any]]] = None,
-            is_graph_node: bool = False
+        self,
+        conversation_id: str,
+        agent_name: str,
+        result: Dict[str, Any],
+        user_id: str,
+        user_prompt: str,
+        model_name: str,
+        tools: Optional[List[Dict[str, Any]]] = None,
+        is_graph_node: bool = False,
     ) -> Optional[Dict[str, Any]]:
         """
         保存 Agent 运行结果到数据库
@@ -590,31 +704,43 @@ class AgentStreamExecutor:
         """
         # 如果是 Graph 节点调用，跳过所有数据库写入操作
         if is_graph_node:
-            logger.debug(f"Graph 节点调用，跳过数据库写入: conversation_id={conversation_id}")
+            logger.debug(
+                f"Graph 节点调用，跳过数据库写入: conversation_id={conversation_id}"
+            )
             return None
-        
+
         try:
             from app.infrastructure.database.mongodb.client import mongodb_client
 
             # 确保 conversations 元数据存在
-            conversation = await mongodb_client.conversation_repository.get_conversation(conversation_id)
+            conversation = (
+                await mongodb_client.conversation_repository.get_conversation(
+                    conversation_id
+                )
+            )
             if not conversation:
                 await mongodb_client.conversation_repository.create_conversation(
                     conversation_id=conversation_id,
                     conversation_type="agent",
                     user_id=user_id,
                     title=f"{agent_name} 对话" if agent_name != "manual" else "新对话",
-                    tags=[]
+                    tags=[],
                 )
 
             # 确保 agent_run 文档存在
-            agent_run = await mongodb_client.agent_run_repository.get_agent_run(conversation_id)
+            agent_run = await mongodb_client.agent_run_repository.get_agent_run(
+                conversation_id
+            )
             if not agent_run:
-                await mongodb_client.agent_run_repository.create_agent_run(conversation_id)
+                await mongodb_client.agent_run_repository.create_agent_run(
+                    conversation_id
+                )
 
             # 获取当前主线程的 round 数量
-            current_round_count = await mongodb_client.agent_run_repository.get_round_count(
-                conversation_id
+            current_round_count = (
+                await mongodb_client.agent_run_repository.get_round_count(
+                    conversation_id
+                )
             )
             next_round_number = current_round_count + 1
 
@@ -632,10 +758,12 @@ class AgentStreamExecutor:
                 tools=tools,
                 model=model_name,
                 prompt_tokens=prompt_tokens,
-                completion_tokens=completion_tokens
+                completion_tokens=completion_tokens,
             )
-            
-            logger.info(f"✓ 保存主线程 round 成功: conversation_id={conversation_id}, round={next_round_number}")
+
+            logger.info(
+                f"✓ 保存主线程 round 成功: conversation_id={conversation_id}, round={next_round_number}"
+            )
 
             if not success:
                 logger.error(f"保存主线程 round 失败: {conversation_id}")
@@ -643,8 +771,7 @@ class AgentStreamExecutor:
 
             # 更新 conversation 的 round_count
             await mongodb_client.conversation_repository.update_conversation_round_count(
-                conversation_id=conversation_id,
-                increment=1
+                conversation_id=conversation_id, increment=1
             )
 
             # 更新 conversation 的 token 使用量
@@ -652,10 +779,12 @@ class AgentStreamExecutor:
                 await mongodb_client.conversation_repository.update_conversation_token_usage(
                     conversation_id=conversation_id,
                     prompt_tokens=prompt_tokens,
-                    completion_tokens=completion_tokens
+                    completion_tokens=completion_tokens,
                 )
 
-            logger.debug(f"Agent {agent_name} 执行结果已保存到数据库: {conversation_id}, round {next_round_number}")
+            logger.debug(
+                f"Agent {agent_name} 执行结果已保存到数据库: {conversation_id}, round {next_round_number}"
+            )
 
             return None
 

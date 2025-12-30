@@ -14,6 +14,7 @@ else:
     if cwd_env_path.exists():
         load_dotenv(cwd_env_path)
 
+
 class Settings:
     """应用配置设置"""
 
@@ -26,22 +27,31 @@ class Settings:
         f"mongodb://{os.getenv('MONGO_ROOT_USERNAME', 'admin')}:"
         f"{os.getenv('MONGO_ROOT_PASSWORD', 'securepassword123')}@"
         f"localhost:{os.getenv('MONGO_PORT', '27017')}/"
+        "?authSource=admin",
     )
 
     MONGODB_DB: str = os.getenv("MONGO_DATABASE", "mcp-agent-graph")
 
     # JWT 配置
-    JWT_SECRET_KEY: str = os.getenv("JWT_SECRET_KEY", "your-secret-key-change-in-production")
+    JWT_SECRET_KEY: str = os.getenv(
+        "JWT_SECRET_KEY", "your-secret-key-change-in-production"
+    )
     JWT_ALGORITHM: str = os.getenv("JWT_ALGORITHM", "HS256")
-    JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = int(os.getenv("JWT_ACCESS_TOKEN_EXPIRE_MINUTES", "15"))  # 15分钟
-    JWT_REFRESH_TOKEN_EXPIRE_DAYS: int = int(os.getenv("JWT_REFRESH_TOKEN_EXPIRE_DAYS", "7"))  # 7天
+    JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = int(
+        os.getenv("JWT_ACCESS_TOKEN_EXPIRE_MINUTES", "15")
+    )  # 15分钟
+    JWT_REFRESH_TOKEN_EXPIRE_DAYS: int = int(
+        os.getenv("JWT_REFRESH_TOKEN_EXPIRE_DAYS", "7")
+    )  # 7天
 
     # 超级管理员配置
     ADMIN_USERNAME: str = os.getenv("ADMIN_USERNAME", "admin")
     ADMIN_PASSWORD: str = os.getenv("ADMIN_PASSWORD", "admin123")
 
     # MinIO 配置
-    MINIO_ENDPOINT: str = os.getenv("MINIO_ENDPOINT", f"localhost:{os.getenv('MINIO_API_PORT', '9010')}")
+    MINIO_ENDPOINT: str = os.getenv(
+        "MINIO_ENDPOINT", f"localhost:{os.getenv('MINIO_API_PORT', '9010')}"
+    )
     MINIO_ACCESS_KEY: str = os.getenv("MINIO_ROOT_USER", "minioadmin")
     MINIO_SECRET_KEY: str = os.getenv("MINIO_ROOT_PASSWORD", "minioadmin123")
     MINIO_SECURE: bool = os.getenv("MINIO_SECURE", "false").lower() == "true"
@@ -84,6 +94,7 @@ class Settings:
     def get_mcp_tool_dir(self, tool_name: str) -> Path:
         """获取指定MCP工具的目录路径"""
         return self.MCP_TOOLS_DIR / tool_name
+
 
 # 创建全局设置实例
 settings = Settings()

@@ -1,7 +1,7 @@
 // src/components/chat/input/ModeSelector.tsx
 import React from 'react';
-import { Button } from 'antd';
-import { ArrowUp, Bot, GitBranch } from 'lucide-react';
+import { Button, Tag } from 'antd';
+import { ArrowUp, Bot, GitBranch, Network, X } from 'lucide-react';
 import { useConversationStore } from '../../../store/conversationStore';
 import { useModelStore } from '../../../store/modelStore';
 import { useGraphEditorStore } from '../../../store/graphEditorStore';
@@ -47,6 +47,9 @@ const ModeSelector: React.FC<ModeSelectorProps> = ({
   const [selectedMCPServers, setSelectedMCPServers] = React.useState<Record<string, boolean>>({});
   const [selectedSystemTools, setSelectedSystemTools] = React.useState<string[]>([]);
   const [maxIterations, setMaxIterations] = React.useState<number | null>(null);
+  // Planning 模式状态
+  const [planAgentName, setPlanAgentName] = React.useState<string>('plan_agent');
+  const [includeAgents, setIncludeAgents] = React.useState<string[]>([]);
 
   const availableMCPServers = React.useMemo(() => {
     return Object.keys(mcpConfig.mcpServers || {}).filter(serverName => {
@@ -87,6 +90,8 @@ const ModeSelector: React.FC<ModeSelectorProps> = ({
     setSystemPrompt('');
     setInputValue('');
     setIsSystemPromptMode(false);
+    setPlanAgentName('plan_agent');
+    setIncludeAgents([]);
   };
 
   const toggleMcpServer = (serverName: string, enabled: boolean) => {
@@ -141,6 +146,12 @@ const ModeSelector: React.FC<ModeSelectorProps> = ({
       }
     } else if (currentMode === 'graph') {
       options.graph_name = selectedGraph;
+    } else if (currentMode === 'planning') {
+      options.plan_agent_name = planAgentName;
+      if (includeAgents.length > 0) {
+        options.include_agents = includeAgents;
+      }
+      options.max_concurrent = 5; // 默认最大并发数
     }
 
     onStartConversation(content, options);
@@ -155,6 +166,8 @@ const ModeSelector: React.FC<ModeSelectorProps> = ({
         return !!selectedAgent || !!selectedModel;
       case 'graph':
         return !!selectedGraph;
+      case 'planning':
+        return !!planAgentName;
       default:
         return false;
     }
@@ -179,6 +192,12 @@ const ModeSelector: React.FC<ModeSelectorProps> = ({
       title: t('pages.chatSystem.modeSelector.graphMode'),
       description: t('pages.chatSystem.modeSelector.graphModeDesc'),
       icon: GitBranch
+    },
+    {
+      key: 'planning' as ConversationMode,
+      title: t('pages.chatSystem.modeSelector.planningMode'),
+      description: t('pages.chatSystem.modeSelector.planningModeDesc'),
+      icon: Network
     }
   ];
 
@@ -202,6 +221,9 @@ const ModeSelector: React.FC<ModeSelectorProps> = ({
     if (currentMode === 'agent') {
       return t('pages.chatSystem.modeSelector.agentPlaceholder');
     }
+    if (currentMode === 'planning') {
+      return t('pages.chatSystem.modeSelector.planningPlaceholder');
+    }
     return t('pages.chatSystem.modeSelector.graphPlaceholder');
   };
 
@@ -222,7 +244,7 @@ const ModeSelector: React.FC<ModeSelectorProps> = ({
       }}>
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(2, 1fr)',
+          gridTemplateColumns: 'repeat(3, 1fr)',
           gap: '12px',
           marginBottom: '28px'
         }}>
@@ -408,6 +430,54 @@ const ModeSelector: React.FC<ModeSelectorProps> = ({
                       onChange={setSelectedGraph}
                       availableGraphs={availableGraphs}
                     />
+                  )}
+
+                  {currentMode === 'planning' && (
+                    <>
+                      <AgentPicker
+                        selectedAgent={planAgentName}
+                        onAgentChange={(agent) => setPlanAgentName(agent || 'plan_agent')}
+                        size="small"
+                        placeholder="规划 Agent"
+                      />
+                      <AgentPicker
+                        selectedAgent={null}
+                        onAgentChange={(agent) => {
+                          if (agent && !includeAgents.includes(agent)) {
+                            setIncludeAgents([...includeAgents, agent]);
+                          }
+                        }}
+                        size="small"
+                        placeholder="添加可用 Agent"
+                        allowClear={false}
+                      />
+                      {includeAgents.length > 0 && (
+                        <div style={{
+                          display: 'flex',
+                          gap: '4px',
+                          flexWrap: 'wrap',
+                          alignItems: 'center'
+                        }}>
+                          {includeAgents.map(agent => (
+                            <Tag
+                              key={agent}
+                              closable
+                              onClose={() => setIncludeAgents(includeAgents.filter(a => a !== agent))}
+                              style={{
+                                margin: 0,
+                                fontSize: '11px',
+                                padding: '2px 6px',
+                                background: 'rgba(139, 115, 85, 0.1)',
+                                border: '1px solid rgba(139, 115, 85, 0.2)',
+                                color: '#8b7355'
+                              }}
+                            >
+                              {agent}
+                            </Tag>
+                          ))}
+                        </div>
+                      )}
+                    </>
                   )}
 
                   <Button

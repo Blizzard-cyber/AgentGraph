@@ -13,7 +13,7 @@ import './TaskBlock.css';
 interface TaskBlockProps {
   taskBlock: TaskBlockType;
   blocks: StreamingBlock[];
-  renderingMode: 'agent' | 'graph';
+  renderingMode: 'chat' | 'agent' | 'graph_run';
   toolResults?: Record<string, string>;
   conversationId?: string;
 }
