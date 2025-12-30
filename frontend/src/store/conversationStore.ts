@@ -26,7 +26,7 @@ interface ConversationState {
   // 搜索和筛选
   searchQuery: string;
   statusFilter: 'active' | 'favorite' | 'deleted';
-  typeFilter: 'agent' | 'graph';
+  typeFilter: 'chat' | 'agent' | 'graph';
   
   // SSE连接
   currentSSE: EventSource | null;
@@ -58,7 +58,7 @@ interface ConversationState {
   // 搜索和筛选
   setSearchQuery: (query: string) => void;
   setStatusFilter: (filter: 'active' | 'favorite' | 'deleted') => void;
-  setTypeFilter: (filter: 'agent' | 'graph') => void;
+  setTypeFilter: (filter: 'chat' | 'agent' | 'graph') => void;
   
   // UI操作
   toggleSidebar: () => void;
@@ -78,7 +78,7 @@ export const useConversationStore = create<ConversationState>()(
     currentMode: 'agent',
     searchQuery: '',
     statusFilter: 'active',
-    typeFilter: 'agent',
+    typeFilter: 'chat',
     currentSSE: null,
     isStreaming: false,
     sidebarCollapsed: localStorage.getItem('sidebar_collapsed') === 'true',
@@ -378,7 +378,7 @@ export const useConversationStore = create<ConversationState>()(
     },
 
     // 设置类型筛选
-    setTypeFilter: (filter: 'agent' | 'graph') => {
+    setTypeFilter: (filter: 'chat' | 'agent' | 'graph') => {
       set({ typeFilter: filter });
     },
 

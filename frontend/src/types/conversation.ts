@@ -44,7 +44,7 @@ export interface TokenUsage {
 export interface ConversationSummary {
   _id: string;
   user_id: string;
-  type: 'agent' | 'graph';
+  type: 'agent' | 'graph' | 'planning';
   title: string;
   created_at: string;
   updated_at: string;
@@ -62,13 +62,15 @@ export interface InputConfig {
   selected_agent?: string | null;
   selected_system_tools?: string[];
   max_iterations?: number | null;
+  plan_agent_name?: string; // 任务规划模式使用的规划 agent
+  include_agents?: string[]; // 任务规划模式中可用的 agent 列表
 }
 
 export interface ConversationDetail {
   conversation_id: string;
   title: string;
   rounds: ConversationRound[];
-  type: 'agent' | 'graph';
+  type: 'agent' | 'graph' | 'planning';
   documents?: ConversationDocuments; // 新增：文档列表
   parsed_results?: ParsedResults;
   execution_chain?: string[][];
@@ -121,7 +123,6 @@ export interface SSEMessage {
     delta?: {
       content?: string;
       reasoning_content?: string;
-      reasoning?: string; // OpenRouter format
       tool_calls?: ToolCall[];
     };
     finish_reason?: 'stop' | 'tool_calls' | null;
@@ -194,7 +195,7 @@ export interface ConversationUpdateRequest {
 }
 
 // 对话模式：只保留 agent 和 graph
-export type ConversationMode = 'agent' | 'graph';
+export type ConversationMode = 'agent' | 'graph' | 'planning';
 
 // 流式输出块类型
 export type StreamingBlockType = 'reasoning' | 'content' | 'tool_calls' | 'node_start' | 'task';

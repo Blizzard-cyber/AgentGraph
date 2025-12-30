@@ -11,6 +11,7 @@ from app.api.routes import router
 from app.services.mcp.mcp_service import mcp_service
 from app.services.model.model_service import model_service
 from app.services.graph.graph_service import graph_service
+from memory_client import MemoryClient
 from app.infrastructure.database.mongodb import mongodb_client
 from app.infrastructure.storage.file_storage import FileManager
 from app.core.config import settings
@@ -22,6 +23,9 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 )
 logger = logging.getLogger("mag")
+
+# 全局记忆客户端实例
+memory_client: MemoryClient = None
 
 
 @asynccontextmanager
@@ -58,6 +62,22 @@ async def lifespan(app: FastAPI):
         await mcp_service.initialize()
         logger.info("MCP服务初始化成功")
 
+        # 8. 初始化记忆客户端
+        global memory_client
+        memory_client = MemoryClient()
+
+        # 测试记忆服务连接
+        try:
+            health_result = await memory_client.health_check()
+            if health_result["success"]:
+                logger.info("记忆客户端连接测试成功")
+            else:
+                logger.warning(f"记忆服务连接异常: {health_result['error']}")
+        except Exception as e:
+            logger.warning(f"记忆服务连接测试失败: {str(e)}")
+
+        logger.info("记忆客户端初始化完成")
+
         logger.info("所有服务初始化完成")
 
         yield
@@ -65,6 +85,7 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logger.error(f"Failed to initialize application: {str(e)}")
         import traceback
+
         traceback.print_exc()
         raise
     finally:
@@ -76,6 +97,14 @@ async def lifespan(app: FastAPI):
             logger.info("MCP服务清理完成")
         except Exception as e:
             logger.error(f"清理MCP服务时出错: {str(e)}")
+
+        try:
+            # 清理记忆客户端（如果需要）
+            if memory_client:
+                # memory_client 目前没有需要清理的资源，但保留接口
+                logger.info("记忆客户端清理完成")
+        except Exception as e:
+            logger.error(f"清理记忆客户端时出错: {str(e)}")
 
         try:
             # 断开MongoDB连接
@@ -108,6 +137,7 @@ app.add_middleware(
 async def generic_exception_handler(request: Request, exc: Exception):
     logger.error(f"未处理的异常: {str(exc)}")
     import traceback
+
     traceback.print_exc()
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -121,7 +151,11 @@ app.include_router(router, prefix="/api")
 
 @app.get("/health")
 async def health_check():
-    return {"status": "healthy", "app_name": settings.APP_NAME, "version": settings.APP_VERSION}
+    return {
+        "status": "healthy",
+        "app_name": settings.APP_NAME,
+        "version": settings.APP_VERSION,
+    }
 
 
 # 静态文件服务配置
@@ -132,7 +166,11 @@ if FRONTEND_DIST_DIR.exists() and FRONTEND_DIST_DIR.is_dir():
     logger.info(f"前端静态文件目录存在: {FRONTEND_DIST_DIR}")
 
     # 挂载静态资源目录（CSS, JS, images等）
-    app.mount("/assets", StaticFiles(directory=str(FRONTEND_DIST_DIR / "assets")), name="assets")
+    app.mount(
+        "/assets",
+        StaticFiles(directory=str(FRONTEND_DIST_DIR / "assets")),
+        name="assets",
+    )
 
     # 处理所有非API路由，返回index.html（支持前端路由）
     @app.get("/{full_path:path}")
@@ -152,10 +190,8 @@ if FRONTEND_DIST_DIR.exists() and FRONTEND_DIST_DIR.is_dir():
             return FileResponse(index_path)
 
         # 如果 index.html 不存在，返回 404
-        return JSONResponse(
-            status_code=404,
-            content={"detail": "Frontend not found"}
-        )
+        return JSONResponse(status_code=404, content={"detail": "Frontend not found"})
+
 else:
     logger.warning(f"前端静态文件目录不存在: {FRONTEND_DIST_DIR}")
     logger.warning("如需使用集成前端，请先运行 'npm run build' 构建前端应用")

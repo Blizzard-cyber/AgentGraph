@@ -8,7 +8,7 @@ import NodeExecutionInfo from './NodeExecutionInfo';
 
 interface StreamingBlockDisplayProps {
   block: StreamingBlock;
-  renderingMode: 'agent' | 'graph';
+  renderingMode: 'chat' | 'agent' | 'graph_run';
   toolResults?: Record<string, string>;
   conversationId?: string;
 }

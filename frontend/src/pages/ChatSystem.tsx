@@ -254,7 +254,9 @@ const ChatSystem: React.FC = () => {
         selectedMCPServers: options.mcp_servers || options.selectedMCPServers || [],
         selectedAgent: options.agent_name || null,
         selectedSystemTools: options.system_tools || [],
-        maxIterations: options.max_iterations || null
+        maxIterations: options.max_iterations || null,
+        plan_agent_name: options.plan_agent_name,
+        include_agents: options.include_agents
       });
 
       // 立即设置活跃对话ID，界面立即切换到对话模式
@@ -293,6 +295,10 @@ const ChatSystem: React.FC = () => {
         user_prompt: options.user_prompt || inputText,
         // Graph 模式参数
         graph_name: options.graph_name,
+        // Planning 模式参数
+        plan_agent_name: options.plan_agent_name,
+        include_agents: options.include_agents,
+        max_concurrent: options.max_concurrent,
         onConversationCreated: (backendConversationId: string) => {
           // Graph模式时更新实际的对话ID和标题
           if (isGraphMode) {
