@@ -1,4 +1,4 @@
-version: "3.9"
+
 
 services:
   # Nginx - 反向代理 + 前端静态资源服务
