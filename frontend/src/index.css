@@ -1,0 +1,778 @@
+/* 重置HTML和body的默认样式，确保div完全贴合屏幕边缘 */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+}
+
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #f0f0f0;
+  padding-right: 16px;
+  background-color: #fff;
+}
+
+/* Shutdown button styling */
+.shutdown-button {
+  background-color: #fff1f0;
+  border-color: #ff4d4f;
+  color: #ff4d4f;
+  font-weight: 500;
+  border-radius: 4px;
+  transition: all 0.3s;
+  height: 32px;
+  display: flex;
+  align-items: center;
+}
+
+.shutdown-button:hover {
+  background-color: #ff4d4f;
+  color: white;
+  border-color: #ff4d4f;
+  box-shadow: 0 2px 6px rgba(255, 77, 79, 0.4);
+  transform: translateY(-1px);
+}
+
+.shutdown-button:active {
+  transform: translateY(0);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .main-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .shutdown-button {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    align-self: flex-end;
+  }
+}
+
+.mcp-tabs .ant-tabs-nav {
+  margin-bottom: 16px;
+}
+
+/* 调整JSON编辑器间距 */
+.ant-input-textarea textarea.font-mono {
+  padding: 12px;
+  line-height: 1.5;
+  border-radius: 4px;
+}
+
+/* 添加卡片hover效果 */
+.ant-card {
+  transition: all 0.2s ease-in-out;
+}
+
+.ant-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* 页面容器 */
+.max-w-7xl {
+  max-width: 1280px;
+}
+
+/* MCP管理器页面美化 */
+.ant-card .ant-tabs-content-holder {
+  padding: 8px;
+}
+
+/* 美化按钮和按钮组 */
+.ant-btn {
+  border-radius: 4px;
+  transition: all 0.3s;
+  margin-right: 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+.ant-btn:last-child {
+  margin-right: 0;
+}
+
+.ant-btn-primary {
+  background: #1890ff;
+  border-color: #1890ff;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045);
+}
+
+.ant-btn-primary:hover {
+  background: #40a9ff;
+  border-color: #40a9ff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(24, 144, 255, 0.25);
+}
+
+.ant-btn-default:hover {
+  border-color: #40a9ff;
+  color: #40a9ff;
+}
+
+/* 服务器卡片样式 */
+.ant-card-bordered {
+  border-radius: 8px;
+  border: 1px solid rgba(139, 115, 85, 0.15);
+  overflow: hidden;
+  margin-bottom: 16px;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 2px 8px rgba(139, 115, 85, 0.08);
+}
+
+.ant-card-head {
+  border-bottom: 1px solid rgba(139, 115, 85, 0.15);
+  padding: 0 20px;
+  min-height: 48px;
+  background-color: rgba(250, 248, 245, 0.9);
+}
+
+.ant-card-body {
+  padding: 20px;
+}
+
+/* 工具栏布局修复 */
+.flex.justify-between {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.flex.justify-between .space-x-2 > * {
+  margin-right: 12px;
+}
+
+.flex.justify-between .space-x-2 > *:last-child {
+  margin-right: 0;
+}
+
+/* 服务器列表美化 */
+.ant-row {
+  margin-top: 16px;
+}
+
+.ant-empty {
+  margin: 32px 0;
+  padding: 24px;
+  background: rgba(250, 248, 245, 0.6);
+  border-radius: 8px;
+  border: 1px solid rgba(139, 115, 85, 0.1);
+}
+
+/* 美化表格样式 */
+.ant-table {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.ant-table-thead > tr > th {
+  background-color: rgba(250, 248, 245, 0.9);
+  color: #2d2d2d;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 16px 12px;
+  border-bottom: 2px solid rgba(139, 115, 85, 0.15);
+  letter-spacing: 0.5px;
+}
+
+.ant-table-tbody > tr > td {
+  padding: 14px 12px;
+  border-bottom: 1px solid rgba(139, 115, 85, 0.08);
+}
+
+.ant-table-tbody > tr:hover > td {
+  background-color: rgba(250, 248, 245, 0.5);
+}
+
+/* 表单样式美化 */
+.ant-form-item {
+  margin-bottom: 20px;
+}
+
+.ant-form-item-label > label {
+  font-weight: 500;
+  color: #333;
+}
+
+/* 状态指示器 */
+.ant-badge-status-dot {
+  width: 10px;
+  height: 10px;
+}
+
+.ant-badge-status-text {
+  margin-left: 8px;
+  font-weight: 500;
+}
+
+/* MCP服务器卡片中的按钮组 */
+.ant-card-actions {
+  background: #fafafa;
+  border-top: 1px solid #f0f0f0;
+  padding: 8px 0;
+}
+
+.ant-card-actions > li {
+  margin: 0 8px;
+}
+
+.ant-card-actions .ant-btn {
+  margin-right: 8px;
+}
+
+/* 弹窗美化 */
+.ant-modal-content {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.ant-modal-header {
+  padding: 16px 24px;
+  background: rgba(250, 248, 245, 0.9);
+  border-bottom: 1px solid rgba(139, 115, 85, 0.15);
+}
+
+.ant-modal-title {
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.ant-modal-footer {
+  padding: 16px 24px;
+  background: rgba(250, 248, 245, 0.9);
+  border-top: 1px solid rgba(139, 115, 85, 0.15);
+}
+
+/* Tools 弹出卡片优化 */
+.ant-modal {
+  width: 90% !important;
+  max-width: 900px !important;
+  top: 50px;
+}
+
+.ant-modal-body {
+  max-height: 70vh;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+/* Tools 内容自动换行和滚动条 */
+pre, code, .tool-description, .tool-schema {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
+}
+
+.tool-item {
+  margin-bottom: 20px;
+  padding: 16px;
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+  background-color: #fafafa;
+  transition: all 0.3s ease;
+}
+
+.tool-item:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+  border-color: #d9d9d9;
+}
+
+.tool-title {
+  font-weight: 600;
+  font-size: 16px;
+  color: #1890ff;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed #e8e8e8;
+}
+
+.tool-description {
+  color: #666;
+  margin-bottom: 12px;
+  line-height: 1.6;
+}
+
+.tool-schema {
+  background: #f8f8f8;
+  padding: 12px;
+  border-radius: 4px;
+  border-left: 3px solid #1890ff;
+  font-family: monospace;
+  font-size: 13px;
+  overflow-x: auto;
+  color: #333;
+}
+
+/* 代码高亮区域 */
+.code-block {
+  background: #f8f8f8;
+  border-radius: 4px;
+  padding: 12px;
+  margin: 12px 0;
+  overflow-x: auto;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #333;
+  border-left: 3px solid #1890ff;
+}
+
+.parameter-list {
+  margin-top: 12px;
+  background: rgba(245, 243, 240, 0.6);
+  border-radius: 4px;
+  padding: 12px;
+}
+
+.parameter-item {
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed #e8e8e8;
+}
+
+.parameter-item:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.parameter-name {
+  font-weight: 600;
+  color: #1890ff;
+}
+
+.parameter-type {
+  font-style: italic;
+  color: #888;
+  margin-left: 8px;
+}
+
+.parameter-required {
+  display: inline-block;
+  background: #fff2e8;
+  color: #fa541c;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 12px;
+  margin-left: 8px;
+}
+
+.parameter-optional {
+  display: inline-block;
+  background: #f6ffed;
+  color: #52c41a;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 12px;
+  margin-left: 8px;
+}
+
+.parameter-description {
+  margin-top: 4px;
+  color: #666;
+}
+
+/* 响应式布局优化 */
+@media (max-width: 768px) {
+  .ant-btn {
+    padding: 4px 12px;
+    font-size: 14px;
+    margin-right: 8px;
+  }
+
+  .ant-card-body {
+    padding: 16px;
+  }
+
+  .ant-modal {
+    max-width: 95% !important;
+    margin: 0 auto;
+  }
+
+  .ant-modal-body {
+    max-height: 80vh;
+    padding: 16px;
+  }
+
+  .tool-item {
+    padding: 12px;
+    margin-bottom: 16px;
+  }
+}
+
+/* 自定义标题样式 */
+h1.text-2xl.font-bold {
+  position: relative;
+  padding-left: 12px;
+  margin-bottom: 24px;
+  font-size: 1.5rem;
+  line-height: 1.4;
+  color: #222;
+  border-left: 4px solid #1890ff;
+}
+
+/* 美化布局 */
+.ant-layout-header {
+  background: linear-gradient(90deg, #1890ff, #0050b3);
+  z-index: 10;
+}
+
+.ant-layout-content {
+  background-color: transparent;
+  padding: 24px;
+}
+
+/* 美化菜单 */
+.ant-menu {
+  border-right: none;
+}
+
+.ant-menu-item {
+  margin: 4px 0;
+  padding: 0 16px;
+  border-radius: 0 20px 20px 0;
+  transition: all 0.3s;
+}
+
+.ant-menu-item-selected {
+  background-color: rgba(184, 88, 69, 0.08);
+  color: #b85845;
+  font-weight: 500;
+}
+
+.ant-menu-item:hover {
+  color: #b85845;
+}
+
+.ant-menu-item-selected::after {
+  opacity: 0;
+}
+
+/* 标签页美化 */
+.ant-tabs-tab {
+  padding: 12px 16px;
+  transition: all 0.3s;
+}
+
+.ant-tabs-tab:hover {
+  color: #40a9ff;
+}
+
+.ant-tabs-tab-active {
+  font-weight: 500;
+}
+
+.ant-tabs-ink-bar {
+  height: 3px;
+  border-radius: 3px;
+  background: linear-gradient(135deg, #b85845 0%, #a0826d 100%);
+}
+
+.custom-tabs .ant-tabs-content {
+  padding-top: 16px;
+}
+
+/* Action按钮间距调整 */
+.ant-space {
+  gap: 8px;
+}
+
+.ant-space-item button {
+  margin-right: 0;
+}
+
+/* Enhanced Model Manager Styling */
+
+/* Page title styling */
+.model-manager-title {
+  position: relative;
+  padding-left: 12px;
+  border-left: 4px solid #1890ff;
+  margin-bottom: 24px;
+}
+
+/* Table styling */
+.ant-table-wrapper {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(139, 115, 85, 0.08);
+  background-color: rgba(255, 255, 255, 0.85);
+  overflow: hidden;
+}
+
+.ant-table-thead > tr > th {
+  background: rgba(250, 248, 245, 0.9);
+  font-weight: 600;
+  color: #2d2d2d;
+  font-size: 13px;
+  padding: 14px 16px;
+  border-bottom: 2px solid rgba(139, 115, 85, 0.15);
+  letter-spacing: 0.5px;
+}
+
+.ant-table-tbody > tr > td {
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(139, 115, 85, 0.08);
+}
+
+.ant-table-tbody > tr:hover > td {
+  background-color: rgba(250, 248, 245, 0.5);
+}
+
+/* Add model button with enhanced styling */
+.add-model-btn {
+  background: linear-gradient(to right, #1890ff, #096dd9);
+  border: none;
+  border-radius: 4px;
+  height: 40px;
+  padding: 0 20px;
+  font-weight: 500;
+  margin-top: 20px;
+  box-shadow: 0 2px 6px rgba(24, 144, 255, 0.25);
+  transition: all 0.3s ease;
+}
+
+.add-model-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.35);
+  background: linear-gradient(to right, #40a9ff, #1890ff);
+}
+
+/* Edit and Delete buttons */
+.action-btn-edit {
+  color: #1890ff;
+  background: #e6f7ff;
+  border-color: #91d5ff;
+  margin-right: 8px;
+}
+
+.action-btn-edit:hover {
+  color: #096dd9;
+  background: #bae7ff;
+  border-color: #1890ff;
+}
+
+.action-btn-delete {
+  color: #ff4d4f;
+  background: #fff1f0;
+  border-color: #ffa39e;
+}
+
+.action-btn-delete:hover {
+  color: #ff7875;
+  background: #ff4d4f;
+  border-color: #ff4d4f;
+  color: white;
+}
+
+/* Modal styling */
+.ant-modal-header {
+  padding: 16px 24px;
+  background: rgba(250, 248, 245, 0.9);
+  border-bottom: 1px solid rgba(139, 115, 85, 0.15);
+}
+
+.ant-modal-title {
+  font-weight: 600;
+  font-size: 18px;
+  color: #222;
+}
+
+.ant-modal-content {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.ant-modal-body {
+  padding: 24px;
+}
+
+.ant-modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid rgba(139, 115, 85, 0.15);
+  background: rgba(250, 248, 245, 0.9);
+}
+
+/* Form styling */
+.ant-form-item-label > label {
+  font-weight: 500;
+  color: #333;
+}
+
+.ant-input, .ant-input-password {
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: 1px solid #d9d9d9;
+}
+
+.ant-input:hover, .ant-input-password:hover {
+  border-color: rgba(184, 88, 69, 0.4);
+}
+
+.ant-input-number:hover,
+.ant-input-number-wrapper:hover,
+.ant-input-number:not(.ant-input-number-disabled):hover {
+  border-color: rgba(184, 88, 69, 0.4);
+}
+
+.ant-select:not(.ant-select-disabled):hover .ant-select-selector {
+  border-color: rgba(184, 88, 69, 0.4);
+}
+
+textarea.ant-input:hover {
+  border-color: rgba(184, 88, 69, 0.4);
+}
+
+.ant-input-affix-wrapper:hover {
+  border-color: rgba(184, 88, 69, 0.4);
+}
+
+.ant-input-affix-wrapper-focused,
+.ant-input-affix-wrapper:focus {
+  border-color: #b85845;
+  box-shadow: 0 0 0 2px rgba(184, 88, 69, 0.1);
+}
+
+/* Switch 组件样式 */
+.ant-switch-checked {
+  background-color: #b85845;
+}
+
+.ant-switch-checked:hover:not(.ant-switch-disabled) {
+  background-color: #a0826d;
+}
+
+.ant-input:focus, .ant-input-focused,
+.ant-input-password.ant-input-affix-wrapper-focused {
+  border-color: #b85845;
+  box-shadow: 0 0 0 2px rgba(184, 88, 69, 0.1);
+}
+
+.ant-input-number:focus,
+.ant-input-number-focused,
+.ant-input-number-wrapper-focused,
+.ant-input-number:not(.ant-input-number-disabled):focus {
+  border-color: #b85845;
+  box-shadow: 0 0 0 2px rgba(184, 88, 69, 0.1);
+}
+
+.ant-input-number-input:focus {
+  border-color: #b85845;
+  box-shadow: none;
+}
+
+.ant-select-focused .ant-select-selector {
+  border-color: #b85845;
+  box-shadow: 0 0 0 2px rgba(184, 88, 69, 0.1);
+}
+
+.ant-input-textarea-show-count .ant-input:focus,
+.ant-input-textarea-show-count textarea.ant-input:focus,
+textarea.ant-input:focus,
+textarea.ant-input-focused {
+  border-color: #b85845;
+  box-shadow: 0 0 0 2px rgba(184, 88, 69, 0.1);
+}
+
+/* Error message styling */
+.error-message {
+  margin-bottom: 16px;
+}
+
+/* Loading state */
+.ant-spin-nested-loading {
+  transition: opacity 0.3s;
+}
+
+/* Empty table styling */
+.ant-empty {
+  margin: 32px 0;
+  padding: 24px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .ant-table-thead > tr > th,
+  .ant-table-tbody > tr > td {
+    padding: 10px 8px;
+  }
+
+  .add-model-btn {
+    height: 36px;
+    padding: 0 16px;
+  }
+
+  .ant-modal {
+    width: 95% !important;
+    margin: 0 auto;
+  }
+}
+
+/* RawPreviewModal 专属覆盖，避免全局 .ant-modal 限制影响预览弹窗 */
+.raw-preview-modal.ant-modal {
+  width: 1280px !important;
+  max-width: none !important;
+  top: 32px;
+}
+
+.raw-preview-modal .ant-modal-body {
+  padding: 0 !important;
+  max-height: none !important;
+  overflow-y: visible !important;
+}
+
+/* 让外层弹窗负责滚动（使用默认的 .ant-modal-wrap 行为） */
+.raw-preview-root .ant-modal-wrap {
+  overflow: auto !important;
+}
+
+/* 详情弹窗：只保留外层滚动 */
+.raw-preview-detail-modal .ant-modal-body {
+  max-height: none !important;
+  overflow-y: visible !important;
+  padding: 24px !important;
+}
+
+.raw-preview-detail-root .ant-modal-wrap {
+  overflow: auto !important;
+}
+
+/* 对话侧边栏 Checkbox 基础样式 */
+.conversation-item-checkbox .ant-checkbox-inner {
+  border-color: rgba(139, 115, 85, 0.25);
+  border-radius: 4px;
+  background-color: #ffffff;
+}
+
+.conversation-item-checkbox .ant-checkbox:hover .ant-checkbox-inner {
+  border-color: #8b7355;
+}
+
+.conversation-item-checkbox .ant-checkbox-checked .ant-checkbox-inner {
+  background-color: #b85845;
+  border-color: #b85845;
+}
+
+.conversation-item-checkbox .ant-checkbox-checked:hover .ant-checkbox-inner {
+  background-color: #a0826d;
+  border-color: #a0826d;
+}
+
+.conversation-item-checkbox .ant-checkbox-checked .ant-checkbox-inner::after {
+  border-color: #faf8f5;
+}

@@ -1,0 +1,25 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+.trae/
+
+.idea/
+
+test/
+experimental/
+.qoderignore
+
+.qoder/
+
+.claude
+app.log
+mag/dist*
+fronted/dist
+spec/

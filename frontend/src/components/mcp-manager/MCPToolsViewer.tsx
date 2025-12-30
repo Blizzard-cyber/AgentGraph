@@ -1,0 +1,481 @@
+// src/components/mcp-manager/MCPToolsViewer.tsx
+import React, { useState, useEffect } from 'react';
+import {
+  Modal,
+  Tabs,
+  Card,
+  Typography,
+  Descriptions,
+  Form,
+  Input,
+  InputNumber,
+  Switch,
+  Button,
+  message,
+  Alert,
+  Spin
+} from 'antd';
+import { Play, Bug } from 'lucide-react';
+import { useMCPStore } from '../../store/mcpStore';
+import { useT } from '../../i18n/hooks';
+
+const { Text } = Typography;
+const { TextArea } = Input;
+
+interface MCPToolsViewerProps {
+  visible: boolean;
+  onClose: () => void;
+  serverName: string;
+}
+
+// 根据JSON Schema生成表单项
+const generateFormItem = (name: string, schema: any, t: (key: string, params?: any) => string) => {
+  const { type, description, format, minimum, maximum, items } = schema;
+
+  switch (type) {
+    case 'string':
+      if (format === 'uri') {
+        return (
+          <Form.Item 
+            name={name} 
+            label={name}
+            tooltip={description}
+            rules={[{ type: 'url', message: t('pages.mcpManager.toolsViewer.invalidUrl') }]}
+          >
+            <Input placeholder={description || t('pages.mcpManager.toolsViewer.inputUrl')} />
+          </Form.Item>
+        );
+      }
+      return (
+        <Form.Item 
+          name={name} 
+          label={name}
+          tooltip={description}
+        >
+          <Input placeholder={description || t('pages.mcpManager.toolsViewer.inputPlaceholder', { name })} />
+        </Form.Item>
+      );
+    
+    case 'integer':
+    case 'number':
+      return (
+        <Form.Item 
+          name={name} 
+          label={name}
+          tooltip={description}
+        >
+          <InputNumber 
+            style={{ width: '100%' }}
+            min={minimum}
+            max={maximum}
+            placeholder={description || t('pages.mcpManager.toolsViewer.inputPlaceholder', { name })}
+          />
+        </Form.Item>
+      );
+    
+    case 'boolean':
+      return (
+        <Form.Item 
+          name={name} 
+          label={name}
+          tooltip={description}
+          valuePropName="checked"
+        >
+          <Switch />
+        </Form.Item>
+      );
+    
+    case 'array':
+      return (
+        <Form.Item 
+          name={name} 
+          label={name}
+          tooltip={description}
+        >
+          <TextArea 
+            rows={3}
+            placeholder={t('pages.mcpManager.toolsViewer.arrayPlaceholder', { description: description || t('pages.mcpManager.toolsViewer.inputPlaceholder', { name }) })}
+          />
+        </Form.Item>
+      );
+    
+    case 'object':
+      return (
+        <Form.Item 
+          name={name} 
+          label={name}
+          tooltip={description}
+        >
+          <TextArea 
+            rows={4}
+            placeholder={t('pages.mcpManager.toolsViewer.objectPlaceholder', { description: description || t('pages.mcpManager.toolsViewer.inputPlaceholder', { name }) })}
+          />
+        </Form.Item>
+      );
+    
+    default:
+      return (
+        <Form.Item 
+          name={name} 
+          label={name}
+          tooltip={description}
+        >
+          <Input placeholder={description || t('pages.mcpManager.toolsViewer.inputPlaceholder', { name })} />
+        </Form.Item>
+      );
+  }
+};
+
+const MCPToolsViewer: React.FC<MCPToolsViewerProps> = ({
+  visible,
+  onClose,
+  serverName,
+}) => {
+  const t = useT();
+  const { tools, fetchTools, testTool } = useMCPStore();
+  const [loading, setLoading] = useState(false);
+  const [testLoading, setTestLoading] = useState(false);
+  const [testResults, setTestResults] = useState<Record<string, any>>({});
+  const [forms] = useState(() => new Map());
+
+  useEffect(() => {
+    if (visible) {
+      setLoading(true);
+      fetchTools().finally(() => setLoading(false));
+    }
+  }, [visible, fetchTools]);
+
+  const serverTools = tools[serverName] || [];
+
+  const handleTest = async (toolName: string) => {
+    const form = forms.get(toolName);
+    if (!form) return;
+
+    try {
+      setTestLoading(true);
+      const values = await form.validateFields();
+      
+      // 处理特殊类型的参数
+      const processedParams: Record<string, any> = {};
+      
+      Object.entries(values).forEach(([key, value]) => {
+        if (value === undefined || value === null || value === '') return;
+        
+        // 处理数组类型
+        if (typeof value === 'string' && value.includes('\n')) {
+          processedParams[key] = value.split('\n').filter(line => line.trim());
+        }
+        // 处理JSON对象
+        else if (typeof value === 'string' && (value.startsWith('{') || value.startsWith('['))) {
+          try {
+            processedParams[key] = JSON.parse(value);
+          } catch {
+            processedParams[key] = value;
+          }
+        }
+        else {
+          processedParams[key] = value;
+        }
+      });
+
+      const result = await testTool(serverName, toolName, processedParams);
+      
+      setTestResults(prev => ({
+        ...prev,
+        [toolName]: result
+      }));
+
+      if (result.status === 'success') {
+        message.success(t('pages.mcpManager.toolsViewer.testToolSuccess', { name: toolName }));
+      } else {
+        message.error(t('pages.mcpManager.toolsViewer.testToolFailed', { name: toolName, error: result.error }));
+      }
+    } catch (error) {
+      message.error(t('pages.mcpManager.toolsViewer.testError', { error: error instanceof Error ? error.message : String(error) }));
+    } finally {
+      setTestLoading(false);
+    }
+  };
+
+  // 渲染JSON对象
+  const renderJsonObject = (obj: any) => {
+    if (!obj) return <span>null</span>;
+    return (
+      <pre className="bg-gray-100 p-4 rounded overflow-auto max-h-96">
+        {JSON.stringify(obj, null, 2)}
+      </pre>
+    );
+  };
+
+  // 为每个工具生成测试表单
+  const generateTestForm = (tool: any) => {
+    const schema = tool.input_schema;
+    if (!schema || !schema.properties) {
+      return <Text type="secondary">{t('pages.mcpManager.toolsViewer.noParameters')}</Text>;
+    }
+
+    const formItems = Object.entries(schema.properties).map(([name, propSchema]: [string, any]) => 
+      generateFormItem(name, propSchema, t)
+    );
+
+    return (
+      <Form
+        layout="vertical"
+        ref={(formRef: any) => {
+          if (formRef) forms.set(tool.name, formRef);
+        }}
+      >
+        {formItems}
+        <Form.Item>
+          <Button
+            onClick={() => handleTest(tool.name)}
+            loading={testLoading}
+            style={{
+              height: '36px',
+              background: testLoading ? 'rgba(139, 115, 85, 0.1)' : 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+              border: 'none',
+              borderRadius: '6px',
+              color: testLoading ? 'rgba(139, 115, 85, 0.4)' : '#fff',
+              fontSize: '14px',
+              fontWeight: 500,
+              letterSpacing: '0.3px',
+              boxShadow: testLoading ? 'none' : '0 2px 6px rgba(184, 88, 69, 0.25)',
+              transition: 'all 0.3s ease',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              cursor: testLoading ? 'not-allowed' : 'pointer'
+            }}
+            onMouseEnter={(e) => {
+              if (!testLoading) {
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(184, 88, 69, 0.35)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!testLoading) {
+                e.currentTarget.style.boxShadow = '0 2px 6px rgba(184, 88, 69, 0.25)';
+              }
+            }}
+          >
+            <Play size={16} strokeWidth={1.5} />
+            {t('pages.mcpManager.toolsViewer.testTool')}
+          </Button>
+        </Form.Item>
+      </Form>
+    );
+  };
+
+  // 渲染测试结果
+  const renderTestResult = (toolName: string) => {
+    const result = testResults[toolName];
+    if (!result) return null;
+
+    return (
+      <Card
+        size="small"
+        title={
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Bug size={16} strokeWidth={1.5} style={{ color: '#8b7355' }} />
+            <span style={{ fontSize: '14px', fontWeight: 500 }}>{t('pages.mcpManager.toolsViewer.testResult')}</span>
+          </div>
+        }
+        style={{
+          marginTop: '16px',
+          borderRadius: '6px',
+          border: '1px solid rgba(139, 115, 85, 0.15)',
+          boxShadow: '0 1px 3px rgba(139, 115, 85, 0.06)'
+        }}
+      >
+        {result.status === 'success' ? (
+          <Alert
+            type="success"
+            message={t('pages.mcpManager.toolsViewer.testSuccess')}
+            description={
+              <div>
+                <p style={{ margin: '0 0 8px 0', fontSize: '13px' }}>
+                  <strong>{t('pages.mcpManager.toolsViewer.executionTime')}:</strong> {result.execution_time?.toFixed(3)}秒
+                </p>
+                <p style={{ margin: '0 0 8px 0', fontSize: '13px' }}>
+                  <strong>{t('pages.mcpManager.toolsViewer.returnResult')}:</strong>
+                </p>
+                <div style={{
+                  background: 'rgba(139, 195, 74, 0.05)',
+                  padding: '10px 12px',
+                  borderRadius: '6px',
+                  border: '1px solid rgba(139, 195, 74, 0.2)'
+                }}>
+                  {typeof result.result === 'string' ? (
+                    <pre style={{
+                      margin: 0,
+                      whiteSpace: 'pre-wrap',
+                      fontSize: '13px',
+                      color: 'rgba(45, 45, 45, 0.85)',
+                      fontFamily: 'Monaco, "Courier New", monospace'
+                    }}>
+                      {result.result}
+                    </pre>
+                  ) : (
+                    renderJsonObject(result.result)
+                  )}
+                </div>
+              </div>
+            }
+            style={{
+              borderRadius: '6px',
+              border: '1px solid rgba(139, 195, 74, 0.25)',
+              background: 'rgba(139, 195, 74, 0.05)'
+            }}
+          />
+        ) : (
+          <Alert
+            type="error"
+            message={t('pages.mcpManager.toolsViewer.testFailed')}
+            description={
+              <div>
+                <p style={{ margin: '0 0 8px 0', fontSize: '13px' }}>
+                  <strong>{t('pages.mcpManager.toolsViewer.errorMessage')}:</strong> {result.error}
+                </p>
+                {result.execution_time && (
+                  <p style={{ margin: 0, fontSize: '13px' }}>
+                    <strong>{t('pages.mcpManager.toolsViewer.executionTime')}:</strong> {result.execution_time.toFixed(3)}秒
+                  </p>
+                )}
+              </div>
+            }
+            style={{
+              borderRadius: '6px',
+              border: '1px solid rgba(184, 88, 69, 0.3)',
+              background: 'rgba(255, 245, 243, 0.9)'
+            }}
+          />
+        )}
+      </Card>
+    );
+  };
+
+  return (
+    <Modal
+      title={
+        <span style={{
+          fontSize: '16px',
+          fontWeight: 500,
+          color: '#2d2d2d',
+          letterSpacing: '0.5px'
+        }}>
+          {t('pages.mcpManager.toolsViewer.title', { serverName })}
+        </span>
+      }
+      open={visible}
+      onCancel={onClose}
+      footer={null}
+      width={900}
+      styles={{
+        content: {
+          borderRadius: '8px',
+          boxShadow: '0 8px 24px rgba(139, 115, 85, 0.15)'
+        }
+      }}
+    >
+      {loading ? (
+        <div style={{
+          textAlign: 'center',
+          padding: '60px 20px'
+        }}>
+          <Spin size="large" />
+          <p style={{
+            marginTop: '16px',
+            fontSize: '14px',
+            color: 'rgba(45, 45, 45, 0.65)'
+          }}>
+            {t('pages.mcpManager.toolsViewer.loading')}
+          </p>
+        </div>
+      ) : serverTools.length === 0 ? (
+        <div style={{
+          textAlign: 'center',
+          padding: '60px 20px',
+          fontSize: '14px',
+          color: 'rgba(45, 45, 45, 0.65)'
+        }}>
+          {t('pages.mcpManager.toolsViewer.noTools')}
+        </div>
+      ) : (
+        <Tabs
+          type="card"
+          items={serverTools.map(tool => ({
+            key: tool.name,
+            label: (
+              <span style={{
+                fontSize: '14px',
+                fontWeight: 500,
+                letterSpacing: '0.3px'
+              }}>
+                {tool.name}
+              </span>
+            ),
+            children: (
+              <div>
+                <Descriptions
+                  column={1}
+                  bordered
+                  style={{
+                    marginBottom: '16px',
+                    borderRadius: '6px',
+                    overflow: 'hidden'
+                  }}
+                  contentStyle={{
+                    background: 'rgba(250, 248, 245, 0.4)',
+                    fontSize: '14px',
+                    color: 'rgba(45, 45, 45, 0.85)'
+                  }}
+                  labelStyle={{
+                    background: 'rgba(250, 248, 245, 0.6)',
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    color: '#2d2d2d'
+                  }}
+                >
+                  <Descriptions.Item label={t('pages.mcpManager.toolsViewer.toolName')}>
+                    <Text strong style={{ color: '#2d2d2d' }}>{tool.name}</Text>
+                  </Descriptions.Item>
+                  <Descriptions.Item label={t('pages.mcpManager.toolsViewer.description')}>
+                    <span style={{ color: 'rgba(45, 45, 45, 0.85)' }}>{tool.description}</span>
+                  </Descriptions.Item>
+                  <Descriptions.Item label={t('pages.mcpManager.toolsViewer.parameterStructure')}>
+                    {renderJsonObject(tool.input_schema)}
+                  </Descriptions.Item>
+                </Descriptions>
+
+                <Card
+                  title={
+                    <span style={{
+                      fontSize: '14px',
+                      fontWeight: 500,
+                      color: '#2d2d2d'
+                    }}>
+                      {t('pages.mcpManager.toolsViewer.parameterTest')}
+                    </span>
+                  }
+                  size="small"
+                  style={{
+                    borderRadius: '6px',
+                    border: '1px solid rgba(139, 115, 85, 0.15)',
+                    boxShadow: '0 1px 3px rgba(139, 115, 85, 0.06)'
+                  }}
+                >
+                  {generateTestForm(tool)}
+                  {renderTestResult(tool.name)}
+                </Card>
+              </div>
+            )
+          }))}
+          style={{
+            fontSize: '14px'
+          }}
+        />
+      )}
+    </Modal>
+  );
+};
+
+export default MCPToolsViewer;
