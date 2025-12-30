@@ -1,0 +1,173 @@
+/* src/styles/chat-system.css */
+/* ChatSystem 页面公共样式 - 仅保留主题变量、布局和玻璃拟态效果 */
+
+/* 主题变量 - 经典优雅风格 */
+:root {
+  --bg-primary: #f5f5f5;
+  --bg-secondary: #e8e8e8;
+  --bg-tertiary: #f0f0f0;
+  --text-primary: #2c3e50;
+  --text-secondary: #34495e;
+  --text-tertiary: #7f8c8d;
+  --border-color: #bdc3c7;
+  --accent-color: #3498db;
+  --accent-secondary: #5d6d7e;
+  --shadow-light: rgba(44, 62, 80, 0.1);
+  --shadow-medium: rgba(44, 62, 80, 0.15);
+  --shadow-heavy: rgba(44, 62, 80, 0.2);
+  --glass-bg: rgba(245, 245, 245, 0.9);
+  --glass-border: rgba(189, 195, 199, 0.5);
+  --backdrop-blur: blur(10px);
+  --elegant-font: 'Times New Roman', serif;
+  --modern-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+/* 全局页面样式 */
+.chat-system-page {
+  background: transparent;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+/* 玻璃拟态基础样式 */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+/* 主布局 */
+.chat-system-layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* 主对话区域 */
+.main-conversation-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+}
+
+/* 重置主对话区域的样式变量为原始值 */
+.main-conversation-area {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f5f5;
+  --bg-tertiary: #fafafa;
+  --text-primary: #000000;
+  --text-secondary: #666666;
+  --text-tertiary: #999999;
+  --border-color: #d9d9d9;
+  --glass-bg: rgba(255, 255, 255, 0.8);
+  --glass-border: rgba(255, 255, 255, 0.2);
+}
+
+/* 对话头部栏 */
+.conversation-header-bar {
+  padding: 16px 24px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.conversation-header-bar .conversation-title-display {
+  color: #000000;
+}
+
+.conversation-header-bar .compact-button {
+  color: #666666;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.conversation-header-bar .compact-button:hover {
+  color: #000000;
+  border-color: #1890ff;
+  background: rgba(24, 144, 255, 0.1);
+}
+
+.conversation-title-display {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.conversation-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.compact-button {
+  color: var(--text-secondary);
+  border: 1px solid var(--glass-border);
+  border-radius: 6px;
+  background: var(--glass-bg);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  transition: all 0.3s ease;
+}
+
+.compact-button:hover {
+  color: var(--text-primary);
+  border-color: #1890ff;
+  background: rgba(24, 144, 255, 0.1);
+}
+
+/* 动画 */
+.fade-in {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.slide-in-right {
+  animation: slideInRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* 打字机效果 */
+.typewriter-cursor::after {
+  content: '|';
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .chat-system-layout {
+    flex-direction: column;
+  }
+}

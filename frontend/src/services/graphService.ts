@@ -1,0 +1,303 @@
+// src/services/graphService.ts
+import api from './api';
+import { 
+  BackendGraphConfig, 
+  GraphCardResponse, 
+  MCPScriptResponse,
+  ImportResult,
+  ExportResult,
+  GraphReadmeResponse,
+  PromptTemplateResponse
+} from '../types/graph';
+
+// Clean special characters, comments, etc. from JSON
+function sanitizeForJson(obj: any): any {
+  if (obj === null || obj === undefined) {
+    return null;
+  }
+
+  if (typeof obj === 'string') {
+    return obj
+      .replace(/\/\*[\s\S]*?\*\//g, '')
+      .replace(/\/\/.*/g, '')           
+      .replace(/[\x00-\x09\x0B\x0C\x0E-\x1F\x7F]/g, '');
+  }
+
+  if (typeof obj !== 'object') {
+    return obj;
+  }
+
+  if (Array.isArray(obj)) {
+    return obj.map(item => sanitizeForJson(item));
+  }
+
+  const result: any = {};
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      result[key] = sanitizeForJson(obj[key]);
+    }
+  }
+  return result;
+}
+
+// Get all graphs list
+export const getGraphs = async (): Promise<string[]> => {
+  const response = await api.get('/graphs');
+  return response.data;
+};
+
+// Get a specific graph
+export const getGraph = async (graphName: string): Promise<any> => {
+  const response = await api.get(`/graphs/${graphName}`);
+  return response.data;
+};
+
+// Create or update a graph
+export const createGraph = async (graph: BackendGraphConfig): Promise<any> => {
+  const cleanedGraph = sanitizeForJson(graph);
+
+  cleanedGraph.nodes.forEach((node: any) => {
+    if (!Array.isArray(node.input_nodes)) node.input_nodes = [];
+    if (!Array.isArray(node.output_nodes)) node.output_nodes = [];
+    if (!Array.isArray(node.mcp_servers)) node.mcp_servers = [];
+    if (!Array.isArray(node.system_tools)) node.system_tools = [];
+
+    const allNodeNames = cleanedGraph.nodes.map((n: any) => n.name);
+    node.input_nodes = node.input_nodes.filter(
+      (input: string) => input === "start" || allNodeNames.includes(input)
+    );
+    node.output_nodes = node.output_nodes.filter(
+      (output: string) => output === "end" || allNodeNames.includes(output)
+    );
+  });
+
+  const requestBody = {
+    name: cleanedGraph.name,
+    description: cleanedGraph.description || "",
+    end_template: cleanedGraph.end_template || "",
+    nodes: cleanedGraph.nodes.map((node: any) => {
+      const result: any = {
+        name: node.name,
+        description: node.description || "",
+        agent_name: node.agent_name || null,
+        is_subgraph: Boolean(node.is_subgraph),
+        mcp_servers: Array.isArray(node.mcp_servers) ? node.mcp_servers : [],
+        system_tools: Array.isArray(node.system_tools) ? node.system_tools : [],
+        system_prompt: typeof node.system_prompt === 'string' ? node.system_prompt : "",
+        user_prompt: typeof node.user_prompt === 'string' ? node.user_prompt : "",
+        max_iterations: node.max_iterations || null,
+        input_nodes: Array.isArray(node.input_nodes) ? node.input_nodes : [],
+        output_nodes: Array.isArray(node.output_nodes) ? node.output_nodes : [],
+        handoffs: node.handoffs || null,
+        output_enabled: node.output_enabled !== undefined ? Boolean(node.output_enabled) : true,
+        position: node.position || { x: 0, y: 0 },
+        level: node.level || null
+      };
+
+      if (node.is_subgraph) {
+        result.subgraph_name = node.subgraph_name || "";
+      } else {
+        result.model_name = node.model_name || "";
+      }
+
+      return result;
+    })
+  };
+
+  try {
+    const cleanJson = JSON.stringify(requestBody);
+    const finalBody = JSON.parse(cleanJson);
+
+    console.log('Data structure submitted to API:', finalBody);
+
+    const response = await api.post('/graphs', finalBody);
+    return response.data;
+  } catch (error: any) {
+    console.error('Error submitting to API:', error);
+    console.log('Submitted data:', JSON.stringify(requestBody, null, 2));
+    
+    // Extract and log the detailed error message from the backend
+    const errorDetail = error?.response?.data?.detail || error?.message || 'Unknown error';
+    console.error('Backend error detail:', errorDetail);
+    
+    // Re-throw with more detailed error message
+    const enhancedError = new Error(errorDetail);
+    (enhancedError as any).originalError = error;
+    throw enhancedError;
+  }
+};
+
+// Delete a graph
+export const deleteGraph = async (graphName: string): Promise<any> => {
+  const response = await api.delete(`/graphs/${graphName}`);
+  return response.data;
+};
+
+// Rename a graph
+export const renameGraph = async (oldName: string, newName: string): Promise<any> => {
+  const response = await api.put(`/graphs/${oldName}/rename/${newName}`);
+  return response.data;
+};
+
+
+// Get graph card
+export const getGraphCard = async (graphName: string): Promise<GraphCardResponse> => {
+  const response = await api.get(`/graphs/${graphName}/card`);
+  return response.data;
+};
+
+// Generate MCP script
+export const generateMCPScript = async (graphName: string): Promise<MCPScriptResponse> => {
+  const response = await api.get(`/graphs/${graphName}/generate_mcp`);
+  return response.data;
+};
+
+// Download MCP script as file
+export const downloadMCPScript = async (graphName: string): Promise<void> => {
+  const response = await generateMCPScript(graphName);
+  
+  if (response.error) {
+    throw new Error(response.error);
+  }
+
+  // 使用 sequential_script 或 default_script
+  const scriptContent = response.sequential_script || response.default_script || '';
+  
+  if (!scriptContent) {
+    throw new Error('No script content available');
+  }
+
+  // 创建 Blob 并下载
+  const blob = new Blob([scriptContent], { type: 'text/plain;charset=utf-8' });
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `${graphName}_mcp_server.py`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  window.URL.revokeObjectURL(url);
+};
+
+// ======= 导入导出功能 =======
+
+// Import graph from JSON file (by file path)
+export const importGraph = async (filePath: string): Promise<ImportResult> => {
+  const response = await api.post('/graphs/import', { file_path: filePath });
+  return response.data;
+};
+
+// Import graph from uploaded JSON file
+export const importGraphFromFile = async (file: File): Promise<ImportResult> => {
+  const formData = new FormData();
+  formData.append('file', file);
+  
+  const response = await api.post('/graphs/import_from_file', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response.data;
+};
+
+// Export graph to ZIP package
+export const exportGraph = async (graphName: string): Promise<void> => {
+  const response = await api.get(`/graphs/${graphName}/export`, {
+    responseType: 'blob'
+  });
+  
+  // 创建 Blob 并下载
+  const blob = new Blob([response.data], { type: 'application/zip' });
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `${graphName}.zip`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  window.URL.revokeObjectURL(url);
+};
+
+// Import graph package from ZIP (by file path)
+export const importGraphPackage = async (filePath: string): Promise<ImportResult> => {
+  const response = await api.post('/graphs/import_package', { file_path: filePath });
+  return response.data;
+};
+
+// Import graph package from uploaded ZIP file
+export const importGraphPackageFromFile = async (file: File): Promise<ImportResult> => {
+  const formData = new FormData();
+  formData.append('file', file);
+  
+  const response = await api.post('/graphs/import_package_from_file', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response.data;
+};
+
+// ======= AI提示词模板功能 =======
+
+// Get prompt template for graph generation
+export const getPromptTemplate = async (request?: { mcp_servers?: string[], graph_name?: string }): Promise<PromptTemplateResponse> => {
+  const response = await api.post('/prompt-template', {
+    mcp_servers: request?.mcp_servers || [],
+    graph_name: request?.graph_name
+  });
+  return response.data;
+};
+
+
+// ======= README功能 =======
+
+// Get graph README
+export const getGraphReadme = async (graphName: string): Promise<GraphReadmeResponse> => {
+  const response = await api.get(`/graphs/${graphName}/readme`);
+  return response.data;
+};
+
+// ======= 版本管理功能 =======
+
+/**
+ * 创建图版本快照
+ */
+export const createGraphVersion = async (
+  graphName: string,
+  commitMessage: string
+): Promise<any> => {
+  const response = await api.post(`/graphs/${graphName}/create-version`, {
+    commit_message: commitMessage
+  });
+  return response.data;
+};
+
+/**
+ * 获取图的版本列表
+ */
+export const getGraphVersions = async (graphName: string): Promise<any> => {
+  const response = await api.get(`/graphs/${graphName}/versions`);
+  return response.data;
+};
+
+/**
+ * 获取特定版本的配置
+ */
+export const getGraphVersion = async (
+  graphName: string,
+  versionId: string
+): Promise<any> => {
+  const response = await api.get(`/graphs/${graphName}/versions/${versionId}`);
+  return response.data;
+};
+
+/**
+ * 删除特定版本
+ */
+export const deleteGraphVersion = async (
+  graphName: string,
+  versionId: string
+): Promise<any> => {
+  const response = await api.delete(`/graphs/${graphName}/versions/${versionId}`);
+  return response.data;
+};

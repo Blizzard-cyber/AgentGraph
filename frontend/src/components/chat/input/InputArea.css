@@ -1,0 +1,126 @@
+/* InputArea 组件样式 - 大地色系设计 */
+
+/* 模型选择器样式覆盖 */
+.model-selector-new .ant-select,
+.model-selector-new .ant-select.ant-select-sm {
+  min-width: 120px !important;
+  font-size: 13px !important;
+}
+
+.model-selector-new .ant-select .ant-select-selector,
+.model-selector-new .ant-select.ant-select-sm .ant-select-selector {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: rgba(139, 115, 85, 0.75) !important;
+  padding: 4px 8px !important;
+  height: auto !important;
+  font-weight: 500 !important;
+}
+
+.model-selector-new .ant-select .ant-select-selection-item,
+.model-selector-new .ant-select.ant-select-sm .ant-select-selection-item {
+  color: rgba(139, 115, 85, 0.75) !important;
+  font-weight: 500 !important;
+}
+
+.model-selector-new .ant-select:hover .ant-select-selector,
+.model-selector-new .ant-select.ant-select-sm:hover .ant-select-selector {
+  color: #b85845 !important;
+}
+
+.model-selector-new .ant-select:hover .ant-select-selection-item {
+  color: #b85845 !important;
+}
+
+.model-selector-new .ant-select .ant-select-arrow,
+.model-selector-new .ant-select.ant-select-sm .ant-select-arrow {
+  color: rgba(139, 115, 85, 0.65) !important;
+  font-size: 10px !important;
+}
+
+/* Graph选择器样式覆盖 */
+.graph-selector-new .ant-select,
+.graph-selector-new .ant-select.ant-select-sm {
+  min-width: 120px !important;
+  font-size: 13px !important;
+}
+
+.graph-selector-new .ant-select .ant-select-selector,
+.graph-selector-new .ant-select.ant-select-sm .ant-select-selector {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: rgba(139, 115, 85, 0.75) !important;
+  padding: 4px 8px !important;
+  height: auto !important;
+  font-weight: 500 !important;
+}
+
+.graph-selector-new .ant-select .ant-select-selection-item,
+.graph-selector-new .ant-select.ant-select-sm .ant-select-selection-item {
+  color: rgba(139, 115, 85, 0.75) !important;
+  font-weight: 500 !important;
+}
+
+.graph-selector-new .ant-select:hover .ant-select-selector,
+.graph-selector-new .ant-select.ant-select-sm:hover .ant-select-selector {
+  color: #a0826d !important;
+}
+
+.graph-selector-new .ant-select:hover .ant-select-selection-item {
+  color: #a0826d !important;
+}
+
+.graph-selector-new .ant-select .ant-select-arrow,
+.graph-selector-new .ant-select.ant-select-sm .ant-select-arrow {
+  color: rgba(139, 115, 85, 0.65) !important;
+  font-size: 10px !important;
+}
+
+/* 下拉菜单样式覆盖 */
+.ant-select-dropdown {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid rgba(139, 115, 85, 0.2) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 16px rgba(139, 115, 85, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+  padding: 4px !important;
+}
+
+.ant-select-item {
+  color: #2d2d2d !important;
+  border-radius: 6px !important;
+  padding: 8px 12px !important;
+  font-size: 13px !important;
+  transition: all 0.2s ease !important;
+}
+
+.ant-select-item:hover {
+  background: rgba(160, 130, 109, 0.08) !important;
+}
+
+.ant-select-item-option-selected {
+  background: rgba(184, 88, 69, 0.08) !important;
+  color: #b85845 !important;
+  font-weight: 500 !important;
+}
+
+/* 滑入动画 */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .model-selector-new .ant-select,
+  .graph-selector-new .ant-select {
+    min-width: 100px !important;
+  }
+}
