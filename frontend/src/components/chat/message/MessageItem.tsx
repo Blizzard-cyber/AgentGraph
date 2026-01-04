@@ -2,6 +2,9 @@
 import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import 'katex/dist/katex.min.css';
 import { ConversationMessage, TaskRoundData } from '../../../types/conversation';
 import { getCurrentUserDisplayName } from '../../../config/user';
 import ReasoningDisplay from './ReasoningDisplay';
@@ -26,7 +29,6 @@ interface MessageItemProps {
     status: 'running' | 'completed' | 'pending';
   };
   reasoningContent?: string;
-  isGraphMode?: boolean;
   isFirstMessageInRound?: boolean;
   renderingMode: 'chat' | 'agent' | 'graph_run';
   conversationId?: string;
@@ -43,7 +45,6 @@ const MessageItem: React.FC<MessageItemProps> = ({
   taskRoundDataMap = {},
   nodeInfo,
   reasoningContent,
-  isGraphMode = false,
   isFirstMessageInRound = false,
   renderingMode,
   conversationId
@@ -150,7 +151,7 @@ const MessageItem: React.FC<MessageItemProps> = ({
       )}
 
       {/* Graph执行模式下用户消息：只有start节点显示消息内容，其他节点不显示 */}
-      {!(renderingMode === 'graph' && isUser && nodeInfo?.nodeName !== 'start') && (
+      {!(renderingMode === 'graph_run' && isUser && nodeInfo?.nodeName !== 'start') && (
         <div style={isUser ? {
           background: 'rgba(212, 196, 176, 0.15)',
           border: '1px solid rgba(139, 115, 85, 0.2)',
@@ -275,7 +276,8 @@ const MessageItem: React.FC<MessageItemProps> = ({
                           return (
                             <ReactMarkdown
                               key={index}
-                              remarkPlugins={[remarkGfm]}
+                              remarkPlugins={[remarkGfm, remarkMath]}
+                              rehypePlugins={[rehypeKatex]}
                               components={{
                                 code({ node, ...codeProps }) {
                                   const { children: codeChildren, className: codeClassName, ...restProps } = codeProps;

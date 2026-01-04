@@ -44,6 +44,8 @@ const ChatSystem: React.FC = () => {
     selectedAgent?: string | null;
     selectedSystemTools?: string[];
     maxIterations?: number | null;
+    plan_agent_name?: string;
+    include_agents?: string[];
   }>({});
   // 压缩相关状态
   const [compactConfigVisible, setCompactConfigVisible] = useState(false);
