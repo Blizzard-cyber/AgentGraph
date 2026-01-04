@@ -110,7 +110,6 @@ const MessageDisplay: React.FC<MessageDisplayProps> = React.memo(({
               toolResults={toolResults}
               taskRoundDataMap={taskRoundDataMap}
               nodeInfo={nodeInfo}
-              isGraphMode={true}
               renderingMode={renderingMode}
               conversationId={conversation?.conversation_id}
             />
@@ -123,11 +122,10 @@ const MessageDisplay: React.FC<MessageDisplayProps> = React.memo(({
           <MessageItem
             key={`${roundIndex}-${msgIndex}`}
             message={message}
-            toolResults={toolResults}
-            taskRoundDataMap={taskRoundDataMap}
-            nodeInfo={undefined}
-            isGraphMode={true}
-            renderingMode={renderingMode}
+              toolResults={toolResults}
+              taskRoundDataMap={taskRoundDataMap}
+              nodeInfo={undefined}
+              renderingMode={renderingMode}
             conversationId={conversation?.conversation_id}
           />
         ))}
@@ -208,6 +206,21 @@ const MessageDisplay: React.FC<MessageDisplayProps> = React.memo(({
                 margin: 0
               }}>
                 Tokens: {round.prompt_tokens} / {round.completion_tokens}
+              </Tag>
+            )}
+            {/* 模型调用耗时 */}
+            {round.elapsed_time_ms !== undefined && (
+              <Tag style={{
+                background: 'rgba(112, 136, 255, 0.08)',
+                color: '#7088ff',
+                border: '1px solid rgba(112, 136, 255, 0.2)',
+                borderRadius: '6px',
+                fontWeight: 500,
+                padding: '4px 12px',
+                fontSize: '12px',
+                margin: 0
+              }}>
+                Time: {round.elapsed_time_ms} ms
               </Tag>
             )}
           </div>

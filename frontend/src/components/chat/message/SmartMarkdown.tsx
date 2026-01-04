@@ -2,6 +2,9 @@
 import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import 'katex/dist/katex.min.css';
 import GlassCodeBlock from './GlassCodeBlock';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { useT } from '../../../i18n/hooks';
@@ -245,7 +248,8 @@ const SmartMarkdown: React.FC<SmartMarkdownProps> = ({
               return (
                 <ReactMarkdown
                   key={index}
-                  remarkPlugins={[remarkGfm]}
+                  remarkPlugins={[remarkGfm, remarkMath]}
+                  rehypePlugins={[rehypeKatex]}
                   components={{ code: codeComponent }}
                 >
                   {part.content}
@@ -353,7 +357,8 @@ const SmartMarkdown: React.FC<SmartMarkdownProps> = ({
             return (
               <ReactMarkdown
                 key={index}
-                remarkPlugins={[remarkGfm]}
+                remarkPlugins={[remarkGfm, remarkMath]}
+                rehypePlugins={[rehypeKatex]}
                 components={{ code: codeComponent }}
               >
                 {part.content}
