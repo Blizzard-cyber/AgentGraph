@@ -120,16 +120,23 @@ class AgentStreamExecutor:
 
             # 保存执行结果到数据库（is_graph_node 默认为 False）
             if final_result:
-                await self._save_agent_run_result(
-                    conversation_id=conversation_id,
-                    agent_name=effective_config["agent_name"],
-                    result=final_result,
-                    user_id=user_id,
-                    user_prompt=user_prompt,
-                    model_name=effective_config["model_name"],
-                    tools=tools,
-                    is_graph_node=False,
-                )
+                elapsed_time_ms = final_result.get("elapsed_time_ms", 0)
+                try:
+                    await self._save_agent_run_result(
+                        conversation_id=conversation_id,
+                        agent_name=effective_config["agent_name"],
+                        result=final_result,
+                        user_id=user_id,
+                        user_prompt=user_prompt,
+                        model_name=effective_config["model_name"],
+                        elapsed_time_ms=elapsed_time_ms,
+                        tools=tools,
+                        is_graph_node=False,
+                    )
+                except Exception as save_error:
+                    logger.error(f"保存 Agent 执行结果失败: {str(save_error)}")
+                    # 抛出错误，让上层知道保存失败
+                    raise
                 memory_info = await self.extract_memory_info(
                     final_result.get("round_messages", [])
                 )
@@ -157,6 +164,11 @@ class AgentStreamExecutor:
 
         except Exception as e:
             logger.error(f"run_agent_stream 失败: {str(e)}")
+            # 发送错误信息给前端
+            error_chunk = {"error": {"message": str(e), "type": "execution_error"}}
+            yield f"data: {json.dumps(error_chunk)}\n\n"
+            yield "data: [DONE]\n\n"
+            raise
             error_msg = {"error": str(e)}
             yield f"data: {json.dumps(error_msg)}\n\n"
             yield "data: [DONE]\n\n"
@@ -439,6 +451,7 @@ class AgentStreamExecutor:
             "prompt_tokens": 0,
             "completion_tokens": 0,
         }
+        round_elapsed_time_ms = 0  # 单轮模型调用总耗时
 
         # 标识是否为 Sub Agent
         is_sub_agent = task_id is not None
@@ -507,6 +520,10 @@ class AgentStreamExecutor:
                 )
                 current_tool_calls = accumulated_result.get("tool_calls", [])
                 api_usage = accumulated_result.get("api_usage")
+                # 模型调用耗时
+                elapsed_ms = accumulated_result.get("elapsed_time_ms")
+                if elapsed_ms is not None:
+                    round_elapsed_time_ms += elapsed_ms
 
                 # 更新 token 使用量
                 if api_usage:
@@ -624,6 +641,7 @@ class AgentStreamExecutor:
             result = {
                 "round_messages": round_messages,
                 "round_token_usage": round_token_usage,
+                "elapsed_time_ms": round_elapsed_time_ms,
                 "iteration_count": iteration,
                 "agent_name": agent_name,
             }
@@ -683,6 +701,7 @@ class AgentStreamExecutor:
         user_id: str,
         user_prompt: str,
         model_name: str,
+        elapsed_time_ms: int,
         tools: Optional[List[Dict[str, Any]]] = None,
         is_graph_node: bool = False,
     ) -> Optional[Dict[str, Any]]:
@@ -759,6 +778,7 @@ class AgentStreamExecutor:
                 model=model_name,
                 prompt_tokens=prompt_tokens,
                 completion_tokens=completion_tokens,
+                elapsed_time_ms=elapsed_time_ms,
             )
 
             logger.info(
@@ -766,8 +786,9 @@ class AgentStreamExecutor:
             )
 
             if not success:
-                logger.error(f"保存主线程 round 失败: {conversation_id}")
-                return None
+                error_msg = f"保存主线程 round 失败: {conversation_id}"
+                logger.error(error_msg)
+                raise Exception(error_msg)
 
             # 更新 conversation 的 round_count
             await mongodb_client.conversation_repository.update_conversation_round_count(

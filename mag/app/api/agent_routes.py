@@ -529,9 +529,11 @@ async def agent_run(
 
             except Exception as e:
                 logger.error(f"Agent 流式响应生成出错: {str(e)}")
-                error_chunk = {"error": {"message": str(e), "type": "api_error"}}
-                yield f"data: {json.dumps(error_chunk)}\n\n"
+                error_chunk = {"error": {"message": f"执行失败: {str(e)}", "type": "api_error"}}
+                yield f"data: {json.dumps(error_chunk, ensure_ascii=False)}\n\n"
                 yield "data: [DONE]\n\n"
+                # 重新抛出异常，让上层知道失败
+                raise
 
         # 根据stream参数决定响应类型
         if request.stream:

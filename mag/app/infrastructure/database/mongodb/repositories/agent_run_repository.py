@@ -67,7 +67,8 @@ class AgentRunRepository:
         tools: Optional[List[Dict[str, Any]]] = None,
         model: Optional[str] = None,
         prompt_tokens: Optional[int] = None,
-        completion_tokens: Optional[int] = None
+        completion_tokens: Optional[int] = None,
+        elapsed_time_ms: Optional[int] = None
     ) -> bool:
         """
         添加主线程 round
@@ -100,6 +101,8 @@ class AgentRunRepository:
                 round_doc["prompt_tokens"] = prompt_tokens
             if completion_tokens is not None:
                 round_doc["completion_tokens"] = completion_tokens
+            if elapsed_time_ms is not None:
+                round_doc["elapsed_time_ms"] = elapsed_time_ms
 
             result = await self.agent_run_collection.update_one(
                 {"_id": conversation_id},

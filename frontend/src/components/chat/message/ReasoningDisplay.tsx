@@ -4,6 +4,9 @@ import { Typography, Tag } from 'antd';
 import { Bot, ChevronDown, ChevronRight } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import 'katex/dist/katex.min.css';
 import GlassCodeBlock from './GlassCodeBlock';
 import { useT } from '../../../i18n/hooks';
 
@@ -76,7 +79,8 @@ const ReasoningDisplay: React.FC<ReasoningDisplayProps> = ({ content }) => {
         }} className="reasoning-scrollbar">
           <div style={{ marginTop: '12px' }}>
             <ReactMarkdown
-              remarkPlugins={[remarkGfm]}
+              remarkPlugins={[remarkGfm, remarkMath]}
+              rehypePlugins={[rehypeKatex]}
               components={{
                 code({ node, ...codeProps }) {
                   const { children: codeChildren, className: codeClassName, ...restProps } = codeProps;

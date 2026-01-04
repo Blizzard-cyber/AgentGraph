@@ -243,7 +243,8 @@ class ModelService:
                 "accumulated_content": str,
                 "accumulated_reasoning": str,
                 "tool_calls": List[Dict],
-                "api_usage": Dict
+                "api_usage": Dict,
+                "elapsed_time_ms": int
             }
         """
         client_key = f"{user_id}:{model_name}"

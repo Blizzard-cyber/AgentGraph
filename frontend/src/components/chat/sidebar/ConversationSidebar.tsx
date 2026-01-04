@@ -64,12 +64,58 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
   useEffect(() => {
     loadConversations();
 
-    const interval = setInterval(() => {
-      saveScrollPosition();
-      silentUpdateConversations();
-    }, 15000);
+    let interval: ReturnType<typeof setInterval> | null = null;
+    let lastUpdateTime = Date.now();
+    const UPDATE_INTERVAL = 60000; // 增加到 60 秒
+    const MIN_INTERVAL_WHEN_VISIBLE = 30000; // 页面可见时最小间隔 30 秒
 
-    return () => clearInterval(interval);
+    // 页面可见性变化处理
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        // 页面不可见时，清除定时器
+        if (interval) {
+          clearInterval(interval);
+          interval = null;
+        }
+      } else {
+        // 页面变为可见时，检查是否需要立即更新
+        const timeSinceLastUpdate = Date.now() - lastUpdateTime;
+        if (timeSinceLastUpdate >= MIN_INTERVAL_WHEN_VISIBLE) {
+          // 如果距离上次更新超过最小间隔，立即更新
+          saveScrollPosition();
+          silentUpdateConversations();
+          lastUpdateTime = Date.now();
+        }
+        
+        // 重新启动定时器
+        if (!interval) {
+          interval = setInterval(() => {
+            saveScrollPosition();
+            silentUpdateConversations();
+            lastUpdateTime = Date.now();
+          }, UPDATE_INTERVAL);
+        }
+      }
+    };
+
+    // 初始化：只在页面可见时启动定时器
+    if (!document.hidden) {
+      interval = setInterval(() => {
+        saveScrollPosition();
+        silentUpdateConversations();
+        lastUpdateTime = Date.now();
+      }, UPDATE_INTERVAL);
+    }
+
+    // 监听页面可见性变化
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, [loadConversations, silentUpdateConversations]);
 
   useEffect(() => {
