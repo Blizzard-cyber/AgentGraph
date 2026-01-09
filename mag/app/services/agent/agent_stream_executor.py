@@ -9,7 +9,7 @@ import logging
 from typing import Dict, List, Any, Optional, AsyncGenerator
 import requests
 from app.services.model.model_service import model_service
-# from memory_client import MEMORY_CLIENT  # 记忆服务器挂掉，暂时注释
+from memory_client import MEMORY_CLIENT 
 from app.services.tool_execution import ToolExecutor
 from app.infrastructure.database.mongodb import mongodb_client
 from app.services.system_tools import get_system_tools_by_names
@@ -143,28 +143,30 @@ class AgentStreamExecutor:
                     logger.error(f"保存 Agent 执行结果失败: {str(save_error)}")
                     # 抛出错误，让上层知道保存失败
                     raise
-                # 记忆服务器挂掉，暂时注释
-                # memory_info = await self.extract_memory_info(
-                #     final_result.get("round_messages", [])
-                # )
-                # try:
-                #     memory_result = await MEMORY_CLIENT.add_memory(
-                #         user_id=user_id,
-                #         agent_id=effective_config["agent_name"],
-                #         session_id=conversation_id,
-                #         memory_info=memory_info,
-                #     )
-                #     if memory_result.get("success"):
-                #         logger.info(
-                #             f"记忆保存成功: user_id={user_id}, agent_id={effective_config['agent_name']}, session_id={conversation_id}"
-                #         )
-                #     else:
-                #         logger.warning(
-                #             f"记忆保存失败: {memory_result.get('error', '未知错误')}"
-                #         )
-                # except Exception as e:
-                #     logger.error(f"记忆保存异常: {str(e)}")
-                #     # 记忆保存失败不应该影响主流程，继续执行
+                memory_info = await self.extract_memory_info(
+                    final_result.get("round_messages", [])
+                )
+                try:
+                    memory_result = await MEMORY_CLIENT.add_memory(
+                        user_id=user_id,
+                        agent_id=effective_config["agent_name"],
+                        session_id=conversation_id,
+                        memory_info=memory_info,
+                    )
+                    memory_count = len(memory_info)
+                    memory_count_save_bool = await self._save_memory_count(user_id, memory_count,
+                                                                           effective_config["agent_name"])
+                    if memory_result.get("success") and memory_count_save_bool:
+                        logger.info(
+                            f"记忆保存成功: user_id={user_id}, agent_id={effective_config['agent_name']}, session_id={conversation_id}"
+                        )
+                    else:
+                        logger.warning(
+                            f"记忆保存失败: {memory_result.get('error', '未知错误')},memory_count_save_bool={memory_count_save_bool}"
+                        )
+                except Exception as e:
+                    logger.error(f"记忆保存异常: {str(e)}")
+                    # 记忆保存失败不应该影响主流程，继续执行
 
             # 发送完成信号
             yield "data: [DONE]\n\n"
@@ -228,14 +230,14 @@ class AgentStreamExecutor:
 
             # 3.记忆查询 - 记忆服务器挂掉，暂时注释
             # 使用memory_query（如果提供）进行查询，否则使用user_prompt
-            # query_for_memory = memory_query if memory_query else user_prompt
-            # SearchMemoryRequest = await MEMORY_CLIENT.search_memory(
-            #     user_id=user_id,
-            #     agent_id=agent_id,
-            #     session_id=conversation_id,
-            #     query=query_for_memory,
-            # )
-            # logger.info(f"记忆查询 (query={query_for_memory[:100]}...) 结果: {SearchMemoryRequest}")
+            query_for_memory = memory_query if memory_query else user_prompt
+            SearchMemoryRequest = await MEMORY_CLIENT.search_memory(
+                user_id=user_id,
+                agent_id=agent_id,
+                session_id=conversation_id,
+                query=query_for_memory,
+            )
+            logger.info(f"记忆查询 (query={query_for_memory[:100]}...) 结果: {SearchMemoryRequest}")
             
             # 3. 添加当前用户消息
             if user_prompt and user_prompt.strip():
@@ -243,7 +245,7 @@ class AgentStreamExecutor:
                     {
                         "role": "user",
                         "content": user_prompt.strip(),
-                        # "memory": SearchMemoryRequest["data"],  # 记忆服务器挂掉，暂时注释
+                        "memory": SearchMemoryRequest["data"],
                     }
                 )
 
