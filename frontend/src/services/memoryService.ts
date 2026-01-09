@@ -1,5 +1,6 @@
 // src/services/memoryService.ts
 import api from './api';
+import externalApi from './externalApi';
 import {
   AddMemoryRequest,
   UpdateMemoryRequest,
@@ -32,6 +33,31 @@ export const getOwnerMemories = async (
   const response = await api.post('/memory/detail', {
     owner_type: ownerType,
     owner_id: ownerId
+  });
+  return response.data;
+};
+
+/**
+ * 调用后端 v1 路径获取特定owner的完整记忆（支持分页）
+ * 使用项目的 `api` 实例并调用 '/v1/detail'，让 Vite proxy 转发到 192.168.1.85:8851，避免 CORS
+ * @param ownerType - owner类型 (user 或 agent)
+ * @param ownerId - owner的ID
+ * @param page - 页号（后端要求0为起始页）
+ * @param pageSize - 每页大小
+ * @returns 完整的记忆数据
+ */
+export const getOwnerMemoriesV1 = async (
+  ownerType: string,
+  ownerId: string,
+  page: number = 0,
+  pageSize: number = 20
+): Promise<GetMemoriesResponse> => {
+  // call through the same api instance to benefit from interceptors and to use the Vite proxy (/api base)
+  const response = await externalApi.post('/detail', {
+    owner_type: ownerType,
+    owner_id: ownerId,
+    page: page,
+    page_size: pageSize
   });
   return response.data;
 };

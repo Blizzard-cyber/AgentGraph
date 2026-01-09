@@ -13,6 +13,12 @@ export default defineConfig({
       'localhost'
     ],
     proxy: {
+      //优先匹配v1的请求
+      '/api/v1': {
+        target: 'http://localhost:8852',
+        changeOrigin: true,
+        rewrite: (path) => path,
+      },
       // 所有API请求统一通过 /api 前缀代理到后端
       '/api': {
         target: 'http://localhost:9999',

@@ -1,11 +1,11 @@
 // src/components/memory-manager/MemoryDetailDrawer.tsx
-import React, { useState, useEffect } from 'react';
-import { Drawer, Button, Spin, Empty, Modal, Input, Select, message } from 'antd';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Drawer, Button, Spin, Empty, Modal, Input, Select, message, Pagination } from 'antd';
 import { Plus } from 'lucide-react';
 import { MemoryDetail } from '../../types/memory';
-import { getOwnerMemories, addMemoryItem, updateMemoryItem, batchDeleteItems, batchDeleteCategories } from '../../services/memoryService';
+import { getOwnerMemoriesV1, addMemoryItem, updateMemoryItem, batchDeleteItems, batchDeleteCategories } from '../../services/memoryService';
 import CategoryPanel from './CategoryPanel';
-import { useT } from '../../i18n/hooks';
+import { useT } from '../../i18n';
 
 const { TextArea } = Input;
 
@@ -15,6 +15,9 @@ interface MemoryDetailDrawerProps {
   onClose: () => void;
   onRefresh: () => void;
 }
+
+// allow optional total_items in response from new API
+type MaybePagedMemoryDetail = MemoryDetail & { total_items?: number };
 
 const MemoryDetailDrawer: React.FC<MemoryDetailDrawerProps> = ({
   visible,
@@ -32,20 +35,34 @@ const MemoryDetailDrawer: React.FC<MemoryDetailDrawerProps> = ({
     content: '',
   });
 
-  useEffect(() => {
-    if (visible && owner) {
-      fetchMemoryDetail();
-    }
-  }, [visible, owner]);
+  // Pagination state
+  const [page, setPage] = useState<number>(0); // 0-based for API
+  const pageSize = 20; // per requirement
+  const [totalItems, setTotalItems] = useState<number>(0);
 
-  const fetchMemoryDetail = async () => {
+  const fetchMemoryDetail = useCallback(async (fetchPage: number = 0) => {
     if (!owner) return;
 
     setLoading(true);
     try {
-      const response = await getOwnerMemories(owner.type, owner.id);
+      const response = await getOwnerMemoriesV1(owner.type, owner.id, fetchPage, pageSize);
       if (response.status === 'success') {
-        setMemoryData(response.data);
+        const data = response.data as MaybePagedMemoryDetail;
+        setMemoryData(data);
+
+        // try to compute total items: prefer explicit total if present, otherwise sum category totals
+        let computedTotal = 0;
+        if (typeof data.total_items === 'number') {
+          computedTotal = data.total_items;
+        } else if (data.memories) {
+          computedTotal = Object.values(data.memories).reduce((acc: number, cat) => {
+            if (cat && typeof cat.total === 'number') {
+              return acc + cat.total;
+            }
+            return acc + (Array.isArray(cat.items) ? cat.items.length : 0);
+          }, 0);
+        }
+        setTotalItems(computedTotal);
       } else {
         message.error(t('pages.memoryManager.loadFailed', { error: '' }));
       }
@@ -55,7 +72,22 @@ const MemoryDetailDrawer: React.FC<MemoryDetailDrawerProps> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [owner, pageSize, t]);
+
+  useEffect(() => {
+    if (visible && owner) {
+      // reset to initial page 0 when opening for a new owner
+      setPage(0);
+      fetchMemoryDetail(0);
+    }
+  }, [visible, owner, fetchMemoryDetail]);
+
+  useEffect(() => {
+    // when page changes, refetch (owner must exist)
+    if (visible && owner) {
+      fetchMemoryDetail(page);
+    }
+  }, [page, visible, owner, fetchMemoryDetail]);
 
   const handleAddMemory = () => {
     setAddForm({ category: '', newCategory: '', content: '' });
@@ -79,7 +111,7 @@ const MemoryDetailDrawer: React.FC<MemoryDetailDrawerProps> = ({
       if (response.status === 'success') {
         message.success(t('pages.memoryManager.addSuccess'));
         setAddModalVisible(false);
-        fetchMemoryDetail();
+        fetchMemoryDetail(page);
         onRefresh();
       } else {
         message.error(t('pages.memoryManager.addFailed', { error: response.message || '' }));
@@ -100,7 +132,7 @@ const MemoryDetailDrawer: React.FC<MemoryDetailDrawerProps> = ({
 
       if (response.status === 'success') {
         message.success(t('pages.memoryManager.updateSuccess'));
-        fetchMemoryDetail();
+        fetchMemoryDetail(page);
         onRefresh();
       } else {
         message.error(t('pages.memoryManager.updateFailed', { error: response.message || '' }));
@@ -119,14 +151,14 @@ const MemoryDetailDrawer: React.FC<MemoryDetailDrawerProps> = ({
 
       if (response.status === 'success') {
         message.success(t('pages.memoryManager.deleteSuccess'));
-        fetchMemoryDetail();
+        fetchMemoryDetail(page);
         onRefresh();
       } else if (response.status === 'partial_success') {
         message.warning(t('pages.memoryManager.deletePartialSuccess', {
           success: response.data?.deleted_count || 0,
           failed: response.data?.failed_count || 0,
         }));
-        fetchMemoryDetail();
+        fetchMemoryDetail(page);
         onRefresh();
       } else {
         message.error(t('pages.memoryManager.deleteFailed', { error: response.message || '' }));
@@ -145,7 +177,9 @@ const MemoryDetailDrawer: React.FC<MemoryDetailDrawerProps> = ({
 
       if (response.status === 'success') {
         message.success(t('pages.memoryManager.deleteCategorySuccess'));
-        fetchMemoryDetail();
+        // after deleting category, reset to first page to avoid empty page situations
+        setPage(0);
+        fetchMemoryDetail(0);
         onRefresh();
       } else {
         message.error(t('pages.memoryManager.deleteCategoryFailed', { error: response.message || '' }));
@@ -217,6 +251,19 @@ const MemoryDetailDrawer: React.FC<MemoryDetailDrawerProps> = ({
                 onDeleteCategory={() => handleDeleteCategory(category)}
               />
             ))}
+
+            {/* Pagination 控件（1-based 显示，API 使用 0-based） */}
+            {totalItems > pageSize && (
+              <div style={{ textAlign: 'center', marginTop: 12 }}>
+                <Pagination
+                  current={page + 1}
+                  pageSize={pageSize}
+                  total={totalItems}
+                  onChange={(page1) => setPage(page1 - 1)}
+                  showSizeChanger={false}
+                />
+              </div>
+            )}
           </div>
         )}
       </Drawer>

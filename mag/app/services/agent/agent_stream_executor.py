@@ -148,8 +148,7 @@ class AgentStreamExecutor:
                         session_id=conversation_id,
                         memory_info=memory_info,
                     )
-                    memory_count = len(memory_info)
-                    memory_count_save_bool = await self._save_memory_count(user_id, memory_count,
+                    memory_count_save_bool = await self._save_memory_count(user_id, memory_info,
                                                                            effective_config["agent_name"])
                     if memory_result.get("success") and memory_count_save_bool:
                         logger.info(
@@ -216,7 +215,7 @@ class AgentStreamExecutor:
                 for round_data in agent_run_doc["rounds"]:
                     round_messages = round_data.get("messages", [])
                     for msg in round_messages:
-                        # 跳过历史中的 system 消息（已在开头添加）
+                        # 跳过历史中的 system 消消息（已在开头添加）
                         if msg.get("role") != "system":
                             messages.append(msg)
             else:
@@ -820,31 +819,44 @@ class AgentStreamExecutor:
     async def _save_memory_count(
             self,
             user_id: str,
-            memory_count: int,
-            owner_id: str
+            memory_info: List[Dict[str, Any]],
+            agent_id: str
     ) -> bool:
         """
                 构建记忆的count数据，具体content内容保存在我们自己的memory中，
                 所以这里的content全部记为空字符串，此处只是用于前端展示计数记录
 
                 Args:
-                    user_id: Agent 名称
-                    memory_count: 记忆条数
-                    owner_id: 模型名称
+                    user_id: 用户id
+                    memory_info: 记忆信息
+                    agent_id: 模型 id
                 Returns:
                     成功返回TRUE，失败抛出异常
         """
-        owner = "user"
-        # 固定为episodic，我们自己的记忆保存默认为这个类型
+        # 如果没有待保存的记忆，直接返回 True（无须写入）
+        memory_count = len(memory_info)
+        if memory_count == 0:
+            return True
+
+        # 固定为 episodic，我们自己的记忆保存默认为这个类型
         category = "episodic"
         additions = []
-        for _ in range(memory_count):
+
+        # 为每条 memory_info 创建一条计数记录，owner 根据 role 区分 user / assistant
+        for mem in memory_info:
+            role = mem.get("role", "user")
+            # user 保持为 "user"，assistant 对应的计数 owner 使用 "self"
+            if role == "assistant":
+                owner = "self"
+            else:
+                owner = "user"
             additions.append({
                 "owner": owner,
                 "category": category,
                 "items": [""]
             })
-        result = await mongodb_client.add_memory(user_id, additions, owner_id)
+
+        result = await mongodb_client.add_memory(user_id, additions, agent_id)
         if result.get("success"):
             return True
         else:
