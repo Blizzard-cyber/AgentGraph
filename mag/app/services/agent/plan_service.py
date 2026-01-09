@@ -54,15 +54,16 @@ class PlanService:
             logger.info(f"开始任务规划（使用{plan_agent_name}），用户查询: {user_query[:100]}...")
             
             # 收集plan_agent的流式输出
-            final_result = None
             assistant_content = ""
             
+            # 传递original_query参数，确保记忆查询只使用原始的user_query
             async for item in self.agent_executor.run_agent_stream(
                 agent_name=plan_agent_name,
                 user_prompt=planning_prompt,
                 user_id=user_id,
                 conversation_id=conversation_id,
-                max_iterations=5
+                max_iterations=5,
+                original_query=user_query
             ):
                 if isinstance(item, str):
                     # SSE 字符串
@@ -71,19 +72,25 @@ class PlanService:
                             data_str = item[6:].strip()
                             if data_str:
                                 data = json.loads(data_str)
-                                if data.get("role") == "assistant" and data.get("content"):
+                                # OpenAI SSE格式: {choices: [{delta: {content: "..."}}]}
+                                if "choices" in data and len(data["choices"]) > 0:
+                                    delta = data["choices"][0].get("delta", {})
+                                    content = delta.get("content", "")
+                                    if content:
+                                        assistant_content += content
+                                # 简化格式: {role: "assistant", content: "..."}
+                                elif data.get("role") == "assistant" and data.get("content"):
                                     assistant_content += data["content"]
                         except json.JSONDecodeError:
                             pass
-                else:
-                    # 最终结果
-                    final_result = item
             
-            # 从助手回复中提取DAG定义
-            if final_result and "round_messages" in final_result:
-                for msg in final_result["round_messages"]:
-                    if msg.get("role") == "assistant" and msg.get("content"):
-                        assistant_content += msg["content"]
+            # 检查是否收集到了响应内容
+            if not assistant_content or not assistant_content.strip():
+                logger.error(f"plan_agent 没有返回任何内容")
+                raise ValueError(f"plan_agent 没有返回任何内容，请检查 {plan_agent_name} 是否正常工作")
+            
+            logger.info(f"收集到的响应内容长度: {len(assistant_content)} 字符")
+            logger.debug(f"响应内容前500字符: {assistant_content[:500]}")
             
             # 解析DAG定义
             dag_definition = self._parse_dag_from_response(assistant_content)
@@ -111,6 +118,7 @@ class PlanService:
                 agents_info += f"- {agent['name']}: {agent.get('description', '')}\n"
                 agents_info += f"  类别: {agent.get('category', 'unknown')}\n"
                 agents_info += f"  可用动作: {', '.join(agent.get('actions', []))}\n"
+            logger.info(f"可用Agent列表1:\n{agents_info}")
         
         prompt = f"""你是一个任务规划专家。请根据用户的需求，生成一个DAG（有向无环图）执行计划。
 
@@ -180,29 +188,41 @@ class PlanService:
     def _parse_dag_from_response(self, response: str) -> Dict[str, Any]:
         """从plan_agent的回复中解析DAG定义"""
         try:
+            # 检查响应是否为空
+            if not response or not response.strip():
+                logger.error("收到空的响应内容")
+                raise ValueError("收到空的响应内容，无法解析DAG定义")
+            
+            logger.debug(f"开始解析响应，长度: {len(response)}")
+            
             # 尝试提取JSON代码块
             json_match = re.search(r'```json\s*(\{.*?\})\s*```', response, re.DOTALL)
             if json_match:
                 json_str = json_match.group(1)
+                logger.info("从JSON代码块中提取到内容")
                 dag_definition = json.loads(json_str)
                 return dag_definition
             
             # 尝试直接解析整个回复为JSON
             try:
                 dag_definition = json.loads(response)
+                logger.info("直接解析响应为JSON成功")
                 return dag_definition
-            except json.JSONDecodeError:
+            except json.JSONDecodeError as e:
+                logger.debug(f"直接解析JSON失败: {str(e)}")
                 pass
             
             # 尝试查找JSON对象
             json_match = re.search(r'\{.*"目标".*\}', response, re.DOTALL)
             if json_match:
                 json_str = json_match.group(0)
+                logger.info("通过正则表达式找到JSON对象")
                 dag_definition = json.loads(json_str)
                 return dag_definition
             
             # 解析失败，返回默认结构
-            logger.warning("无法从回复中解析DAG定义，使用默认结构")
+            logger.warning(f"无法从回复中解析DAG定义，使用默认结构")
+            logger.warning(f"响应内容: {response[:1000]}...")  # 只记录前1000字符
             return {
                 "目标": "执行用户任务",
                 "前提假设": ["Agent服务可用"],
@@ -213,6 +233,7 @@ class PlanService:
             
         except Exception as e:
             logger.error(f"解析DAG定义失败: {str(e)}")
+            logger.error(f"响应内容: {response[:1000] if response else 'None'}...")
             raise ValueError(f"解析DAG定义失败: {str(e)}")
     
     async def execute_planning_mode(

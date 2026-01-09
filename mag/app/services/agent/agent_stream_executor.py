@@ -9,7 +9,7 @@ import logging
 from typing import Dict, List, Any, Optional, AsyncGenerator
 import requests
 from app.services.model.model_service import model_service
-from memory_client import MEMORY_CLIENT
+from memory_client import MEMORY_CLIENT 
 from app.services.tool_execution import ToolExecutor
 from app.infrastructure.database.mongodb import mongodb_client
 from app.services.system_tools import get_system_tools_by_names
@@ -25,16 +25,17 @@ class AgentStreamExecutor:
         self.tool_executor = ToolExecutor()
 
     async def run_agent_stream(
-            self,
-            agent_name: Optional[str],
-            user_prompt: str,
-            user_id: str,
-            conversation_id: str,
-            model_name: Optional[str] = None,
-            system_prompt: Optional[str] = None,
-            mcp_servers: Optional[List[str]] = None,
-            system_tools: Optional[List[str]] = None,
-            max_iterations: Optional[int] = None,
+        self,
+        agent_name: Optional[str],
+        user_prompt: str,
+        user_id: str,
+        conversation_id: str,
+        model_name: Optional[str] = None,
+        system_prompt: Optional[str] = None,
+        mcp_servers: Optional[List[str]] = None,
+        system_tools: Optional[List[str]] = None,
+        max_iterations: Optional[int] = None,
+        original_query: Optional[str] = None,
     ) -> AsyncGenerator[str, None]:
         """
         Agent 流式运行（主入口，支持多轮对话）
@@ -49,6 +50,7 @@ class AgentStreamExecutor:
             mcp_servers: MCP服务器列表（可选添加）
             system_tools: 系统工具列表（可选添加）
             max_iterations: 最大迭代次数（可选覆盖）
+            original_query: 原始用户查询（用于记忆查询，如果不提供则使用user_prompt）
 
         Yields:
             SSE 格式字符串 "data: {...}\\n\\n"
@@ -84,12 +86,15 @@ class AgentStreamExecutor:
                 return
 
             # 构建包含历史消息的完整消息列表
+            # 如果提供了original_query，用它进行记忆查询；否则使用user_prompt
+            memory_query = original_query if original_query else user_prompt
             messages = await self._build_messages(
                 conversation_id=conversation_id,
                 user_prompt=user_prompt,
                 agent_id=agent_name,
                 user_id=user_id,
                 system_prompt=effective_config["system_prompt"],
+                memory_query=memory_query,
             )
 
             # 准备工具
@@ -177,12 +182,13 @@ class AgentStreamExecutor:
             yield "data: [DONE]\n\n"
 
     async def _build_messages(
-            self,
-            agent_id: str,
-            conversation_id: str,
-            user_prompt: str,
-            system_prompt: str,
-            user_id: str,
+        self,
+        agent_id: str,
+        conversation_id: str,
+        user_prompt: str,
+        system_prompt: str,
+        user_id: str,
+        memory_query: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """
         构建包含历史消息的完整消息列表
@@ -221,15 +227,17 @@ class AgentStreamExecutor:
             else:
                 logger.debug(f"新对话，无历史消息: {conversation_id}")
 
-            # 3.记忆查询
+            # 3.记忆查询 - 记忆服务器挂掉，暂时注释
+            # 使用memory_query（如果提供）进行查询，否则使用user_prompt
+            query_for_memory = memory_query if memory_query else user_prompt
             SearchMemoryRequest = await MEMORY_CLIENT.search_memory(
                 user_id=user_id,
                 agent_id=agent_id,
                 session_id=conversation_id,
-                query=user_prompt,
+                query=query_for_memory,
             )
-
-            logger.info(f"记忆查询结果: {SearchMemoryRequest}")
+            logger.info(f"记忆查询 (query={query_for_memory[:100]}...) 结果: {SearchMemoryRequest}")
+            
             # 3. 添加当前用户消息
             if user_prompt and user_prompt.strip():
                 messages.append(
