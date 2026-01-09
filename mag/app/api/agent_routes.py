@@ -852,13 +852,14 @@ async def list_dag_available_agents(
             )
 
             for agent in agents:
+                agent_config = agent.get("agent_config", {})
                 agents_info.append(
                     {
-                        "name": agent["name"],
-                        "description": f"{category['category']} Agent",
+                        "name": agent_config.get("name", ""),
+                        "description": agent_config.get("description", f"{category['category']} Agent"),
                         "category": category["category"],
                         "actions": ["execute", "analyze", "process"],  # 通用动作
-                        "tags": agent.get("tags", []),
+                        "tags": agent_config.get("tags", []),
                     }
                 )
 
@@ -956,27 +957,39 @@ async def execute_planning_mode(
             # 获取所有可用的agent
             try:
                 categories = (
-                    await mongodb_client.agent_repository.list_agent_categories(user_id)
+                    await mongodb_client.agent_repository.list_categories(user_id)
                 )
 
-                for category in categories:
+                for category_item in categories:
+                    category_name = category_item.get("category", "")
                     agents = (
                         await mongodb_client.agent_repository.list_agents_in_category(
-                            user_id=user_id, category=category["category"]
+                            user_id=user_id, category=category_name
                         )
                     )
 
                     for agent in agents:
-                        agent_config = agent.get("agent_config", {})
-                        available_agents.append(
-                            {
-                                "name": agent_config.get("name", ""),
-                                "description": agent_config.get("description", ""),
-                                "category": category["category"],
-                                "actions": ["execute", "analyze", "process"],
-                                "tags": agent_config.get("tags", []),
-                            }
-                        )
+                        agent_name = agent.get("name", "")
+                        if agent_name:  # 只添加有名称的 agent
+                            # 使用 get_agent_details 获取完整的 agent 详情
+                            agent_details = await mongodb_client.agent_repository.get_agent_details(
+                                agent_name=agent_name,
+                                user_id=user_id
+                            )
+                            
+                            if agent_details:
+                                agent_config = agent.get("agent_config", {})
+                                available_agents.append(
+                                    {
+                                        "name": agent_config.get("name", agent_name),
+                                        "description": agent_config.get("card", agent_details.get("description", "")),
+                                        "category": agent_config.get("category", category_name),
+                                        "tags": agent_config.get("tags", []),
+                                        "model": agent_config.get("model"),
+                                        "max_actions": agent_config.get("max_actions", 50)
+                                    }
+                                )
+                logger.info(f"可用agent列表: {available_agents}")
             except Exception as e:
                 logger.warning(f"获取agent列表失败: {str(e)}")
 
