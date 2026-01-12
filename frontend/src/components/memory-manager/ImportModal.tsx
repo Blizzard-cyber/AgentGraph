@@ -76,7 +76,8 @@ const ImportModal: React.FC<ImportModalProps> = ({ visible, owner, onClose, onSu
     }
   };
 
-  const modelOptions = models.map((model) => ({
+  const readyModels = models.filter(m => m.status === 'ready');
+  const modelOptions = readyModels.map((model) => ({
     label: model.name,
     value: model.name,
   }));

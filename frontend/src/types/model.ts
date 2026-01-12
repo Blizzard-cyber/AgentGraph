@@ -27,6 +27,9 @@ export interface ModelConfig {
   extra_headers?: Record<string, string>;
   timeout?: number;
 
+  // 运行时状态，可选
+  status?: string; // e.g., 'ready' | 'initializing' | 'error' 等
+
   [key: string]: any;
 }
 

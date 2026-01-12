@@ -231,7 +231,11 @@ const ModelForm: React.FC<ModelFormProps> = ({
           rules={[{ required: true, message: t('pages.modelManager.form.providerRequired') }]}
         >
           <Select placeholder={t('pages.modelManager.form.providerPlaceholder')}>
-            <Select.Option value="openai">OpenAI</Select.Option>
+            <Select.Option value="openai">{t('pages.modelManager.form.providerOpenAI')}</Select.Option>
+            <Select.Option value="google">{t('pages.modelManager.form.providerGoogle')}</Select.Option>
+            <Select.Option value="anthropic">{t('pages.modelManager.form.providerAnthropic')}</Select.Option>
+            <Select.Option value="azure">{t('pages.modelManager.form.providerAzure')}</Select.Option>
+            <Select.Option value="custom">{t('pages.modelManager.form.providerCustom')}</Select.Option>
           </Select>
         </Form.Item>
 
@@ -244,6 +248,10 @@ const ModelForm: React.FC<ModelFormProps> = ({
         >
           <Select placeholder={t('pages.modelManager.form.modelTypePlaceholder')}>
             <Select.Option value="llm">{t('pages.modelManager.form.llmType')}</Select.Option>
+            <Select.Option value="vlm">{t('pages.modelManager.form.vlmType')}</Select.Option>
+            <Select.Option value="image_gen">{t('pages.modelManager.form.imageGenType')}</Select.Option>
+            <Select.Option value="audio">{t('pages.modelManager.form.audioType')}</Select.Option>
+            <Select.Option value="custom">{t('pages.modelManager.form.customType')}</Select.Option>
           </Select>
         </Form.Item>
 

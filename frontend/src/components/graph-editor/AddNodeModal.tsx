@@ -409,7 +409,7 @@ const AddNodeModal: React.FC<AddNodeModalProps> = ({ visible, onClose, onAdd }) 
                           showSearch
                           style={{ fontSize: '14px' }}
                         >
-                          {models.map(model => (
+                          {models.filter(m => m.status === 'ready').map(model => (
                             <Option key={model.name} value={model.name}>{model.name}</Option>
                           ))}
                         </Select>
