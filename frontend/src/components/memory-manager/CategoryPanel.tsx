@@ -1,6 +1,6 @@
 // src/components/memory-manager/CategoryPanel.tsx
 import React from 'react';
-import { Collapse, Typography, Space, App, Popconfirm } from 'antd';
+import { Collapse, Typography, Space, App, Popconfirm, Pagination } from 'antd';
 import type { CollapseProps } from 'antd';
 import { ChevronDown, Trash2 } from 'lucide-react';
 import { MemoryItem } from '../../types/memory';
@@ -17,6 +17,11 @@ interface CategoryPanelProps {
   onUpdate: (itemId: string, content: string) => void;
   onDelete: (itemIds: string[]) => void;
   onDeleteCategory: () => void;
+  // pagination props
+  page?: number; // 1-based
+  pageSize?: number;
+  total?: number;
+  onPageChange?: (page: number) => void;
 }
 
 const CategoryPanel: React.FC<CategoryPanelProps> = ({
@@ -25,6 +30,10 @@ const CategoryPanel: React.FC<CategoryPanelProps> = ({
   onUpdate,
   onDelete,
   onDeleteCategory,
+  page = 1,
+  pageSize = 20,
+  total = 0,
+  onPageChange,
 }) => {
   const t = useT();
   const { modal } = App.useApp();
@@ -36,7 +45,7 @@ const CategoryPanel: React.FC<CategoryPanelProps> = ({
       title: t('pages.memoryManager.editMemory'),
       content: (
         <textarea
-          id="edit-memory-content"
+          id={`edit-memory-content-${category}`}
           defaultValue={item.content}
           placeholder={t('pages.memoryManager.memoryContent')}
           aria-label={t('pages.memoryManager.memoryContent')}
@@ -74,7 +83,7 @@ const CategoryPanel: React.FC<CategoryPanelProps> = ({
         }
       },
       onOk: () => {
-        const textarea = document.getElementById('edit-memory-content') as HTMLTextAreaElement;
+        const textarea = document.getElementById(`edit-memory-content-${category}`) as HTMLTextAreaElement;
         const newContent = textarea?.value?.trim();
         if (newContent && newContent !== item.content) {
           onUpdate(item.item_id, newContent);
@@ -82,8 +91,6 @@ const CategoryPanel: React.FC<CategoryPanelProps> = ({
       },
     });
   };
-
-
 
   const panelHeader = (
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
@@ -104,7 +111,7 @@ const CategoryPanel: React.FC<CategoryPanelProps> = ({
             color: 'rgba(45, 45, 45, 0.65)',
           }}
         >
-          {items.length} {t('pages.memoryManager.items')}
+          {total} {t('pages.memoryManager.items')}
         </Text>
       </Space>
       <Popconfirm
@@ -187,6 +194,19 @@ const CategoryPanel: React.FC<CategoryPanelProps> = ({
               onDelete={() => onDelete([item.item_id])}
             />
           ))}
+
+          {/* per-category pagination */}
+          {total > pageSize && onPageChange && (
+            <div style={{ textAlign: 'center', marginTop: 12 }}>
+              <Pagination
+                current={page}
+                pageSize={pageSize}
+                total={total}
+                onChange={(p) => onPageChange(p)}
+                showSizeChanger={false}
+              />
+            </div>
+          )}
         </div>
       ),
       style: {

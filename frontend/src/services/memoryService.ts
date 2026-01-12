@@ -44,21 +44,28 @@ export const getOwnerMemories = async (
  * @param ownerId - owner的ID
  * @param page - 页号（后端要求0为起始页）
  * @param pageSize - 每页大小
+ * @param category - 记忆分类（可选）
  * @returns 完整的记忆数据
  */
 export const getOwnerMemoriesV1 = async (
   ownerType: string,
   ownerId: string,
   page: number = 0,
-  pageSize: number = 20
+  pageSize: number = 20,
+  category?: string
 ): Promise<GetMemoriesResponse> => {
   // call through the same api instance to benefit from interceptors and to use the Vite proxy (/api base)
-  const response = await externalApi.post('/detail', {
+  const body: { owner_type: string; owner_id: string; page: number; page_size: number; category?: string } = {
     owner_type: ownerType,
     owner_id: ownerId,
     page: page,
-    page_size: pageSize
-  });
+    page_size: pageSize,
+  };
+  if (category) {
+    body.category = category;
+  }
+
+  const response = await externalApi.post('/detail', body);
   return response.data;
 };
 

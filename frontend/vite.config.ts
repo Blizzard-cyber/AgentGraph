@@ -15,7 +15,7 @@ export default defineConfig({
     proxy: {
       //优先匹配v1的请求
       '/api/v1': {
-        target: 'http://localhost:8852',
+        target: 'http://localhost:8851',
         changeOrigin: true,
         rewrite: (path) => path,
       },
