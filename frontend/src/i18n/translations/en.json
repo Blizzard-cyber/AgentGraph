@@ -233,10 +233,10 @@
       "error": "Error"
     },
     "modelManager": {
-        "statusReady": "Ready",
-        "statusInitializing": "Initializing",
-        "statusError": "Error",
-        "statusDisabled": "Disabled",
+      "statusReady": "Ready",
+      "statusInitializing": "Initializing",
+      "statusError": "Error",
+      "statusDisabled": "Disabled",
       "title": "Model Manager",
       "modelsCount": "{{count}} models",
       "titleModel": "Title: {{name}}",

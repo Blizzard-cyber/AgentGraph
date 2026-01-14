@@ -233,10 +233,10 @@
       "error": "错误"
     },
     "modelManager": {
-        "statusReady": "就绪",
-        "statusInitializing": "初始化中",
-        "statusError": "错误",
-        "statusDisabled": "已禁用",
+      "statusReady": "就绪",
+      "statusInitializing": "初始化中",
+      "statusError": "错误",
+      "statusDisabled": "已禁用",
       "title": "模型管理",
       "modelsCount": "{{count}} 个模型",
       "titleModel": "标题: {{name}}",
