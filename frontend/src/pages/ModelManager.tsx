@@ -373,17 +373,103 @@ const ModelManager: React.FC = () => {
                     <Star size={16} strokeWidth={1.5} style={{ color: '#b85845' }} fill="#b85845" />
                   )}
                   <Server size={16} strokeWidth={1.5} style={{ color: '#8b7355' }} />
-                  <Text style={{
-                    fontWeight: 500,
-                    fontSize: '14px',
-                    color: '#2d2d2d',
-                    flex: 1,
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap'
-                  }}>
+                  {/* 模型名称 */}
+                  <Text
+                    style={{
+                      fontWeight: 500,
+                      fontSize: '14px',
+                      color: '#2d2d2d',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                      flex: 1,
+                      maxWidth: '100%',
+                      flexShrink: 1
+                    }}
+                  >
                     {model.name}
                   </Text>
+
+                  {/* 模型类型 */}
+                  <span
+                    style={{
+                      marginLeft: '4px',
+                      padding: '2px 4px',
+                      fontSize: '10px',
+                      borderRadius: '4px',
+                      fontWeight: 500,
+                      background: 'rgba(139, 115, 85, 0.1)',
+                      color: '#8b7355',
+                      textTransform: 'uppercase',
+                      flexShrink: 0
+                    }}
+                  >
+                    {(model.model_type || 'llm').toUpperCase()}
+                  </span>
+
+                  {/* 状态标签 */}
+                  {(() => {
+                      const statusRaw = model.status || 'initializing';
+                      const status = String(statusRaw).toLowerCase();
+                      const statusStyles: Record<string, { color: string; bg: string; border: string; text: string }> = {
+                        ready: {
+                          color: '#10b981',
+                          bg: 'rgba(16, 185, 129, 0.08)',
+                          border: '1px solid rgba(16, 185, 129, 0.2)',
+                          text: t('pages.modelManager.statusReady') || 'ready'
+                        },
+                        initializing: {
+                          color: '#f59e0b',
+                          bg: 'rgba(245, 158, 11, 0.08)',
+                          border: '1px solid rgba(245, 158, 11, 0.2)',
+                          text: t('pages.modelManager.statusInitializing') || 'initializing'
+                        },
+                        error: {
+                          color: '#ef4444',
+                          bg: 'rgba(239, 68, 68, 0.08)',
+                          border: '1px solid rgba(239, 68, 68, 0.2)',
+                          text: t('pages.modelManager.statusError') || 'error'
+                        },
+                        not_found: {
+                          color: '#9333ea',
+                          bg: 'rgba(147, 51, 234, 0.08)',
+                          border: '1px solid rgba(147, 51, 234, 0.2)',
+                          text: t('pages.modelManager.statusNotFound') || 'not found'
+                        },
+                        disabled: {
+                          color: '#6b7280',
+                          bg: 'rgba(107, 114, 128, 0.08)',
+                          border: '1px solid rgba(107, 114, 128, 0.2)',
+                          text: t('pages.modelManager.statusDisabled') || 'disabled'
+                        }
+                      };
+                      const cfg = statusStyles[status] || {
+                        color: '#8b7355',
+                        bg: 'rgba(139, 115, 85, 0.08)',
+                        border: '1px solid rgba(139, 115, 85, 0.2)',
+                        text: status
+                      };
+                      return (
+                        <span
+                          style={{
+                            marginLeft: '4px',
+                            padding: '2px 6px',
+                            fontSize: '11px',
+                            borderRadius: '4px',
+                            fontWeight: 500,
+                            color: cfg.color,
+                            background: cfg.bg,
+                            border: cfg.border,
+                            lineHeight: 1.2,
+                            textTransform: 'capitalize'
+                          }}
+                        >
+                          {cfg.text}
+                        </span>
+                      );
+                    })()
+                  }
+
                 </div>
 
                 {/* 内容区 */}
@@ -605,7 +691,7 @@ const ModelManager: React.FC = () => {
                 filterOption={(input, option) =>
                   (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
                 }
-                options={models.map(model => ({
+                options={models.filter(m => m.status === 'ready').map(model => ({
                   label: model.name,
                   value: model.name,
                 }))}

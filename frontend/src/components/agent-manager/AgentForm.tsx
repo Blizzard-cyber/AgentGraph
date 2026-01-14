@@ -160,7 +160,7 @@ const AgentForm: React.FC<AgentFormProps> = ({
                 showSearch
                 style={{ fontSize: '14px' }}
               >
-                {models.map((model) => (
+                {models.filter(m => m.status === 'ready').map((model) => (
                   <Option key={model} value={model}>{model}</Option>
                 ))}
               </Select>

@@ -16,6 +16,7 @@ from app.infrastructure.database.mongodb import mongodb_client
 from app.infrastructure.storage.file_storage import FileManager
 from app.core.config import settings
 from app.core.initialization import initialize_system
+from app.services.model.gpustack_client import GPUStackClient
 
 # 配置日志
 logging.basicConfig(
@@ -62,7 +63,14 @@ async def lifespan(app: FastAPI):
         await mcp_service.initialize()
         logger.info("MCP服务初始化成功")
 
-        # 8. 初始化记忆客户端
+        # 8. 初始化GPUStack客户端（登录获取Cookie，会被模型服务复用）
+        try:
+            await model_service.initialize_gpustack_client()
+            logger.info("GPUStack客户端初始化流程完成")
+        except Exception as e:
+            logger.warning(f"GPUStack客户端初始化失败: {e}")
+
+        # 9. 初始化记忆客户端
         global memory_client
         memory_client = MemoryClient()
 
@@ -164,7 +172,9 @@ async def health_check():
 import os
 
 STATIC_SERVE_ENABLED = os.getenv("MAG_INTERNAL_STATIC", "true").lower() == "true"
-FRONTEND_DIST_DIR = Path(os.getenv("MAG_FRONTEND_DIST", str(Path(__file__).parent.parent / "dist")))
+FRONTEND_DIST_DIR = Path(
+    os.getenv("MAG_FRONTEND_DIST", str(Path(__file__).parent.parent / "dist"))
+)
 
 # 仅当启用了内部静态服务、且目录存在时挂载
 if STATIC_SERVE_ENABLED and FRONTEND_DIST_DIR.exists() and FRONTEND_DIST_DIR.is_dir():
@@ -202,7 +212,9 @@ else:
         logger.warning(f"前端静态文件目录不存在: {FRONTEND_DIST_DIR}")
         logger.warning("如需使用集成前端，请先运行 'npm run build' 构建前端应用")
     else:
-        logger.info("已禁用 FastAPI 内部静态资源服务 (MAG_INTERNAL_STATIC=false)，由外部 Nginx/CDN 提供")
+        logger.info(
+            "已禁用 FastAPI 内部静态资源服务 (MAG_INTERNAL_STATIC=false)，由外部 Nginx/CDN 提供"
+        )
 
 
 if __name__ == "__main__":

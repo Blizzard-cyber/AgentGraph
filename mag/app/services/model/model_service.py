@@ -1,9 +1,12 @@
 import logging
 from typing import Dict, List, Any, Optional, AsyncGenerator
 from openai import AsyncOpenAI
+import httpx
 from app.services.model.param_builder import ParamBuilder
 from app.services.model.stream_handler import StreamHandler
 from app.services.model.response_parser import ResponseParser
+from app.services.model.gpustack_client import GPUStackClient
+from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -16,6 +19,7 @@ class ModelService:
         self.clients: Dict[str, AsyncOpenAI] = {}
         self.param_builder = ParamBuilder()
         self.response_parser = ResponseParser()
+        self.gpustack_client: Optional[GPUStackClient] = None
 
     async def initialize(self, mongodb_client) -> None:
         """初始化模型服务
@@ -25,6 +29,7 @@ class ModelService:
         """
         self.model_config_repository = mongodb_client.model_config_repository
         await self._initialize_clients()
+        await self.initialize_gpustack_client()
 
     async def _initialize_clients(self, user_id: str = "default_user") -> None:
         """初始化指定用户的所有模型的异步客户端
@@ -33,44 +38,157 @@ class ModelService:
             user_id: 用户ID
         """
         try:
-            models = await self.model_config_repository.list_models(user_id=user_id, include_api_key=True)
+            models = await self.model_config_repository.list_models(
+                user_id=user_id, include_api_key=True
+            )
             for model_config in models:
                 try:
                     client = AsyncOpenAI(
                         api_key=model_config["api_key"],
-                        base_url=model_config["base_url"]
+                        base_url=model_config["base_url"],
                     )
                     # 使用 (user_id, model_name) 作为key
                     client_key = f"{user_id}:{model_config['name']}"
                     self.clients[client_key] = client
                 except Exception as e:
-                    logger.error(f"初始化模型 '{model_config['name']}' 客户端时出错 (user: {user_id}): {str(e)}")
+                    logger.error(
+                        f"初始化模型 '{model_config['name']}' 客户端时出错 (user: {user_id}): {str(e)}"
+                    )
         except Exception as e:
             logger.error(f"初始化模型客户端列表时出错 (user: {user_id}): {str(e)}")
 
+    async def initialize_gpustack_client(self) -> None:
+        """初始化并登录 GPUStack 客户端（基于全局配置）"""
+        try:
+            base = (settings.GPUSTACK_BASE_URL or "").rstrip("/")
+            if not base:
+                logger.info("未配置 GPUSTACK_BASE_URL，跳过 GPUStack 初始化")
+                return
+            if base.endswith("/v1"):
+                base = base[:-3]
+
+            username = settings.GPUSTACK_USERNAME or settings.ADMIN_USERNAME
+            password = settings.GPUSTACK_PASSWORD or settings.ADMIN_PASSWORD
+            if not (username and password):
+                logger.warning("GPUStack 凭据缺失，跳过 GPUStack 初始化")
+                return
+
+            self.gpustack_client = GPUStackClient(
+                base_url=base, username=username, password=password, timeout=8
+            )
+            ok = await self.gpustack_client.login()
+            if ok:
+                logger.info("GPUStack 登录成功，已建立会话")
+            else:
+                logger.warning("GPUStack 登录失败，将在查询时回退到其他认证方式")
+                self.gpustack_client = None
+        except Exception as e:
+            logger.warning(f"GPUStack 初始化异常: {e}")
+            self.gpustack_client = None
+
     # ========== 模型配置管理方法 ==========
 
-    async def get_all_models(self, user_id: str = "default_user") -> List[Dict[str, Any]]:
-        """获取所有模型配置（不包含API密钥）
+    def determine_model_status(
+        self, model_name: str, models_status_dict: Dict[str, Dict[str, Any]]
+    ) -> str:
+        """根据获取的模型状态字典判断单个模型的状态
+
+        Args:
+            model_name: 模型名称
+            models_status_dict: 所有模型状态字典
+
+        Returns:
+            str: 模型状态 ("ready", "initializing", "error", "not_found")
+        """
+        if model_name not in models_status_dict:
+            logger.debug(f"模型 {model_name} 未在服务端找到")
+            return "not_found"
+
+        model_info = models_status_dict[model_name]
+        replicas = model_info.get("replicas", 0)
+        ready_replicas = model_info.get("ready_replicas", 0)
+
+        # 状态判断逻辑
+        if ready_replicas >= 1:
+            logger.debug(f"模型 {model_name} 状态正常: ready={ready_replicas}")
+            return "ready"
+        elif ready_replicas == 0 and replicas >= 1:
+            logger.debug(
+                f"模型 {model_name} 初始化中: replicas={replicas}, ready={ready_replicas}"
+            )
+            return "initializing"
+        else:
+            logger.warning(
+                f"模型 {model_name} 状态异常: replicas={replicas}, ready={ready_replicas}"
+            )
+            return "error"
+
+    async def get_all_models(
+        self, user_id: str = "default_user"
+    ) -> List[Dict[str, Any]]:
+        """获取所有模型配置（不包含API密钥），并检查每个模型的运行状态
+
+        优化策略：直接从 GPUStack 获取所有模型状态，根据本地模型名称匹配更新状态
 
         Args:
             user_id: 用户ID
 
         Returns:
-            List[Dict[str, Any]]: 模型配置列表
+            List[Dict[str, Any]]: 模型配置列表，包含实时状态
         """
         try:
-            models = await self.model_config_repository.list_models(user_id=user_id, include_api_key=False)
-            return [{
-                "name": model["name"],
-                "base_url": model["base_url"],
-                "model": model.get("model", "")
-            } for model in models]
+            # 获取所有模型配置（不包含API密钥）
+            models = await self.model_config_repository.list_models(
+                user_id=user_id, include_api_key=False
+            )
+
+            # 直接从 GPUStack 获取所有模型状态（一次性）
+            gpustack_models_status: Dict[str, Dict[str, Any]] = {}
+            if self.gpustack_client:
+                try:
+                    gpustack_models_status = (
+                        await self.gpustack_client.get_models_status()
+                    )
+                    logger.debug(
+                        f"从 GPUStack 获取到 {len(gpustack_models_status)} 个模型状态"
+                    )
+                except Exception as e:
+                    logger.warning(f"从 GPUStack 获取模型状态失败: {e}")
+
+            # 遍历本地模型，根据模型名称匹配 GPUStack 状态
+            result = []
+            for model in models:
+                # 使用 model 字段作为在 GPUStack 中的模型名称
+                model_name_in_gpustack = model.get("model", model["name"])
+
+                # 根据名称匹配状态
+                if gpustack_models_status:
+                    status = self.determine_model_status(
+                        model_name_in_gpustack, gpustack_models_status
+                    )
+                else:
+                    # 如果无法获取 GPUStack 状态，标记为 error
+                    status = "error"
+
+                result.append(
+                    {
+                        "name": model["name"],
+                        "base_url": model["base_url"],
+                        "model": model.get("model", ""),
+                        "model_type": model.get("model_type", "llm"),
+                        "provider": model.get("provider", "openai"),
+                        "status": status,
+                    }
+                )
+
+            return result
         except Exception as e:
             logger.error(f"获取所有模型配置失败 (user: {user_id}): {str(e)}")
             return []
 
-    async def get_model_for_edit(self, model_name: str, user_id: str = "default_user") -> Optional[Dict[str, Any]]:
+    async def get_model_for_edit(
+        self, model_name: str, user_id: str = "default_user"
+    ) -> Optional[Dict[str, Any]]:
         """获取特定模型的完整配置（用于编辑，不包含API密钥）
 
         Args:
@@ -81,16 +199,20 @@ class ModelService:
             Optional[Dict[str, Any]]: 模型配置
         """
         try:
-            model = await self.model_config_repository.get_model(model_name, user_id=user_id, include_api_key=False)
+            model = await self.model_config_repository.get_model(
+                model_name, user_id=user_id, include_api_key=False
+            )
             if model:
-                model.pop('created_at', None)
-                model.pop('updated_at', None)
+                model.pop("created_at", None)
+                model.pop("updated_at", None)
             return model
         except Exception as e:
             logger.error(f"获取模型配置失败 {model_name} (user: {user_id}): {str(e)}")
             return None
 
-    async def get_model(self, model_name: str, user_id: str = "default_user") -> Optional[Dict[str, Any]]:
+    async def get_model(
+        self, model_name: str, user_id: str = "default_user"
+    ) -> Optional[Dict[str, Any]]:
         """获取特定模型的配置（包含API密钥）
 
         Args:
@@ -101,7 +223,9 @@ class ModelService:
             Optional[Dict[str, Any]]: 模型配置
         """
         try:
-            return await self.model_config_repository.get_model(model_name, user_id=user_id, include_api_key=True)
+            return await self.model_config_repository.get_model(
+                model_name, user_id=user_id, include_api_key=True
+            )
         except Exception as e:
             logger.error(f"获取模型配置失败 {model_name} (user: {user_id}): {str(e)}")
             return None
@@ -118,11 +242,12 @@ class ModelService:
         """
         try:
             client = AsyncOpenAI(
-                api_key=model_config["api_key"],
-                base_url=model_config["base_url"]
+                api_key=model_config["api_key"], base_url=model_config["base_url"]
             )
 
-            result = await self.model_config_repository.create_model(user_id, model_config)
+            result = await self.model_config_repository.create_model(
+                user_id, model_config
+            )
 
             if result.get("success"):
                 client_key = f"{user_id}:{model_config['name']}"
@@ -130,14 +255,20 @@ class ModelService:
                 logger.info(f"模型 '{model_config['name']}' 添加成功 (user: {user_id})")
                 return True
             else:
-                logger.warning(f"添加模型失败 (user: {user_id}): {result.get('message')}")
+                logger.warning(
+                    f"添加模型失败 (user: {user_id}): {result.get('message')}"
+                )
                 return False
 
         except Exception as e:
-            logger.error(f"添加模型 '{model_config.get('name')}' 时出错 (user: {user_id}): {str(e)}")
+            logger.error(
+                f"添加模型 '{model_config.get('name')}' 时出错 (user: {user_id}): {str(e)}"
+            )
             return False
 
-    async def update_model(self, model_name: str, user_id: str, model_config: Dict[str, Any]) -> bool:
+    async def update_model(
+        self, model_name: str, user_id: str, model_config: Dict[str, Any]
+    ) -> bool:
         """更新现有模型配置
 
         Args:
@@ -150,11 +281,12 @@ class ModelService:
         """
         try:
             client = AsyncOpenAI(
-                api_key=model_config["api_key"],
-                base_url=model_config["base_url"]
+                api_key=model_config["api_key"], base_url=model_config["base_url"]
             )
 
-            result = await self.model_config_repository.update_model(model_name, user_id, model_config)
+            result = await self.model_config_repository.update_model(
+                model_name, user_id, model_config
+            )
 
             if result.get("success"):
                 old_name = model_name
@@ -169,14 +301,18 @@ class ModelService:
                 logger.info(f"模型 '{model_name}' 更新成功 (user: {user_id})")
                 return True
             else:
-                logger.warning(f"更新模型失败 (user: {user_id}): {result.get('message')}")
+                logger.warning(
+                    f"更新模型失败 (user: {user_id}): {result.get('message')}"
+                )
                 return False
 
         except Exception as e:
             logger.error(f"更新模型 '{model_name}' 时出错 (user: {user_id}): {str(e)}")
             return False
 
-    async def delete_model(self, model_name: str, user_id: str = "default_user") -> bool:
+    async def delete_model(
+        self, model_name: str, user_id: str = "default_user"
+    ) -> bool:
         """删除模型配置
 
         Args:
@@ -187,7 +323,9 @@ class ModelService:
             bool: 是否成功
         """
         try:
-            result = await self.model_config_repository.delete_model(model_name, user_id)
+            result = await self.model_config_repository.delete_model(
+                model_name, user_id
+            )
 
             if result.get("success"):
                 client_key = f"{user_id}:{model_name}"
@@ -196,7 +334,9 @@ class ModelService:
                 logger.info(f"模型 '{model_name}' 删除成功 (user: {user_id})")
                 return True
             else:
-                logger.warning(f"删除模型失败 (user: {user_id}): {result.get('message')}")
+                logger.warning(
+                    f"删除模型失败 (user: {user_id}): {result.get('message')}"
+                )
                 return False
 
         except Exception as e:
@@ -205,23 +345,29 @@ class ModelService:
 
     # ========== 参数处理方法 ==========
 
-    def prepare_api_params(self, base_params: Dict[str, Any], model_config: Dict[str, Any]) -> tuple[Dict[str, Any], Dict[str, Any]]:
+    def prepare_api_params(
+        self, base_params: Dict[str, Any], model_config: Dict[str, Any]
+    ) -> tuple[Dict[str, Any], Dict[str, Any]]:
         """准备完整的API调用参数"""
         return self.param_builder.prepare_api_params(base_params, model_config)
 
     @staticmethod
-    def filter_reasoning_content(messages: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    def filter_reasoning_content(
+        messages: List[Dict[str, Any]],
+    ) -> List[Dict[str, Any]]:
         """过滤消息中的reasoning_content字段"""
         return ResponseParser.filter_reasoning_content(messages)
 
     # ========== SSE流式调用方法 ==========
 
-    async def stream_chat_with_tools(self,
-                                     model_name: str,
-                                     messages: List[Dict[str, Any]],
-                                     tools: Optional[List[Dict[str, Any]]] = None,
-                                     yield_chunks: bool = True,
-                                     user_id: str = "default_user") -> AsyncGenerator[str | Dict[str, Any], None]:
+    async def stream_chat_with_tools(
+        self,
+        model_name: str,
+        messages: List[Dict[str, Any]],
+        tools: Optional[List[Dict[str, Any]]] = None,
+        yield_chunks: bool = True,
+        user_id: str = "default_user",
+    ) -> AsyncGenerator[str | Dict[str, Any], None]:
         """SSE流式调用模型（用于chat/graph/mcp的流式场景）
 
         Args:
@@ -254,7 +400,9 @@ class ModelService:
             await self._initialize_clients(user_id)
             client = self.clients.get(client_key)
             if not client:
-                raise ValueError(f"模型 '{model_name}' 未配置或初始化失败 (user: {user_id})")
+                raise ValueError(
+                    f"模型 '{model_name}' 未配置或初始化失败 (user: {user_id})"
+                )
 
         model_config = await self.get_model(model_name, user_id)
         if not model_config:
@@ -266,14 +414,16 @@ class ModelService:
                 "model": model_config["model"],
                 "messages": messages,
                 "stream": True,
-                "stream_options": {"include_usage": True}
+                "stream_options": {"include_usage": True},
             }
 
             if tools:
                 base_params["tools"] = tools
 
             # 使用参数构建器准备参数
-            params, extra_kwargs = self.param_builder.prepare_api_params(base_params, model_config)
+            params, extra_kwargs = self.param_builder.prepare_api_params(
+                base_params, model_config
+            )
 
             # 调用模型获取流
             stream = await client.chat.completions.create(**params, **extra_kwargs)
@@ -288,11 +438,13 @@ class ModelService:
 
     # ========== 非SSE调用方法 ==========
 
-    async def call_model(self,
-                        model_name: str,
-                        messages: List[Dict[str, Any]],
-                        tools: List[Dict[str, Any]] = None,
-                        user_id: str = "default_user") -> Dict[str, Any]:
+    async def call_model(
+        self,
+        model_name: str,
+        messages: List[Dict[str, Any]],
+        tools: List[Dict[str, Any]] = None,
+        user_id: str = "default_user",
+    ) -> Dict[str, Any]:
         """调用模型API（非SSE场景，用于生成标题、压缩对话等静态调用）
 
         注意：此方法不支持工具调用，tools参数保留仅为兼容性考虑。
@@ -317,32 +469,41 @@ class ModelService:
             await self._initialize_clients(user_id)
             client = self.clients.get(client_key)
             if not client:
-                return {"status": "error", "error": f"模型 '{model_name}' 未配置或初始化失败 (user: {user_id})"}
+                return {
+                    "status": "error",
+                    "error": f"模型 '{model_name}' 未配置或初始化失败 (user: {user_id})",
+                }
 
         model_config = await self.get_model(model_name, user_id)
         if not model_config:
-            return {"status": "error", "error": f"找不到模型 '{model_name}' 的配置 (user: {user_id})"}
+            return {
+                "status": "error",
+                "error": f"找不到模型 '{model_name}' 的配置 (user: {user_id})",
+            }
 
         try:
             # 准备基本调用参数
-            base_params = {
-                "model": model_config["model"],
-                "messages": messages
-            }
+            base_params = {"model": model_config["model"], "messages": messages}
 
             if tools:
                 base_params["tools"] = tools
 
             # 使用参数构建器准备参数
-            params, extra_kwargs = self.param_builder.prepare_api_params(base_params, model_config)
+            params, extra_kwargs = self.param_builder.prepare_api_params(
+                base_params, model_config
+            )
 
             # 检查是否启用流式返回
-            is_stream = model_config.get('stream', False)
+            is_stream = model_config.get("stream", False)
 
             if is_stream:
-                return await self._handle_stream_response(client, params, **extra_kwargs)
+                return await self._handle_stream_response(
+                    client, params, **extra_kwargs
+                )
             else:
-                response = await client.chat.completions.create(**params, **extra_kwargs)
+                response = await client.chat.completions.create(
+                    **params, **extra_kwargs
+                )
                 return await self._handle_normal_response(response)
 
         except Exception as e:
@@ -355,7 +516,9 @@ class ModelService:
             stream_params = params.copy()
             stream_params["stream"] = True
 
-            stream = await client.chat.completions.create(**stream_params, **extra_kwargs)
+            stream = await client.chat.completions.create(
+                **stream_params, **extra_kwargs
+            )
 
             content_parts = []
 
@@ -369,10 +532,7 @@ class ModelService:
             full_content = "".join(content_parts)
             cleaned_content = self.response_parser.clean_content(full_content)
 
-            return {
-                "status": "success",
-                "content": cleaned_content
-            }
+            return {"status": "success", "content": cleaned_content}
 
         except Exception as e:
             logger.error(f"处理流式响应时出错: {str(e)}")
@@ -384,10 +544,7 @@ class ModelService:
             message_content = response.choices[0].message.content or ""
             cleaned_content = self.response_parser.clean_content(message_content)
 
-            return {
-                "status": "success",
-                "content": cleaned_content
-            }
+            return {"status": "success", "content": cleaned_content}
 
         except Exception as e:
             logger.error(f"处理普通响应时出错: {str(e)}")

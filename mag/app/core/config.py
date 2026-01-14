@@ -57,6 +57,25 @@ class Settings:
     MINIO_SECURE: bool = os.getenv("MINIO_SECURE", "false").lower() == "true"
     MINIO_BUCKET_NAME: str = os.getenv("MINIO_BUCKET_NAME", "mag")
 
+    # Memory Service 配置
+    MEMORY_SERVICE_HOST: str = os.getenv("MEMORY_SERVICE_HOST", "127.0.0.1")
+    MEMORY_SERVICE_PORT: int = int(os.getenv("MEMORY_SERVICE_PORT", "8851"))
+
+    # GPUStack 平台配置（通过 Cookie 认证拉取 /v2/models）
+    # 支持从主机/端口构建 base_url，兼容 .env 中 GPUSTACK_SERVICE_HOST/PORT
+    GPUSTACK_SERVICE_HOST: str = (
+        os.getenv("GPUSTACK_SERVICE_HOST", "127.0.0.1") or ""
+    ).strip()
+    GPUSTACK_SERVICE_PORT: int = int(
+        (os.getenv("GPUSTACK_SERVICE_PORT", "8899") or "8899").strip()
+    )
+    GPUSTACK_BASE_URL: str = (
+        os.getenv("GPUSTACK_BASE_URL")
+        or f"http://{GPUSTACK_SERVICE_HOST}:{GPUSTACK_SERVICE_PORT}"
+    )
+    GPUSTACK_USERNAME: str = (os.getenv("GPUSTACK_USERNAME", "") or "").strip()
+    GPUSTACK_PASSWORD: str = (os.getenv("GPUSTACK_PASSWORD", "") or "").strip()
+
     # 根据操作系统确定配置目录
     @property
     def MAG_DIR(self) -> Path:

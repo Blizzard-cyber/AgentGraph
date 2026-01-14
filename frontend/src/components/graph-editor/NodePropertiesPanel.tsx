@@ -379,7 +379,7 @@ const NodePropertiesPanel: React.FC = () => {
                             form.validateFields(['agent_name']);
                           }}
                         >
-                          {models.map(model => (
+                          {models.filter(m => m.status === 'ready').map(model => (
                             <Option key={model.name} value={model.name}>{model.name}</Option>
                           ))}
                         </Select>
