@@ -430,12 +430,6 @@ const ModelManager: React.FC = () => {
                           border: '1px solid rgba(239, 68, 68, 0.2)',
                           text: t('pages.modelManager.statusError') || 'error'
                         },
-                        not_found: {
-                          color: '#9333ea',
-                          bg: 'rgba(147, 51, 234, 0.08)',
-                          border: '1px solid rgba(147, 51, 234, 0.2)',
-                          text: t('pages.modelManager.statusNotFound') || 'not found'
-                        },
                         disabled: {
                           color: '#6b7280',
                           bg: 'rgba(107, 114, 128, 0.08)',

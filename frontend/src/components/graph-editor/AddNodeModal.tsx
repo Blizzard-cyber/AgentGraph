@@ -1,6 +1,6 @@
 // src/components/graph-editor/AddNodeModal.tsx
 import React, { useState } from 'react';
-import { Modal, Form, Input, Select, Radio, InputNumber, Button, Row, Col, Tag } from 'antd';
+import { Modal, Form, Input, Select, Radio, InputNumber, Button, Row, Col} from 'antd';
 import { Plus } from 'lucide-react';
 import { useModelStore } from '../../store/modelStore';
 import { useMCPStore } from '../../store/mcpStore';
