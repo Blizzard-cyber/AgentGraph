@@ -3,10 +3,11 @@ import React from 'react';
 import { Dropdown, App, message } from 'antd';
 import type { MenuProps } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, Settings, Languages, Shield } from 'lucide-react';
+import { LogOut, Settings, Languages, Shield, Database, Network } from 'lucide-react';
 import { useT } from '../../i18n/hooks';
 import { useI18n } from '../../i18n';
 import { getCurrentUserDisplayName, getCurrentUserRole } from '../../config/user';
+import { getExternalServices } from '../../config/externalServices';
 import { logout as logoutAPI } from '../../services/authService';
 import { removeToken } from '../../utils/auth';
 import { setUserLanguage } from '../../services/userSettingsService';
@@ -36,6 +37,7 @@ const UserMenu: React.FC<UserMenuProps> = ({
   const { modal } = App.useApp();
   const currentUserDisplayName = getCurrentUserDisplayName();
   const currentUserRole = getCurrentUserRole();
+  const externalServices = getExternalServices();
 
   const handleLogout = () => {
     modal.confirm({
@@ -157,6 +159,30 @@ const UserMenu: React.FC<UserMenuProps> = ({
         icon: <Shield size={16} strokeWidth={1.5} />,
         label: t('pages.workspace.adminPanel'),
         onClick: () => navigate('/admin'),
+      },
+      {
+        type: 'divider' as const,
+      },
+      {
+        key: 'model-management',
+        icon: <Database size={16} strokeWidth={1.5} />,
+        label: t('pages.workspace.modelManagement'),
+        onClick: () => {
+          // 从环境变量读取配置
+          window.location.href = externalServices.gpuStack.url;
+        },
+      },
+      {
+        type: 'divider' as const,
+      },
+      {
+        key: 'gateway-settings',
+        icon: <Network size={16} strokeWidth={1.5} />,
+        label: t('pages.workspace.gatewaySettings'),
+        onClick: () => {
+          // 从环境变量读取配置
+          window.location.href = externalServices.higressConsole.url;
+        },
       }
     ] : []),
     {
