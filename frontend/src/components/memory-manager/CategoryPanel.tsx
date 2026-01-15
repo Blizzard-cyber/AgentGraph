@@ -5,7 +5,7 @@ import type { CollapseProps } from 'antd';
 import { ChevronDown, Trash2 } from 'lucide-react';
 import { MemoryItem } from '../../types/memory';
 import MemoryItemCard from './MemoryItemCard';
-import { useT } from '../../i18n/hooks';
+import { useT } from '../../i18n';
 
 const { Text } = Typography;
 
@@ -22,6 +22,9 @@ interface CategoryPanelProps {
   pageSize?: number;
   total?: number;
   onPageChange?: (page: number) => void;
+  // controlled expand state
+  expanded?: boolean;
+  onExpandedChange?: (expanded: boolean) => void;
 }
 
 const CategoryPanel: React.FC<CategoryPanelProps> = ({
@@ -34,6 +37,8 @@ const CategoryPanel: React.FC<CategoryPanelProps> = ({
   pageSize = 20,
   total = 0,
   onPageChange,
+  expanded,
+  onExpandedChange,
 }) => {
   const t = useT();
   const { modal } = App.useApp();
@@ -41,55 +46,58 @@ const CategoryPanel: React.FC<CategoryPanelProps> = ({
 
 
   const handleEditItem = (item: MemoryItem) => {
-    modal.confirm({
-      title: t('pages.memoryManager.editMemory'),
-      content: (
-        <textarea
-          id={`edit-memory-content-${category}`}
-          defaultValue={item.content}
-          placeholder={t('pages.memoryManager.memoryContent')}
-          aria-label={t('pages.memoryManager.memoryContent')}
-          style={{
-            width: '100%',
-            minHeight: '120px',
-            padding: '10px 14px',
+    // Use setTimeout to defer modal creation to avoid interfering with parent UI events (e.g., Tabs editing state)
+    setTimeout(() => {
+      modal.confirm({
+        title: t('pages.memoryManager.editMemory'),
+        content: (
+          <textarea
+            id={`edit-memory-content-${category}`}
+            defaultValue={item.content}
+            placeholder={t('pages.memoryManager.memoryContent')}
+            aria-label={t('pages.memoryManager.memoryContent')}
+            style={{
+              width: '100%',
+              minHeight: '120px',
+              padding: '10px 14px',
+              borderRadius: '6px',
+              border: '1px solid rgba(139, 115, 85, 0.2)',
+              background: 'rgba(255, 255, 255, 0.85)',
+              fontSize: '14px',
+              color: '#2d2d2d',
+              resize: 'vertical',
+            }}
+          />
+        ),
+        okText: t('common.save'),
+        cancelText: t('common.cancel'),
+        okButtonProps: {
+          style: {
+            background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+            border: 'none',
+            borderRadius: '6px',
+            color: '#fff',
+            fontWeight: 500,
+            boxShadow: '0 2px 6px rgba(184, 88, 69, 0.25)'
+          }
+        },
+        cancelButtonProps: {
+          style: {
             borderRadius: '6px',
             border: '1px solid rgba(139, 115, 85, 0.2)',
-            background: 'rgba(255, 255, 255, 0.85)',
-            fontSize: '14px',
-            color: '#2d2d2d',
-            resize: 'vertical',
-          }}
-        />
-      ),
-      okText: t('common.save'),
-      cancelText: t('common.cancel'),
-      okButtonProps: {
-        style: {
-          background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
-          border: 'none',
-          borderRadius: '6px',
-          color: '#fff',
-          fontWeight: 500,
-          boxShadow: '0 2px 6px rgba(184, 88, 69, 0.25)'
-        }
-      },
-      cancelButtonProps: {
-        style: {
-          borderRadius: '6px',
-          border: '1px solid rgba(139, 115, 85, 0.2)',
-          color: '#8b7355',
-          fontWeight: 500
-        }
-      },
-      onOk: () => {
-        const textarea = document.getElementById(`edit-memory-content-${category}`) as HTMLTextAreaElement;
-        const newContent = textarea?.value?.trim();
-        if (newContent && newContent !== item.content) {
-          onUpdate(item.item_id, newContent);
-        }
-      },
-    });
+            color: '#8b7355',
+            fontWeight: 500
+          }
+        },
+        onOk: () => {
+          const textarea = document.getElementById(`edit-memory-content-${category}`) as HTMLTextAreaElement;
+          const newContent = textarea?.value?.trim();
+          if (newContent && newContent !== item.content) {
+            onUpdate(item.item_id, newContent);
+          }
+        },
+      });
+    }, 0);
   };
 
   const panelHeader = (
@@ -116,9 +124,9 @@ const CategoryPanel: React.FC<CategoryPanelProps> = ({
       </Space>
       <Popconfirm
         title={t('pages.memoryManager.deleteCategoryConfirm')}
-        onConfirm={(e) => {
-          e?.stopPropagation();
-          onDeleteCategory();
+        onConfirm={() => {
+          // defer actual deletion call to avoid interfering with outer UI drag/edit operations
+          setTimeout(() => onDeleteCategory(), 0);
         }}
         okText={t('common.confirm')}
         cancelText={t('common.cancel')}
@@ -140,10 +148,7 @@ const CategoryPanel: React.FC<CategoryPanelProps> = ({
             fontWeight: 500
           }
         }}
-        overlayStyle={{
-          borderRadius: '8px',
-          boxShadow: '0 4px 12px rgba(139, 115, 85, 0.2)'
-        }}
+        styles={{ body: { borderRadius: '8px', boxShadow: '0 4px 12px rgba(139, 115, 85, 0.2)' } }}
       >
         <div
           role="button"
@@ -186,14 +191,20 @@ const CategoryPanel: React.FC<CategoryPanelProps> = ({
       label: panelHeader,
       children: (
         <div style={{ padding: '8px 0' }}>
-          {items.map((item) => (
-            <MemoryItemCard
-              key={item.item_id}
-              item={item}
-              onEdit={() => handleEditItem(item)}
-              onDelete={() => onDelete([item.item_id])}
-            />
-          ))}
+          {items.length > 0 ? (
+            items.map((item) => (
+              <MemoryItemCard
+                key={item.item_id}
+                item={item}
+                onEdit={() => handleEditItem(item)}
+                onDelete={() => onDelete([item.item_id])}
+              />
+            ))
+          ) : (
+            <Text type="secondary" style={{ display: 'block', textAlign: 'center', marginTop: 12 }}>
+              {t('pages.memoryManager.noItems')}
+            </Text>
+          )}
 
           {/* per-category pagination */}
           {total > pageSize && onPageChange && (
@@ -218,6 +229,11 @@ const CategoryPanel: React.FC<CategoryPanelProps> = ({
   return (
     <Collapse
       items={collapseItems}
+      activeKey={expanded ? category : undefined}
+      onChange={(keys) => {
+        const isActive = Array.isArray(keys) ? keys.includes(category) : keys === category;
+        onExpandedChange?.(isActive);
+      }}
       expandIcon={({ isActive }) => (
         <ChevronDown
           size={18}

@@ -636,7 +636,8 @@
       "importHint": "Supports multiple formats: plain text, Markdown, JSON, YAML, etc. AI will intelligently extract and categorize key information",
       "importSuccess": "Import successful",
       "importFailed": "Failed to import: {{error}}",
-      "importError": "Failed to import"
+      "importError": "Failed to import",
+      "noItems": "No items in this category yet"
     },
     "fileManager": {
       "title": "File Manager",

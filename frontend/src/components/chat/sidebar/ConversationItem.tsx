@@ -15,6 +15,7 @@ import { ConversationSummary } from '../../../types/conversation';
 import { useConversationStore } from '../../../store/conversationStore';
 import { useT } from '../../../i18n/hooks';
 import { useI18n } from '../../../i18n/I18nContext';
+import type { MenuInfo } from 'rc-menu/lib/interface';
 
 const { TextArea } = Input;
 
@@ -122,8 +123,9 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
             key: 'restore',
             icon: <Check size={14} strokeWidth={1.5} />,
             label: t('components.conversationItem.restoreToNormal'),
-            onClick: (e: any) => {
-              e.domEvent?.stopPropagation();
+            onClick: (e: MenuInfo) => {
+              // rc-menu MenuInfo contains domEvent; call stopPropagation if available
+              ((e.domEvent as unknown) as { stopPropagation?: () => void }).stopPropagation?.();
               handleRestore();
             },
           } as const,
@@ -139,8 +141,8 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
         />
       ),
       label: conversation.status === 'favorite' ? t('components.conversationItem.unfavorite') : t('components.conversationItem.favorite'),
-      onClick: (e: any) => {
-        e.domEvent?.stopPropagation();
+      onClick: (e: MenuInfo) => {
+        ((e.domEvent as unknown) as { stopPropagation?: () => void }).stopPropagation?.();
         handleStatusToggle();
       },
     },
@@ -148,8 +150,8 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
       key: 'edit',
       icon: <Edit size={14} strokeWidth={1.5} />,
       label: t('components.conversationItem.editTitle'),
-      onClick: (e: any) => {
-        e.domEvent?.stopPropagation();
+      onClick: (e: MenuInfo) => {
+        ((e.domEvent as unknown) as { stopPropagation?: () => void }).stopPropagation?.();
         setEditModalVisible(true);
       },
     },
@@ -157,8 +159,8 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
       key: 'tags',
       icon: <TagIcon size={14} strokeWidth={1.5} />,
       label: t('components.conversationItem.editTags'),
-      onClick: (e: any) => {
-        e.domEvent?.stopPropagation();
+      onClick: (e: MenuInfo) => {
+        ((e.domEvent as unknown) as { stopPropagation?: () => void }).stopPropagation?.();
         setTagsModalVisible(true);
       },
     },
@@ -166,8 +168,8 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
       key: 'delete',
       icon: <Trash2 size={14} strokeWidth={1.5} />,
       label: conversation.status === 'deleted' ? t('components.conversationItem.permanentDelete') : t('common.delete'),
-      onClick: (e: any) => {
-        e.domEvent?.stopPropagation();
+      onClick: (e: MenuInfo) => {
+        ((e.domEvent as unknown) as { stopPropagation?: () => void }).stopPropagation?.();
         handleDelete();
       },
       danger: true,
@@ -325,17 +327,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
       <Tooltip
         title={hoverContent}
         placement="right"
-        overlayStyle={{
-          maxWidth: '300px',
-        }}
-        overlayInnerStyle={{
-          background: '#ffffff',
-          color: '#2d2d2d',
-          border: '1px solid rgba(139, 115, 85, 0.12)',
-          boxShadow: '0 4px 12px rgba(139, 115, 85, 0.1)',
-          borderRadius: '6px',
-          padding: '0',
-        }}
+        styles={{ body: { maxWidth: '300px', background: '#ffffff', color: '#2d2d2d', border: '1px solid rgba(139, 115, 85, 0.12)', boxShadow: '0 4px 12px rgba(139, 115, 85, 0.1)', borderRadius: '6px', padding: '0' } }}
       >
         <div
           style={itemStyle}

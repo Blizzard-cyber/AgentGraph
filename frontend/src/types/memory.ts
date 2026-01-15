@@ -52,8 +52,15 @@ export interface ImportMemoryRequest {
 export interface MemoryResponse {
   status: 'success' | 'error';
   message?: string;
-  data?: any;
+  data?: never;
   error_code?: string;
+}
+
+export interface MemoryResponseV1 {
+  success: boolean;
+  code?: string;
+  message?: string;
+  data?: never;
 }
 
 export interface GetMemoriesMetadataResponse {
