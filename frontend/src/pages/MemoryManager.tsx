@@ -86,15 +86,15 @@ const MemoryManager: React.FC = () => {
   const totalItems = memories.reduce((sum, m) => sum + m.total_items, 0);
 
   return (
-    <Layout style={{ height: '100vh', background: '#faf8f5', display: 'flex', flexDirection: 'column' }}>
+    <Layout style={{ height: '100vh', background: '#ffffff', display: 'flex', flexDirection: 'column' }}>
       {/* Header 顶栏 */}
       <Header
         style={{
-          background: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(245, 243, 240, 0.6))',
+          background: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(230, 244, 255, 0.6))',
           backdropFilter: 'blur(20px)',
           padding: '0 48px',
           borderBottom: 'none',
-          boxShadow: '0 2px 8px rgba(139, 115, 85, 0.08)',
+          boxShadow: '0 2px 8px rgba(24, 144, 255, 0.08)',
           position: 'relative',
         }}
       >
@@ -106,14 +106,14 @@ const MemoryManager: React.FC = () => {
             left: '20%',
             right: '20%',
             height: '1px',
-            background: 'linear-gradient(to right, transparent, rgba(139, 115, 85, 0.3) 50%, transparent)',
+            background: 'linear-gradient(to right, transparent, rgba(24, 144, 255, 0.3) 50%, transparent)',
           }}
         />
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '100%' }}>
           {/* 左侧：图标 + 标题 + 统计标签 */}
           <Space size="large">
-            <Database size={28} color="#b85845" strokeWidth={1.5} />
+            <Database size={28} color="#1890ff" strokeWidth={1.5} />
             <Title
               level={4}
               style={{
@@ -128,9 +128,9 @@ const MemoryManager: React.FC = () => {
             </Title>
             <Tag
               style={{
-                background: 'rgba(184, 88, 69, 0.08)',
-                color: '#b85845',
-                border: '1px solid rgba(184, 88, 69, 0.25)',
+                background: 'rgba(24, 144, 255, 0.08)',
+                color: '#1890ff',
+                border: '1px solid rgba(24, 144, 255, 0.25)',
                 borderRadius: '6px',
                 fontWeight: 500,
                 padding: '4px 12px',
@@ -141,9 +141,9 @@ const MemoryManager: React.FC = () => {
             </Tag>
             <Tag
               style={{
-                background: 'rgba(139, 115, 85, 0.08)',
-                color: '#8b7355',
-                border: '1px solid rgba(139, 115, 85, 0.25)',
+                background: 'rgba(24, 144, 255, 0.08)',
+                color: 'rgba(0, 0, 0, 0.65)',
+                border: '1px solid rgba(24, 144, 255, 0.25)',
                 borderRadius: '6px',
                 fontWeight: 500,
                 padding: '4px 12px',
@@ -157,7 +157,7 @@ const MemoryManager: React.FC = () => {
           {/* 右侧：搜索框 */}
           <Input
             placeholder={t('pages.memoryManager.searchPlaceholder')}
-            prefix={<Search size={16} strokeWidth={1.5} style={{ color: '#8b7355' }} />}
+            prefix={<Search size={16} strokeWidth={1.5} style={{ color: 'rgba(0, 0, 0, 0.65)' }} />}
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
             allowClear
@@ -165,9 +165,9 @@ const MemoryManager: React.FC = () => {
               width: 320,
               height: '40px',
               borderRadius: '8px',
-              border: '1px solid rgba(139, 115, 85, 0.2)',
+              border: '1px solid rgba(24, 144, 255, 0.2)',
               background: 'rgba(255, 255, 255, 0.85)',
-              boxShadow: '0 1px 3px rgba(139, 115, 85, 0.08)',
+              boxShadow: '0 1px 3px rgba(24, 144, 255, 0.08)',
             }}
           />
         </div>
@@ -185,12 +185,12 @@ const MemoryManager: React.FC = () => {
               textAlign: 'center',
               padding: '60px 20px',
               borderRadius: '8px',
-              border: '1px solid rgba(139, 115, 85, 0.15)',
+              border: '1px solid rgba(24, 144, 255, 0.15)',
               background: 'rgba(255, 255, 255, 0.85)',
-              boxShadow: '0 2px 8px rgba(139, 115, 85, 0.08)',
+              boxShadow: '0 2px 8px rgba(24, 144, 255, 0.08)',
             }}
           >
-            <Database size={48} color="#8b7355" strokeWidth={1.5} style={{ marginBottom: '16px' }} />
+            <Database size={48} color="rgba(0, 0, 0, 0.65)" strokeWidth={1.5} style={{ marginBottom: '16px' }} />
             <Text style={{ fontSize: '16px', color: 'rgba(45, 45, 45, 0.65)', display: 'block' }}>
               {searchText ? t('pages.memoryManager.noMatchingMemories') : t('pages.memoryManager.noMemories')}
             </Text>

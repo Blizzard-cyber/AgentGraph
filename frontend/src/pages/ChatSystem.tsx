@@ -93,6 +93,9 @@ const ChatSystem: React.FC = () => {
     steps: chatTourSteps,
     onComplete: () => {
       localStorage.setItem('chat-tour-completed', 'true');
+    },
+    onSkip: () => {
+      localStorage.setItem('chat-tour-completed', 'true');
     }
   });
 
@@ -106,7 +109,8 @@ const ChatSystem: React.FC = () => {
       }, 1000);
       return () => clearTimeout(timer);
     }
-  }, [startTour]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // 只在组件挂载时执行一次
 
   // 处理URL参数变化 - 简化逻辑，避免破坏现有状态管理
   useEffect(() => {
@@ -653,9 +657,9 @@ const ChatSystem: React.FC = () => {
               {/* 对话头部 */}
               <div style={{
                 padding: '20px 32px',
-                background: 'linear-gradient(to bottom, rgba(250, 248, 245, 0.95), rgba(245, 243, 240, 0.9))',
-                borderBottom: '1px solid rgba(139, 115, 85, 0.15)',
-                boxShadow: '0 2px 8px rgba(139, 115, 85, 0.06), inset 0 -1px 0 rgba(255, 255, 255, 0.6)',
+                background: 'linear-gradient(to bottom, rgba(230, 244, 255, 0.95), rgba(230, 244, 255, 0.9))',
+                borderBottom: '1px solid rgba(24, 144, 255, 0.15)',
+                boxShadow: '0 2px 8px rgba(24, 144, 255, 0.06), inset 0 -1px 0 rgba(255, 255, 255, 0.6)',
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
@@ -668,7 +672,7 @@ const ChatSystem: React.FC = () => {
                   left: '15%',
                   right: '15%',
                   height: '1px',
-                  background: 'linear-gradient(to right, transparent, rgba(139, 115, 85, 0.2) 50%, transparent)'
+                  background: 'linear-gradient(to right, transparent, rgba(24, 144, 255, 0.2) 50%, transparent)'
                 }} />
 
                 <div style={{
@@ -692,7 +696,7 @@ const ChatSystem: React.FC = () => {
                       fontWeight: 'normal'
                     }}>
                       {' - '}
-                      <span style={{ color: '#a0826d' }}>
+                      <span style={{ color: '#40a9ff' }}>
                         {selectedGraphName}
                       </span>
                     </span>
@@ -708,8 +712,8 @@ const ChatSystem: React.FC = () => {
                         size="small"
                         onClick={() => setDocumentsDrawerVisible(true)}
                         style={{
-                          color: '#8b7355',
-                          border: '1px solid rgba(139, 115, 85, 0.2)',
+                          color: 'rgba(0, 0, 0, 0.65)',
+                          border: '1px solid rgba(24, 144, 255, 0.2)',
                           borderRadius: '6px',
                           background: 'rgba(255, 255, 255, 0.6)',
                           padding: '4px 12px',
@@ -718,13 +722,13 @@ const ChatSystem: React.FC = () => {
                           transition: 'all 0.2s ease'
                         }}
                         onMouseEnter={(e) => {
-                          e.currentTarget.style.color = '#a0826d';
-                          e.currentTarget.style.borderColor = 'rgba(160, 130, 109, 0.3)';
-                          e.currentTarget.style.background = 'rgba(160, 130, 109, 0.05)';
+                          e.currentTarget.style.color = '#40a9ff';
+                          e.currentTarget.style.borderColor = 'rgba(64, 169, 255, 0.3)';
+                          e.currentTarget.style.background = 'rgba(64, 169, 255, 0.05)';
                         }}
                         onMouseLeave={(e) => {
-                          e.currentTarget.style.color = '#8b7355';
-                          e.currentTarget.style.borderColor = 'rgba(139, 115, 85, 0.2)';
+                          e.currentTarget.style.color = 'rgba(0, 0, 0, 0.65)';
+                          e.currentTarget.style.borderColor = 'rgba(24, 144, 255, 0.2)';
                           e.currentTarget.style.background = 'rgba(255, 255, 255, 0.6)';
                         }}
                       >
@@ -779,8 +783,8 @@ const ChatSystem: React.FC = () => {
                             loading={isCurrentConversationCompacting}
                             disabled={isCurrentConversationCompacting}
                             style={{
-                              color: isCurrentConversationCompacting ? 'rgba(45, 45, 45, 0.45)' : '#8b7355',
-                              border: '1px solid rgba(139, 115, 85, 0.2)',
+                              color: isCurrentConversationCompacting ? 'rgba(45, 45, 45, 0.45)' : 'rgba(0, 0, 0, 0.65)',
+                              border: '1px solid rgba(24, 144, 255, 0.2)',
                               borderRadius: '6px',
                               background: 'rgba(255, 255, 255, 0.6)',
                               padding: '4px 12px',
@@ -790,15 +794,15 @@ const ChatSystem: React.FC = () => {
                             }}
                             onMouseEnter={(e) => {
                               if (!isCurrentConversationCompacting) {
-                                e.currentTarget.style.color = '#b85845';
-                                e.currentTarget.style.borderColor = 'rgba(184, 88, 69, 0.3)';
-                                e.currentTarget.style.background = 'rgba(184, 88, 69, 0.05)';
+                                e.currentTarget.style.color = '#1890ff';
+                                e.currentTarget.style.borderColor = 'rgba(24, 144, 255, 0.3)';
+                                e.currentTarget.style.background = 'rgba(24, 144, 255, 0.05)';
                               }
                             }}
                             onMouseLeave={(e) => {
                               if (!isCurrentConversationCompacting) {
-                                e.currentTarget.style.color = '#8b7355';
-                                e.currentTarget.style.borderColor = 'rgba(139, 115, 85, 0.2)';
+                                e.currentTarget.style.color = 'rgba(0, 0, 0, 0.65)';
+                                e.currentTarget.style.borderColor = 'rgba(24, 144, 255, 0.2)';
                                 e.currentTarget.style.background = 'rgba(255, 255, 255, 0.6)';
                               }
                             }}

@@ -43,7 +43,7 @@ const InviteCodesTable: React.FC<InviteCodesTableProps> = ({
             ...props.style
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = 'rgba(250, 248, 245, 0.5)';
+            e.currentTarget.style.background = 'rgba(230, 244, 255, 0.5)';
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.background = 'transparent';
@@ -62,13 +62,13 @@ const InviteCodesTable: React.FC<InviteCodesTableProps> = ({
       render: (code: string) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <code style={{
-            background: 'rgba(139, 115, 85, 0.08)',
+            background: 'rgba(24, 144, 255, 0.08)',
             color: COLORS.primary,
             padding: '6px 12px',
             borderRadius: '6px',
             fontSize: '13px',
             fontWeight: 500,
-            border: '1px solid rgba(139, 115, 85, 0.2)',
+            border: '1px solid rgba(24, 144, 255, 0.2)',
             fontFamily: 'monospace'
           }}>
             {code}
@@ -84,7 +84,7 @@ const InviteCodesTable: React.FC<InviteCodesTableProps> = ({
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.color = COLORS.primary;
-              e.currentTarget.style.background = 'rgba(184, 88, 69, 0.08)';
+              e.currentTarget.style.background = 'rgba(24, 144, 255, 0.08)';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.color = COLORS.tertiary;
@@ -177,7 +177,7 @@ const InviteCodesTable: React.FC<InviteCodesTableProps> = ({
     <div style={{
       background: COLORS.whiteAlpha85,
       borderRadius: '8px',
-      border: '1px solid rgba(139, 115, 85, 0.15)',
+      border: '1px solid rgba(24, 144, 255, 0.15)',
       boxShadow: SHADOWS.card,
       overflow: 'hidden',
       height: '750px',
@@ -200,8 +200,8 @@ const InviteCodesTable: React.FC<InviteCodesTableProps> = ({
       {/* 自定义底部：分页 + 创建按钮 */}
       <div style={{
         padding: '16px',
-        background: 'rgba(250, 248, 245, 0.5)',
-        borderTop: '1px solid rgba(139, 115, 85, 0.1)',
+        background: 'rgba(230, 244, 255, 0.5)',
+        borderTop: '1px solid rgba(24, 144, 255, 0.1)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',

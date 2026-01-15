@@ -194,14 +194,14 @@ const ExportManager: React.FC = () => {
   }, [conversations, selectedIds, filteredConversations, datasets]);
 
   return (
-    <Layout style={{ minHeight: '100vh', background: '#faf8f5' }}>
+    <Layout style={{ minHeight: '100vh', background: '#ffffff' }}>
       {/* Header 顶栏 */}
       <Header style={{
-        background: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(245, 243, 240, 0.6))',
+        background: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(230, 244, 255, 0.6))',
         backdropFilter: 'blur(20px)',
         padding: '0 48px',
         borderBottom: 'none',
-        boxShadow: '0 2px 8px rgba(139, 115, 85, 0.08)',
+        boxShadow: '0 2px 8px rgba(24, 144, 255, 0.08)',
         position: 'relative'
       }}>
         {/* 装饰性底部渐变线 */}
@@ -211,13 +211,13 @@ const ExportManager: React.FC = () => {
           left: '20%',
           right: '20%',
           height: '1px',
-          background: 'linear-gradient(to right, transparent, rgba(139, 115, 85, 0.3) 50%, transparent)'
+          background: 'linear-gradient(to right, transparent, rgba(24, 144, 255, 0.3) 50%, transparent)'
         }} />
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '100%' }}>
           {/* 左侧：图标 + 标题 + 统计标签 */}
           <Space size="large">
-            <Database size={28} color="#b85845" strokeWidth={1.5} />
+            <Database size={28} color="#1890ff" strokeWidth={1.5} />
             <Title level={4} style={{
               margin: 0,
               color: '#2d2d2d',
@@ -228,9 +228,9 @@ const ExportManager: React.FC = () => {
               {t('pages.exportManager.title')}
             </Title>
             <Tag style={{
-              background: 'rgba(184, 88, 69, 0.08)',
-              color: '#b85845',
-              border: '1px solid rgba(184, 88, 69, 0.25)',
+              background: 'rgba(24, 144, 255, 0.08)',
+              color: '#1890ff',
+              border: '1px solid rgba(24, 144, 255, 0.25)',
               borderRadius: '6px',
               fontWeight: 500,
               padding: '4px 12px',
@@ -239,9 +239,9 @@ const ExportManager: React.FC = () => {
               {t('pages.exportManager.totalConversations', { count: stats.total })}
             </Tag>
             <Tag style={{
-              background: 'rgba(139, 115, 85, 0.08)',
-              color: '#8b7355',
-              border: '1px solid rgba(139, 115, 85, 0.25)',
+              background: 'rgba(24, 144, 255, 0.08)',
+              color: 'rgba(0, 0, 0, 0.65)',
+              border: '1px solid rgba(24, 144, 255, 0.25)',
               borderRadius: '6px',
               fontWeight: 500,
               padding: '4px 12px',
@@ -257,16 +257,16 @@ const ExportManager: React.FC = () => {
             style={{
               padding: '4px',
               borderRadius: '4px',
-              color: '#8b7355',
+              color: 'rgba(0, 0, 0, 0.65)',
               cursor: 'pointer',
               transition: 'all 0.2s ease'
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.color = '#b85845';
-              e.currentTarget.style.background = 'rgba(184, 88, 69, 0.08)';
+              e.currentTarget.style.color = '#1890ff';
+              e.currentTarget.style.background = 'rgba(24, 144, 255, 0.08)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.color = '#8b7355';
+              e.currentTarget.style.color = 'rgba(0, 0, 0, 0.65)';
               e.currentTarget.style.background = 'transparent';
             }}
           >
@@ -279,9 +279,9 @@ const ExportManager: React.FC = () => {
       <Content style={{ padding: '32px 48px', overflow: 'auto' }}>
         <Card style={{
           background: 'rgba(255, 255, 255, 0.85)',
-          border: '1px solid rgba(139, 115, 85, 0.15)',
+          border: '1px solid rgba(24, 144, 255, 0.15)',
           borderRadius: '6px',
-          boxShadow: '0 1px 3px rgba(139, 115, 85, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)'
+          boxShadow: '0 1px 3px rgba(24, 144, 255, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)'
         }}>
         <Tabs
           activeKey={activeTab}
@@ -306,7 +306,7 @@ const ExportManager: React.FC = () => {
                           type="text"
                           onClick={loadConversations}
                           style={{
-                            color: '#8b7355',
+                            color: 'rgba(0, 0, 0, 0.65)',
                             padding: '4px 8px',
                             height: 'auto',
                             display: 'flex',
@@ -319,9 +319,9 @@ const ExportManager: React.FC = () => {
                       }
                       style={{
                         background: 'rgba(255, 255, 255, 0.85)',
-                        border: '1px solid rgba(139, 115, 85, 0.15)',
+                        border: '1px solid rgba(24, 144, 255, 0.15)',
                         borderRadius: '6px',
-                        boxShadow: '0 1px 3px rgba(139, 115, 85, 0.06)'
+                        boxShadow: '0 1px 3px rgba(24, 144, 255, 0.06)'
                       }}
                     >
                       <Space direction="vertical" style={{ width: '100%' }} size="middle">
@@ -330,13 +330,13 @@ const ExportManager: React.FC = () => {
                           value={searchQuery}
                           onChange={(e) => setSearchQuery(e.target.value)}
                           allowClear
-                          prefix={<Search size={16} strokeWidth={1.5} style={{ color: '#8b7355' }} />}
+                          prefix={<Search size={16} strokeWidth={1.5} style={{ color: 'rgba(0, 0, 0, 0.65)' }} />}
                           style={{
                             height: '40px',
                             borderRadius: '6px',
-                            border: '1px solid rgba(139, 115, 85, 0.2)',
+                            border: '1px solid rgba(24, 144, 255, 0.2)',
                             background: 'rgba(255, 255, 255, 0.85)',
-                            boxShadow: '0 1px 3px rgba(139, 115, 85, 0.08)'
+                            boxShadow: '0 1px 3px rgba(24, 144, 255, 0.08)'
                           }}
                         />
                         <RangePicker
@@ -344,7 +344,7 @@ const ExportManager: React.FC = () => {
                             width: '100%',
                             height: '40px',
                             borderRadius: '6px',
-                            border: '1px solid rgba(139, 115, 85, 0.2)',
+                            border: '1px solid rgba(24, 144, 255, 0.2)',
                             background: 'rgba(255, 255, 255, 0.85)'
                           }}
                           onChange={(vals) => {
@@ -375,15 +375,15 @@ const ExportManager: React.FC = () => {
                             { label: t('pages.exportManager.statusDeleted'), value: 'deleted' },
                           ]}
                         />
-                        <Divider style={{ margin: '8px 0', borderColor: 'rgba(139, 115, 85, 0.15)' }} />
+                        <Divider style={{ margin: '8px 0', borderColor: 'rgba(24, 144, 255, 0.15)' }} />
                         <Space>
                           <Button
                             onClick={selectAll}
                             disabled={filteredConversations.length === 0}
                             style={{
                               borderRadius: '6px',
-                              border: '1px solid rgba(139, 115, 85, 0.2)',
-                              color: '#8b7355',
+                              border: '1px solid rgba(24, 144, 255, 0.2)',
+                              color: 'rgba(0, 0, 0, 0.65)',
                               background: 'transparent'
                             }}
                           >
@@ -394,17 +394,17 @@ const ExportManager: React.FC = () => {
                             disabled={selectedIds.size === 0}
                             style={{
                               borderRadius: '6px',
-                              border: '1px solid rgba(139, 115, 85, 0.2)',
-                              color: '#8b7355',
+                              border: '1px solid rgba(24, 144, 255, 0.2)',
+                              color: 'rgba(0, 0, 0, 0.65)',
                               background: 'transparent'
                             }}
                           >
                             {t('pages.exportManager.deselectAll')}
                           </Button>
                           <Tag style={{
-                            background: 'rgba(184, 88, 69, 0.08)',
-                            color: '#b85845',
-                            border: '1px solid rgba(184, 88, 69, 0.25)',
+                            background: 'rgba(24, 144, 255, 0.08)',
+                            color: '#1890ff',
+                            border: '1px solid rgba(24, 144, 255, 0.25)',
                             borderRadius: '6px',
                             fontWeight: 500,
                             padding: '4px 12px'
@@ -427,7 +427,7 @@ const ExportManager: React.FC = () => {
                         </div>
                       ) : filteredConversations.length === 0 ? (
                         <div style={{ textAlign: 'center', padding: 40, color: 'rgba(45, 45, 45, 0.45)' }}>
-                          <FileText size={48} strokeWidth={1.5} style={{ marginBottom: 16, color: 'rgba(139, 115, 85, 0.3)' }} />
+                          <FileText size={48} strokeWidth={1.5} style={{ marginBottom: 16, color: 'rgba(24, 144, 255, 0.3)' }} />
                           <div>{t('pages.exportManager.noConversations')}</div>
                         </div>
                       ) : (
@@ -440,26 +440,26 @@ const ExportManager: React.FC = () => {
                               alignItems: 'flex-start',
                               padding: '12px 14px',
                               marginBottom: '10px',
-                              background: selectedIds.has(conv._id) ? 'rgba(184, 88, 69, 0.08)' : 'rgba(255, 255, 255, 0.85)',
-                              border: selectedIds.has(conv._id) ? '1px solid rgba(184, 88, 69, 0.3)' : '1px solid rgba(139, 115, 85, 0.15)',
+                              background: selectedIds.has(conv._id) ? 'rgba(24, 144, 255, 0.08)' : 'rgba(255, 255, 255, 0.85)',
+                              border: selectedIds.has(conv._id) ? '1px solid rgba(24, 144, 255, 0.3)' : '1px solid rgba(24, 144, 255, 0.15)',
                               borderRadius: '6px',
                               cursor: 'pointer',
                               transition: 'all 0.3s cubic-bezier(0.23, 1, 0.32, 1)',
                               gap: '12px',
-                              boxShadow: '0 1px 3px rgba(139, 115, 85, 0.06)'
+                              boxShadow: '0 1px 3px rgba(24, 144, 255, 0.06)'
                             }}
                             onMouseEnter={(e) => {
                               if (!selectedIds.has(conv._id)) {
                                 e.currentTarget.style.transform = 'translateY(-2px)';
-                                e.currentTarget.style.boxShadow = '0 4px 12px rgba(184, 88, 69, 0.12)';
-                                e.currentTarget.style.borderColor = 'rgba(184, 88, 69, 0.3)';
+                                e.currentTarget.style.boxShadow = '0 4px 12px rgba(24, 144, 255, 0.12)';
+                                e.currentTarget.style.borderColor = 'rgba(24, 144, 255, 0.3)';
                               }
                             }}
                             onMouseLeave={(e) => {
                               if (!selectedIds.has(conv._id)) {
                                 e.currentTarget.style.transform = 'translateY(0)';
-                                e.currentTarget.style.boxShadow = '0 1px 3px rgba(139, 115, 85, 0.06)';
-                                e.currentTarget.style.borderColor = 'rgba(139, 115, 85, 0.15)';
+                                e.currentTarget.style.boxShadow = '0 1px 3px rgba(24, 144, 255, 0.06)';
+                                e.currentTarget.style.borderColor = 'rgba(24, 144, 255, 0.15)';
                               }
                             }}
                           >
@@ -482,9 +482,9 @@ const ExportManager: React.FC = () => {
                               </div>
                               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                                 <Tag style={{
-                                  background: 'rgba(139, 115, 85, 0.08)',
-                                  color: '#8b7355',
-                                  border: '1px solid rgba(139, 115, 85, 0.2)',
+                                  background: 'rgba(24, 144, 255, 0.08)',
+                                  color: 'rgba(0, 0, 0, 0.65)',
+                                  border: '1px solid rgba(24, 144, 255, 0.2)',
                                   borderRadius: '6px',
                                   fontSize: '12px',
                                   padding: '2px 8px'
@@ -492,9 +492,9 @@ const ExportManager: React.FC = () => {
                                   {conv.type}
                                 </Tag>
                                 <Tag style={{
-                                  background: conv.status === 'favorite' ? 'rgba(212, 165, 116, 0.08)' : 'rgba(139, 115, 85, 0.08)',
-                                  color: conv.status === 'favorite' ? '#d4a574' : '#8b7355',
-                                  border: conv.status === 'favorite' ? '1px solid rgba(212, 165, 116, 0.2)' : '1px solid rgba(139, 115, 85, 0.2)',
+                                  background: conv.status === 'favorite' ? 'rgba(64, 169, 255, 0.08)' : 'rgba(24, 144, 255, 0.08)',
+                                  color: conv.status === 'favorite' ? '#69b1ff' : 'rgba(0, 0, 0, 0.65)',
+                                  border: conv.status === 'favorite' ? '1px solid rgba(64, 169, 255, 0.2)' : '1px solid rgba(24, 144, 255, 0.2)',
                                   borderRadius: '6px',
                                   fontSize: '12px',
                                   padding: '2px 8px'
@@ -523,14 +523,14 @@ const ExportManager: React.FC = () => {
                       size="small"
                       extra={
                         <Tooltip title={`总对话数：${stats.total} | 已选择：${stats.selected} | 数据集：${stats.datasets}`}>
-                          <Database size={16} strokeWidth={1.5} style={{ color: '#8b7355' }} />
+                          <Database size={16} strokeWidth={1.5} style={{ color: 'rgba(0, 0, 0, 0.65)' }} />
                         </Tooltip>
                       }
                       style={{
                         background: 'rgba(255, 255, 255, 0.85)',
-                        border: '1px solid rgba(139, 115, 85, 0.15)',
+                        border: '1px solid rgba(24, 144, 255, 0.15)',
                         borderRadius: '6px',
-                        boxShadow: '0 1px 3px rgba(139, 115, 85, 0.06)'
+                        boxShadow: '0 1px 3px rgba(24, 144, 255, 0.06)'
                       }}
                     >
                       <Form
@@ -549,9 +549,9 @@ const ExportManager: React.FC = () => {
                             style={{
                               height: '40px',
                               borderRadius: '6px',
-                              border: '1px solid rgba(139, 115, 85, 0.2)',
+                              border: '1px solid rgba(24, 144, 255, 0.2)',
                               background: 'rgba(255, 255, 255, 0.85)',
-                              boxShadow: '0 1px 3px rgba(139, 115, 85, 0.08)'
+                              boxShadow: '0 1px 3px rgba(24, 144, 255, 0.08)'
                             }}
                           />
                         </Form.Item>
@@ -566,9 +566,9 @@ const ExportManager: React.FC = () => {
                             style={{
                               height: '40px',
                               borderRadius: '6px',
-                              border: '1px solid rgba(139, 115, 85, 0.2)',
+                              border: '1px solid rgba(24, 144, 255, 0.2)',
                               background: 'rgba(255, 255, 255, 0.85)',
-                              boxShadow: '0 1px 3px rgba(139, 115, 85, 0.08)'
+                              boxShadow: '0 1px 3px rgba(24, 144, 255, 0.08)'
                             }}
                           />
                         </Form.Item>
@@ -606,8 +606,8 @@ const ExportManager: React.FC = () => {
                             style={{
                               marginBottom: 16,
                               borderRadius: '6px',
-                              border: '1px solid rgba(184, 88, 69, 0.3)',
-                              background: 'rgba(184, 88, 69, 0.08)'
+                              border: '1px solid rgba(24, 144, 255, 0.3)',
+                              background: 'rgba(24, 144, 255, 0.08)'
                             }}
                           />
                         )}
@@ -618,14 +618,14 @@ const ExportManager: React.FC = () => {
                           block
                           size="large"
                           style={{
-                            background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+                            background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
                             border: 'none',
                             borderRadius: '6px',
                             height: '44px',
                             fontSize: '15px',
                             fontWeight: 500,
                             letterSpacing: '0.5px',
-                            boxShadow: '0 2px 6px rgba(184, 88, 69, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                            boxShadow: '0 2px 6px rgba(24, 144, 255, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
@@ -644,9 +644,9 @@ const ExportManager: React.FC = () => {
                         size="small"
                         style={{
                           background: 'rgba(255, 255, 255, 0.85)',
-                          border: '1px solid rgba(139, 115, 85, 0.15)',
+                          border: '1px solid rgba(24, 144, 255, 0.15)',
                           borderRadius: '6px',
-                          boxShadow: '0 1px 3px rgba(139, 115, 85, 0.06)'
+                          boxShadow: '0 1px 3px rgba(24, 144, 255, 0.06)'
                         }}
                       >
                         <Alert
@@ -661,8 +661,8 @@ const ExportManager: React.FC = () => {
                           style={{
                             marginBottom: 16,
                             borderRadius: '6px',
-                            border: '1px solid rgba(160, 130, 109, 0.3)',
-                            background: 'rgba(160, 130, 109, 0.08)'
+                            border: '1px solid rgba(64, 169, 255, 0.3)',
+                            background: 'rgba(64, 169, 255, 0.08)'
                           }}
                         />
                         <Button
@@ -674,8 +674,8 @@ const ExportManager: React.FC = () => {
                           style={{
                             height: '40px',
                             borderRadius: '6px',
-                            border: '1px solid rgba(139, 115, 85, 0.2)',
-                            color: '#8b7355',
+                            border: '1px solid rgba(24, 144, 255, 0.2)',
+                            color: 'rgba(0, 0, 0, 0.65)',
                             background: 'transparent',
                             display: 'flex',
                             alignItems: 'center',
@@ -687,7 +687,7 @@ const ExportManager: React.FC = () => {
                           <Download size={16} strokeWidth={1.5} />
                           {t('pages.exportManager.downloadDataset')}
                         </Button>
-                        <Divider style={{ margin: '12px 0', borderColor: 'rgba(139, 115, 85, 0.15)' }} />
+                        <Divider style={{ margin: '12px 0', borderColor: 'rgba(24, 144, 255, 0.15)' }} />
                         <Button
                           type="text"
                           onClick={() => {
@@ -696,7 +696,7 @@ const ExportManager: React.FC = () => {
                             setPreviewModalVisible(true);
                           }}
                           style={{
-                            color: '#8b7355',
+                            color: 'rgba(0, 0, 0, 0.65)',
                             padding: '4px 8px',
                             height: 'auto',
                             display: 'flex',
@@ -727,8 +727,8 @@ const ExportManager: React.FC = () => {
                       onClick={loadDatasets}
                       style={{
                         borderRadius: '6px',
-                        border: '1px solid rgba(139, 115, 85, 0.2)',
-                        color: '#8b7355',
+                        border: '1px solid rgba(24, 144, 255, 0.2)',
+                        color: 'rgba(0, 0, 0, 0.65)',
                         background: 'transparent',
                         display: 'flex',
                         alignItems: 'center',
@@ -755,9 +755,9 @@ const ExportManager: React.FC = () => {
                         key: 'data_format',
                         render: (text) => (
                           <Tag style={{
-                            background: 'rgba(139, 115, 85, 0.08)',
-                            color: '#8b7355',
-                            border: '1px solid rgba(139, 115, 85, 0.2)',
+                            background: 'rgba(24, 144, 255, 0.08)',
+                            color: 'rgba(0, 0, 0, 0.65)',
+                            border: '1px solid rgba(24, 144, 255, 0.2)',
                             borderRadius: '6px',
                             fontSize: '12px',
                             padding: '2px 8px'
@@ -782,7 +782,7 @@ const ExportManager: React.FC = () => {
                               style={{
                                 padding: '4px 8px',
                                 borderRadius: '4px',
-                                color: '#8b7355',
+                                color: 'rgba(0, 0, 0, 0.65)',
                                 cursor: 'pointer',
                                 transition: 'all 0.2s ease',
                                 display: 'inline-flex',
@@ -790,11 +790,11 @@ const ExportManager: React.FC = () => {
                                 gap: '4px'
                               }}
                               onMouseEnter={(e) => {
-                                e.currentTarget.style.color = '#b85845';
-                                e.currentTarget.style.background = 'rgba(184, 88, 69, 0.08)';
+                                e.currentTarget.style.color = '#1890ff';
+                                e.currentTarget.style.background = 'rgba(24, 144, 255, 0.08)';
                               }}
                               onMouseLeave={(e) => {
-                                e.currentTarget.style.color = '#8b7355';
+                                e.currentTarget.style.color = 'rgba(0, 0, 0, 0.65)';
                                 e.currentTarget.style.background = 'transparent';
                               }}
                             >
@@ -811,7 +811,7 @@ const ExportManager: React.FC = () => {
                               style={{
                                 padding: '4px 8px',
                                 borderRadius: '4px',
-                                color: '#8b7355',
+                                color: 'rgba(0, 0, 0, 0.65)',
                                 cursor: 'pointer',
                                 transition: 'all 0.2s ease',
                                 display: 'inline-flex',
@@ -819,11 +819,11 @@ const ExportManager: React.FC = () => {
                                 gap: '4px'
                               }}
                               onMouseEnter={(e) => {
-                                e.currentTarget.style.color = '#b85845';
-                                e.currentTarget.style.background = 'rgba(184, 88, 69, 0.08)';
+                                e.currentTarget.style.color = '#1890ff';
+                                e.currentTarget.style.background = 'rgba(24, 144, 255, 0.08)';
                               }}
                               onMouseLeave={(e) => {
-                                e.currentTarget.style.color = '#8b7355';
+                                e.currentTarget.style.color = 'rgba(0, 0, 0, 0.65)';
                                 e.currentTarget.style.background = 'transparent';
                               }}
                             >
@@ -840,7 +840,7 @@ const ExportManager: React.FC = () => {
                                 style={{
                                   padding: '4px 8px',
                                   borderRadius: '4px',
-                                  color: '#b85845',
+                                  color: '#1890ff',
                                   cursor: 'pointer',
                                   transition: 'all 0.2s ease',
                                   display: 'inline-flex',
@@ -848,7 +848,7 @@ const ExportManager: React.FC = () => {
                                   gap: '4px'
                                 }}
                                 onMouseEnter={(e) => {
-                                  e.currentTarget.style.background = 'rgba(184, 88, 69, 0.08)';
+                                  e.currentTarget.style.background = 'rgba(24, 144, 255, 0.08)';
                                 }}
                                 onMouseLeave={(e) => {
                                   e.currentTarget.style.background = 'transparent';

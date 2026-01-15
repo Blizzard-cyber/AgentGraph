@@ -112,10 +112,10 @@ const MCPServerForm: React.FC<MCPServerFormProps> = ({
     <ConfigProvider
       theme={{
         token: {
-          colorPrimary: '#b85845',
-          colorPrimaryHover: '#a0826d',
-          colorBorder: 'rgba(139, 115, 85, 0.2)',
-          colorBorderSecondary: 'rgba(139, 115, 85, 0.15)',
+          colorPrimary: '#1890ff',
+          colorPrimaryHover: '#40a9ff',
+          colorBorder: 'rgba(24, 144, 255, 0.2)',
+          colorBorderSecondary: 'rgba(24, 144, 255, 0.15)',
           colorText: '#2d2d2d',
           colorTextPlaceholder: 'rgba(45, 45, 45, 0.35)',
           borderRadius: 6,
@@ -123,18 +123,18 @@ const MCPServerForm: React.FC<MCPServerFormProps> = ({
         },
         components: {
           Input: {
-            activeBorderColor: '#b85845',
-            hoverBorderColor: 'rgba(184, 88, 69, 0.4)',
-            activeShadow: '0 0 0 2px rgba(184, 88, 69, 0.1)',
+            activeBorderColor: '#1890ff',
+            hoverBorderColor: 'rgba(24, 144, 255, 0.4)',
+            activeShadow: '0 0 0 2px rgba(24, 144, 255, 0.1)',
           },
           InputNumber: {
-            activeBorderColor: '#b85845',
-            hoverBorderColor: 'rgba(184, 88, 69, 0.4)',
-            activeShadow: '0 0 0 2px rgba(184, 88, 69, 0.1)',
+            activeBorderColor: '#1890ff',
+            hoverBorderColor: 'rgba(24, 144, 255, 0.4)',
+            activeShadow: '0 0 0 2px rgba(24, 144, 255, 0.1)',
           },
           Select: {
-            optionSelectedBg: 'rgba(184, 88, 69, 0.08)',
-            optionActiveBg: 'rgba(184, 88, 69, 0.05)',
+            optionSelectedBg: 'rgba(24, 144, 255, 0.08)',
+            optionActiveBg: 'rgba(24, 144, 255, 0.05)',
           },
         },
       }}
@@ -150,13 +150,13 @@ const MCPServerForm: React.FC<MCPServerFormProps> = ({
           style={{
             height: '36px',
             borderRadius: '6px',
-            border: '1px solid rgba(139, 115, 85, 0.2)',
+            border: '1px solid rgba(24, 144, 255, 0.2)',
             background: 'rgba(255, 255, 255, 0.85)',
-            color: '#8b7355',
+            color: 'rgba(0, 0, 0, 0.65)',
             fontSize: '14px',
             fontWeight: 500,
             letterSpacing: '0.3px',
-            boxShadow: '0 1px 3px rgba(139, 115, 85, 0.08)',
+            boxShadow: '0 1px 3px rgba(24, 144, 255, 0.08)',
             transition: 'all 0.3s ease'
           }}
         >
@@ -167,14 +167,14 @@ const MCPServerForm: React.FC<MCPServerFormProps> = ({
           onClick={handleSubmit}
           style={{
             height: '36px',
-            background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+            background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
             border: 'none',
             borderRadius: '6px',
             color: '#fff',
             fontSize: '14px',
             fontWeight: 500,
             letterSpacing: '0.3px',
-            boxShadow: '0 2px 6px rgba(184, 88, 69, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+            boxShadow: '0 2px 6px rgba(24, 144, 255, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
             transition: 'all 0.3s cubic-bezier(0.23, 1, 0.32, 1)'
           }}
         >

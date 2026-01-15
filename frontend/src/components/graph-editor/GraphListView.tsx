@@ -63,14 +63,14 @@ const GraphListView: React.FC<GraphListViewProps> = ({
   const t = useT();
 
   return (
-    <Layout style={{ minHeight: '100vh', background: '#faf8f5' }}>
+    <Layout style={{ minHeight: '100vh', background: '#ffffff' }}>
       {/* Header 顶栏 */}
       <Header style={{
-        background: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(245, 243, 240, 0.6))',
+        background: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(230, 244, 255, 0.6))',
         backdropFilter: 'blur(20px)',
         padding: '0 48px',
         borderBottom: 'none',
-        boxShadow: '0 2px 8px rgba(139, 115, 85, 0.08)',
+        boxShadow: '0 2px 8px rgba(24, 144, 255, 0.08)',
         position: 'relative'
       }}>
         {/* 装饰性底部渐变线 */}
@@ -80,13 +80,13 @@ const GraphListView: React.FC<GraphListViewProps> = ({
           left: '20%',
           right: '20%',
           height: '1px',
-          background: 'linear-gradient(to right, transparent, rgba(139, 115, 85, 0.3) 50%, transparent)'
+          background: 'linear-gradient(to right, transparent, rgba(24, 144, 255, 0.3) 50%, transparent)'
         }} />
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '100%' }}>
           {/* 左侧：图标 + 标题 + 统计标签 */}
           <Space size="large">
-            <Workflow size={28} color="#b85845" strokeWidth={1.5} />
+            <Workflow size={28} color="#1890ff" strokeWidth={1.5} />
             <Title level={4} style={{
               margin: 0,
               color: '#2d2d2d',
@@ -97,9 +97,9 @@ const GraphListView: React.FC<GraphListViewProps> = ({
               {t('pages.graphEditor.title')}
             </Title>
             <Tag style={{
-              background: 'rgba(184, 88, 69, 0.08)',
-              color: '#b85845',
-              border: '1px solid rgba(184, 88, 69, 0.25)',
+              background: 'rgba(24, 144, 255, 0.08)',
+              color: '#1890ff',
+              border: '1px solid rgba(24, 144, 255, 0.25)',
               borderRadius: '6px',
               fontWeight: 500,
               padding: '4px 12px',
@@ -114,26 +114,26 @@ const GraphListView: React.FC<GraphListViewProps> = ({
             <Input
               placeholder={t('pages.graphEditor.searchPlaceholder')}
               allowClear
-              prefix={<SearchIcon size={16} strokeWidth={1.5} style={{ color: '#8b7355', marginRight: '4px' }} />}
+              prefix={<SearchIcon size={16} strokeWidth={1.5} style={{ color: 'rgba(0, 0, 0, 0.65)', marginRight: '4px' }} />}
               value={searchText}
               onChange={(e) => onSearchChange(e.target.value)}
               style={{
                 width: 280,
                 borderRadius: '8px',
-                border: '1px solid rgba(139, 115, 85, 0.2)',
+                border: '1px solid rgba(24, 144, 255, 0.2)',
                 background: 'rgba(255, 255, 255, 0.85)',
-                boxShadow: '0 1px 3px rgba(139, 115, 85, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
+                boxShadow: '0 1px 3px rgba(24, 144, 255, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
                 fontSize: '14px',
                 color: '#2d2d2d',
                 letterSpacing: '0.3px'
               }}
               onFocus={(e) => {
-                e.target.style.borderColor = '#b85845';
-                e.target.style.boxShadow = '0 0 0 3px rgba(184, 88, 69, 0.08), 0 1px 3px rgba(139, 115, 85, 0.08)';
+                e.target.style.borderColor = '#1890ff';
+                e.target.style.boxShadow = '0 0 0 3px rgba(24, 144, 255, 0.08), 0 1px 3px rgba(24, 144, 255, 0.08)';
               }}
               onBlur={(e) => {
-                e.target.style.borderColor = 'rgba(139, 115, 85, 0.2)';
-                e.target.style.boxShadow = '0 1px 3px rgba(139, 115, 85, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6)';
+                e.target.style.borderColor = 'rgba(24, 144, 255, 0.2)';
+                e.target.style.boxShadow = '0 1px 3px rgba(24, 144, 255, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6)';
               }}
             />
             <input
@@ -192,13 +192,13 @@ const GraphListView: React.FC<GraphListViewProps> = ({
             <Card
               style={{
                 borderRadius: '8px',
-                border: '1px solid rgba(139, 115, 85, 0.15)',
-                background: 'rgba(250, 248, 245, 0.6)',
+                border: '1px solid rgba(24, 144, 255, 0.15)',
+                background: 'rgba(230, 244, 255, 0.6)',
                 textAlign: 'center',
                 padding: '40px 20px'
               }}
             >
-              <Workflow size={48} strokeWidth={1.5} style={{ color: 'rgba(139, 115, 85, 0.3)', margin: '0 auto 16px' }} />
+              <Workflow size={48} strokeWidth={1.5} style={{ color: 'rgba(24, 144, 255, 0.3)', margin: '0 auto 16px' }} />
               <Text style={{
                 fontSize: '14px',
                 color: 'rgba(45, 45, 45, 0.65)',
@@ -217,11 +217,11 @@ const GraphListView: React.FC<GraphListViewProps> = ({
                 onClick={onCreateGraph}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(184, 88, 69, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.3)';
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(24, 144, 255, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.3)';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 2px 6px rgba(184, 88, 69, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
+                  e.currentTarget.style.boxShadow = '0 2px 6px rgba(24, 144, 255, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
                 }}
               >
                 <Plus size={16} strokeWidth={1.5} />
@@ -237,9 +237,9 @@ const GraphListView: React.FC<GraphListViewProps> = ({
                   hoverable
                   style={{
                     borderRadius: '6px',
-                    border: '1px solid rgba(139, 115, 85, 0.15)',
+                    border: '1px solid rgba(24, 144, 255, 0.15)',
                     background: 'rgba(255, 255, 255, 0.85)',
-                    boxShadow: '0 1px 3px rgba(139, 115, 85, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
+                    boxShadow: '0 1px 3px rgba(24, 144, 255, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
                     transition: 'all 0.3s cubic-bezier(0.23, 1, 0.32, 1)',
                     height: '100%',
                     display: 'flex',
@@ -248,13 +248,13 @@ const GraphListView: React.FC<GraphListViewProps> = ({
                   styles={{ body: { padding: '16px 20px', flex: 1, display: 'flex', flexDirection: 'column' } }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.transform = 'translateY(-2px)';
-                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(184, 88, 69, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9)';
-                    e.currentTarget.style.borderColor = 'rgba(184, 88, 69, 0.3)';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(24, 144, 255, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9)';
+                    e.currentTarget.style.borderColor = 'rgba(24, 144, 255, 0.3)';
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = '0 1px 3px rgba(139, 115, 85, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)';
-                    e.currentTarget.style.borderColor = 'rgba(139, 115, 85, 0.15)';
+                    e.currentTarget.style.boxShadow = '0 1px 3px rgba(24, 144, 255, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)';
+                    e.currentTarget.style.borderColor = 'rgba(24, 144, 255, 0.15)';
                   }}
                 >
                   {/* 标题区 */}
@@ -264,9 +264,9 @@ const GraphListView: React.FC<GraphListViewProps> = ({
                     gap: '8px',
                     marginBottom: '12px',
                     paddingBottom: '12px',
-                    borderBottom: '1px solid rgba(139, 115, 85, 0.1)'
+                    borderBottom: '1px solid rgba(24, 144, 255, 0.1)'
                   }}>
-                    <Workflow size={16} strokeWidth={1.5} style={{ color: '#8b7355' }} />
+                    <Workflow size={16} strokeWidth={1.5} style={{ color: 'rgba(0, 0, 0, 0.65)' }} />
                     <Text style={{
                       fontWeight: 500,
                       fontSize: '14px',
@@ -297,14 +297,14 @@ const GraphListView: React.FC<GraphListViewProps> = ({
                     display: 'flex',
                     gap: '6px',
                     paddingTop: '12px',
-                    borderTop: '1px solid rgba(139, 115, 85, 0.1)'
+                    borderTop: '1px solid rgba(24, 144, 255, 0.1)'
                   }}>
                     <div
                       style={{
                         flex: 1,
                         padding: '6px',
                         borderRadius: '4px',
-                        color: '#8b7355',
+                        color: 'rgba(0, 0, 0, 0.65)',
                         cursor: 'pointer',
                         display: 'flex',
                         alignItems: 'center',
@@ -316,11 +316,11 @@ const GraphListView: React.FC<GraphListViewProps> = ({
                       }}
                       onClick={() => onEditGraph(graphName)}
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.color = '#b85845';
-                        e.currentTarget.style.background = 'rgba(184, 88, 69, 0.08)';
+                        e.currentTarget.style.color = '#1890ff';
+                        e.currentTarget.style.background = 'rgba(24, 144, 255, 0.08)';
                       }}
                       onMouseLeave={(e) => {
-                        e.currentTarget.style.color = '#8b7355';
+                        e.currentTarget.style.color = 'rgba(0, 0, 0, 0.65)';
                         e.currentTarget.style.background = 'transparent';
                       }}
                     >
@@ -332,7 +332,7 @@ const GraphListView: React.FC<GraphListViewProps> = ({
                         style={{
                           padding: '6px',
                           borderRadius: '4px',
-                          color: '#8b7355',
+                          color: 'rgba(0, 0, 0, 0.65)',
                           cursor: 'pointer',
                           display: 'flex',
                           alignItems: 'center',
@@ -346,11 +346,11 @@ const GraphListView: React.FC<GraphListViewProps> = ({
                           onExportPackage(graphName);
                         }}
                         onMouseEnter={(e) => {
-                          e.currentTarget.style.color = '#b85845';
-                          e.currentTarget.style.background = 'rgba(184, 88, 69, 0.08)';
+                          e.currentTarget.style.color = '#1890ff';
+                          e.currentTarget.style.background = 'rgba(24, 144, 255, 0.08)';
                         }}
                         onMouseLeave={(e) => {
-                          e.currentTarget.style.color = '#8b7355';
+                          e.currentTarget.style.color = 'rgba(0, 0, 0, 0.65)';
                           e.currentTarget.style.background = 'transparent';
                         }}
                       >
@@ -362,7 +362,7 @@ const GraphListView: React.FC<GraphListViewProps> = ({
                         style={{
                           padding: '6px',
                           borderRadius: '4px',
-                          color: '#8b7355',
+                          color: 'rgba(0, 0, 0, 0.65)',
                           cursor: 'pointer',
                           display: 'flex',
                           alignItems: 'center',
@@ -376,11 +376,11 @@ const GraphListView: React.FC<GraphListViewProps> = ({
                           onExportMCP(graphName);
                         }}
                         onMouseEnter={(e) => {
-                          e.currentTarget.style.color = '#b85845';
-                          e.currentTarget.style.background = 'rgba(184, 88, 69, 0.08)';
+                          e.currentTarget.style.color = '#1890ff';
+                          e.currentTarget.style.background = 'rgba(24, 144, 255, 0.08)';
                         }}
                         onMouseLeave={(e) => {
-                          e.currentTarget.style.color = '#8b7355';
+                          e.currentTarget.style.color = 'rgba(0, 0, 0, 0.65)';
                           e.currentTarget.style.background = 'transparent';
                         }}
                       >
@@ -398,25 +398,25 @@ const GraphListView: React.FC<GraphListViewProps> = ({
                       cancelText={t('common.cancel')}
                       okButtonProps={{
                         style: {
-                          background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+                          background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
                           border: 'none',
                           borderRadius: '6px',
                           color: '#fff',
                           fontWeight: 500,
-                          boxShadow: '0 2px 6px rgba(184, 88, 69, 0.25)'
+                          boxShadow: '0 2px 6px rgba(24, 144, 255, 0.25)'
                         }
                       }}
                       cancelButtonProps={{
                         style: {
                           borderRadius: '6px',
-                          border: '1px solid rgba(139, 115, 85, 0.2)',
-                          color: '#8b7355',
+                          border: '1px solid rgba(24, 144, 255, 0.2)',
+                          color: 'rgba(0, 0, 0, 0.65)',
                           fontWeight: 500
                         }
                       }}
                       overlayStyle={{
                         borderRadius: '8px',
-                        boxShadow: '0 4px 12px rgba(139, 115, 85, 0.2)'
+                        boxShadow: '0 4px 12px rgba(24, 144, 255, 0.2)'
                       }}
                     >
                       <Tooltip title={t('pages.graphEditor.deleteWorkflow')}>
@@ -424,7 +424,7 @@ const GraphListView: React.FC<GraphListViewProps> = ({
                           style={{
                             padding: '6px',
                             borderRadius: '4px',
-                            color: '#8b7355',
+                            color: 'rgba(0, 0, 0, 0.65)',
                             cursor: 'pointer',
                             display: 'flex',
                             alignItems: 'center',
@@ -435,11 +435,11 @@ const GraphListView: React.FC<GraphListViewProps> = ({
                           }}
                           onClick={(e) => e.stopPropagation()}
                           onMouseEnter={(e) => {
-                            e.currentTarget.style.color = '#b85845';
-                            e.currentTarget.style.background = 'rgba(184, 88, 69, 0.08)';
+                            e.currentTarget.style.color = '#1890ff';
+                            e.currentTarget.style.background = 'rgba(24, 144, 255, 0.08)';
                           }}
                           onMouseLeave={(e) => {
-                            e.currentTarget.style.color = '#8b7355';
+                            e.currentTarget.style.color = 'rgba(0, 0, 0, 0.65)';
                             e.currentTarget.style.background = 'transparent';
                           }}
                         >

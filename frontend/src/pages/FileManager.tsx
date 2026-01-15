@@ -174,13 +174,13 @@ const FileManager: React.FC = () => {
   const totalFilesCount = filteredGroups.reduce((sum, group) => sum + group.files.length, 0);
 
   return (
-    <Layout style={{ height: '100vh', background: '#faf8f5', display: 'flex', flexDirection: 'column' }}>
+    <Layout style={{ height: '100vh', background: '#ffffff', display: 'flex', flexDirection: 'column' }}>
       <Header style={{
-        background: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(245, 243, 240, 0.6))',
+        background: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(230, 244, 255, 0.6))',
         backdropFilter: 'blur(20px)',
         padding: '0 48px',
         borderBottom: 'none',
-        boxShadow: '0 2px 8px rgba(139, 115, 85, 0.08)',
+        boxShadow: '0 2px 8px rgba(24, 144, 255, 0.08)',
         position: 'relative'
       }}>
         <div style={{
@@ -189,11 +189,11 @@ const FileManager: React.FC = () => {
           left: '20%',
           right: '20%',
           height: '1px',
-          background: 'linear-gradient(to right, transparent, rgba(139, 115, 85, 0.3) 50%, transparent)'
+          background: 'linear-gradient(to right, transparent, rgba(24, 144, 255, 0.3) 50%, transparent)'
         }} />
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '100%' }}>
           <Space size="large">
-            <FolderOpen size={28} color="#b85845" strokeWidth={1.5} />
+            <FolderOpen size={28} color="#1890ff" strokeWidth={1.5} />
             <Title level={4} style={{
               margin: 0,
               color: '#2d2d2d',
@@ -204,9 +204,9 @@ const FileManager: React.FC = () => {
               {t('pages.fileManager.title')}
             </Title>
             <Tag style={{
-              background: 'rgba(184, 88, 69, 0.08)',
-              color: '#b85845',
-              border: '1px solid rgba(184, 88, 69, 0.25)',
+              background: 'rgba(24, 144, 255, 0.08)',
+              color: '#1890ff',
+              border: '1px solid rgba(24, 144, 255, 0.25)',
               borderRadius: '6px',
               fontWeight: 500,
               padding: '4px 12px',
@@ -215,9 +215,9 @@ const FileManager: React.FC = () => {
               {t('pages.fileManager.filesCount', { count: totalFilesCount })}
             </Tag>
             <Tag style={{
-              background: 'rgba(139, 115, 85, 0.08)',
-              color: '#8b7355',
-              border: '1px solid rgba(139, 115, 85, 0.25)',
+              background: 'rgba(24, 144, 255, 0.08)',
+              color: 'rgba(0, 0, 0, 0.65)',
+              border: '1px solid rgba(24, 144, 255, 0.25)',
               borderRadius: '6px',
               fontWeight: 500,
               padding: '4px 12px',
@@ -229,27 +229,27 @@ const FileManager: React.FC = () => {
           <Input
             placeholder={t('pages.fileManager.searchPlaceholder')}
             allowClear
-            prefix={<SearchIcon size={16} strokeWidth={1.5} style={{ color: '#8b7355', marginRight: '4px' }} />}
+            prefix={<SearchIcon size={16} strokeWidth={1.5} style={{ color: 'rgba(0, 0, 0, 0.65)', marginRight: '4px' }} />}
             value={searchText}
             onChange={(e) => handleSearch(e.target.value)}
             style={{
               width: 320,
               height: '40px',
               borderRadius: '8px',
-              border: '1px solid rgba(139, 115, 85, 0.2)',
+              border: '1px solid rgba(24, 144, 255, 0.2)',
               background: 'rgba(255, 255, 255, 0.85)',
-              boxShadow: '0 1px 3px rgba(139, 115, 85, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
+              boxShadow: '0 1px 3px rgba(24, 144, 255, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
               fontSize: '14px',
               color: '#2d2d2d',
               letterSpacing: '0.3px'
             }}
             onFocus={(e) => {
-              e.target.style.borderColor = '#b85845';
-              e.target.style.boxShadow = '0 0 0 3px rgba(184, 88, 69, 0.08), 0 1px 3px rgba(139, 115, 85, 0.08)';
+              e.target.style.borderColor = '#1890ff';
+              e.target.style.boxShadow = '0 0 0 3px rgba(24, 144, 255, 0.08), 0 1px 3px rgba(24, 144, 255, 0.08)';
             }}
             onBlur={(e) => {
-              e.target.style.borderColor = 'rgba(139, 115, 85, 0.2)';
-              e.target.style.boxShadow = '0 1px 3px rgba(139, 115, 85, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6)';
+              e.target.style.borderColor = 'rgba(24, 144, 255, 0.2)';
+              e.target.style.boxShadow = '0 1px 3px rgba(24, 144, 255, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6)';
             }}
           />
         </div>
@@ -287,7 +287,7 @@ const FileManager: React.FC = () => {
                 size={18}
                 strokeWidth={2}
                 style={{
-                  color: '#8b7355',
+                  color: 'rgba(0, 0, 0, 0.65)',
                   transform: isActive ? 'rotate(180deg)' : 'rotate(0deg)',
                   transition: 'transform 0.3s ease'
                 }}
@@ -299,7 +299,7 @@ const FileManager: React.FC = () => {
                 key={group.conversationId}
                 header={
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '4px 0' }}>
-                    <MessageSquare size={18} color="#b85845" strokeWidth={1.5} />
+                    <MessageSquare size={18} color="#1890ff" strokeWidth={1.5} />
                     <Text strong style={{
                       fontSize: '14px',
                       color: '#2d2d2d',
@@ -310,9 +310,9 @@ const FileManager: React.FC = () => {
                       {group.conversationTitle}
                     </Text>
                     <Tag style={{
-                      background: 'rgba(139, 115, 85, 0.08)',
-                      color: '#8b7355',
-                      border: '1px solid rgba(139, 115, 85, 0.2)',
+                      background: 'rgba(24, 144, 255, 0.08)',
+                      color: 'rgba(0, 0, 0, 0.65)',
+                      border: '1px solid rgba(24, 144, 255, 0.2)',
                       borderRadius: '6px',
                       fontWeight: 500,
                       fontSize: '12px',
@@ -323,7 +323,7 @@ const FileManager: React.FC = () => {
                     <Download
                       size={16}
                       strokeWidth={1.5}
-                      style={{ color: '#8b7355', cursor: 'pointer' }}
+                      style={{ color: 'rgba(0, 0, 0, 0.65)', cursor: 'pointer' }}
                       onClick={(e) => {
                         e.stopPropagation();
                         handleDownloadAll(group.conversationId);
@@ -334,8 +334,8 @@ const FileManager: React.FC = () => {
                 style={{
                   marginBottom: '16px',
                   borderRadius: '8px',
-                  border: '1px solid rgba(139, 115, 85, 0.15)',
-                  background: 'rgba(250, 248, 245, 0.6)',
+                  border: '1px solid rgba(24, 144, 255, 0.15)',
+                  background: 'rgba(230, 244, 255, 0.6)',
                   overflow: 'hidden'
                 }}
               >
@@ -346,8 +346,8 @@ const FileManager: React.FC = () => {
                         hoverable
                         style={{
                           borderRadius: '6px',
-                          border: '1px solid rgba(139, 115, 85, 0.15)',
-                          boxShadow: '0 1px 3px rgba(139, 115, 85, 0.06)',
+                          border: '1px solid rgba(24, 144, 255, 0.15)',
+                          boxShadow: '0 1px 3px rgba(24, 144, 255, 0.06)',
                           transition: 'all 0.3s cubic-bezier(0.23, 1, 0.32, 1)',
                           background: 'rgba(255, 255, 255, 0.85)',
                           height: '100%'
@@ -357,13 +357,13 @@ const FileManager: React.FC = () => {
                         }}
                         onMouseEnter={(e) => {
                           e.currentTarget.style.transform = 'translateY(-2px)';
-                          e.currentTarget.style.boxShadow = '0 4px 12px rgba(184, 88, 69, 0.12)';
-                          e.currentTarget.style.borderColor = 'rgba(184, 88, 69, 0.3)';
+                          e.currentTarget.style.boxShadow = '0 4px 12px rgba(24, 144, 255, 0.12)';
+                          e.currentTarget.style.borderColor = 'rgba(24, 144, 255, 0.3)';
                         }}
                         onMouseLeave={(e) => {
                           e.currentTarget.style.transform = 'translateY(0)';
-                          e.currentTarget.style.boxShadow = '0 1px 3px rgba(139, 115, 85, 0.06)';
-                          e.currentTarget.style.borderColor = 'rgba(139, 115, 85, 0.15)';
+                          e.currentTarget.style.boxShadow = '0 1px 3px rgba(24, 144, 255, 0.06)';
+                          e.currentTarget.style.borderColor = 'rgba(24, 144, 255, 0.15)';
                         }}
                       >
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -410,7 +410,7 @@ const FileManager: React.FC = () => {
                           <div style={{ flexShrink: 0, display: 'flex', gap: '4px', alignItems: 'center' }}>
                             <div
                               style={{
-                                color: '#8b7355',
+                                color: 'rgba(0, 0, 0, 0.65)',
                                 transition: 'all 0.2s ease',
                                 cursor: 'pointer',
                                 padding: '4px',
@@ -424,11 +424,11 @@ const FileManager: React.FC = () => {
                                 handleEdit(file);
                               }}
                               onMouseEnter={(e) => {
-                                e.currentTarget.style.color = '#b85845';
-                                e.currentTarget.style.background = 'rgba(184, 88, 69, 0.08)';
+                                e.currentTarget.style.color = '#1890ff';
+                                e.currentTarget.style.background = 'rgba(24, 144, 255, 0.08)';
                               }}
                               onMouseLeave={(e) => {
-                                e.currentTarget.style.color = '#8b7355';
+                                e.currentTarget.style.color = 'rgba(0, 0, 0, 0.65)';
                                 e.currentTarget.style.background = 'transparent';
                               }}
                             >
@@ -436,7 +436,7 @@ const FileManager: React.FC = () => {
                             </div>
                             <div
                               style={{
-                                color: '#8b7355',
+                                color: 'rgba(0, 0, 0, 0.65)',
                                 transition: 'all 0.2s ease',
                                 cursor: 'pointer',
                                 padding: '4px',
@@ -450,11 +450,11 @@ const FileManager: React.FC = () => {
                                 handleDownload(file);
                               }}
                               onMouseEnter={(e) => {
-                                e.currentTarget.style.color = '#b85845';
-                                e.currentTarget.style.background = 'rgba(184, 88, 69, 0.08)';
+                                e.currentTarget.style.color = '#1890ff';
+                                e.currentTarget.style.background = 'rgba(24, 144, 255, 0.08)';
                               }}
                               onMouseLeave={(e) => {
-                                e.currentTarget.style.color = '#8b7355';
+                                e.currentTarget.style.color = 'rgba(0, 0, 0, 0.65)';
                                 e.currentTarget.style.background = 'transparent';
                               }}
                             >

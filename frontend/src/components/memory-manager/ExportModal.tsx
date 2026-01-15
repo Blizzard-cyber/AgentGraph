@@ -47,7 +47,7 @@ const ExportModal: React.FC<ExportModalProps> = ({ visible, owner, onClose }) =>
     <Modal
       title={
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Download size={18} strokeWidth={1.5} style={{ color: '#b85845' }} />
+          <Download size={18} strokeWidth={1.5} style={{ color: '#1890ff' }} />
           <span>{t('pages.memoryManager.export')}</span>
         </div>
       }
@@ -59,7 +59,7 @@ const ExportModal: React.FC<ExportModalProps> = ({ visible, owner, onClose }) =>
       cancelText={t('common.cancel')}
       okButtonProps={{
         style: {
-          background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+          background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
           border: 'none',
         },
       }}
@@ -79,8 +79,8 @@ const ExportModal: React.FC<ExportModalProps> = ({ visible, owner, onClose }) =>
               style={{
                 padding: '12px',
                 borderRadius: '6px',
-                border: '1px solid rgba(139, 115, 85, 0.15)',
-                background: format === 'json' ? 'rgba(184, 88, 69, 0.05)' : 'rgba(255, 255, 255, 0.85)',
+                border: '1px solid rgba(24, 144, 255, 0.15)',
+                background: format === 'json' ? 'rgba(24, 144, 255, 0.05)' : 'rgba(255, 255, 255, 0.85)',
               }}
             >
               <div>
@@ -95,8 +95,8 @@ const ExportModal: React.FC<ExportModalProps> = ({ visible, owner, onClose }) =>
               style={{
                 padding: '12px',
                 borderRadius: '6px',
-                border: '1px solid rgba(139, 115, 85, 0.15)',
-                background: format === 'txt' ? 'rgba(184, 88, 69, 0.05)' : 'rgba(255, 255, 255, 0.85)',
+                border: '1px solid rgba(24, 144, 255, 0.15)',
+                background: format === 'txt' ? 'rgba(24, 144, 255, 0.05)' : 'rgba(255, 255, 255, 0.85)',
               }}
             >
               <div>
@@ -111,8 +111,8 @@ const ExportModal: React.FC<ExportModalProps> = ({ visible, owner, onClose }) =>
               style={{
                 padding: '12px',
                 borderRadius: '6px',
-                border: '1px solid rgba(139, 115, 85, 0.15)',
-                background: format === 'markdown' ? 'rgba(184, 88, 69, 0.05)' : 'rgba(255, 255, 255, 0.85)',
+                border: '1px solid rgba(24, 144, 255, 0.15)',
+                background: format === 'markdown' ? 'rgba(24, 144, 255, 0.05)' : 'rgba(255, 255, 255, 0.85)',
               }}
             >
               <div>
@@ -127,8 +127,8 @@ const ExportModal: React.FC<ExportModalProps> = ({ visible, owner, onClose }) =>
               style={{
                 padding: '12px',
                 borderRadius: '6px',
-                border: '1px solid rgba(139, 115, 85, 0.15)',
-                background: format === 'yaml' ? 'rgba(184, 88, 69, 0.05)' : 'rgba(255, 255, 255, 0.85)',
+                border: '1px solid rgba(24, 144, 255, 0.15)',
+                background: format === 'yaml' ? 'rgba(24, 144, 255, 0.05)' : 'rgba(255, 255, 255, 0.85)',
               }}
             >
               <div>

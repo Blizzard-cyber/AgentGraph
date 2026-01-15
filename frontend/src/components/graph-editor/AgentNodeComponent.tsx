@@ -79,10 +79,10 @@ const AgentNodeComponent: React.FC<AgentNodeProps> = ({ data }) => {
           width: '20px',
           height: '20px',
           borderRadius: '4px',
-          background: 'rgba(205, 127, 50, 0.1)',
-          border: '1px solid rgba(205, 127, 50, 0.2)'
+          background: 'rgba(105, 177, 255, 0.1)',
+          border: '1px solid rgba(105, 177, 255, 0.2)'
         }}>
-          <GitBranch size={12} strokeWidth={2} style={{ color: '#cd7f32' }} />
+          <GitBranch size={12} strokeWidth={2} style={{ color: '#faad14' }} />
         </div>
       )}
 
@@ -114,11 +114,11 @@ const AgentNodeComponent: React.FC<AgentNodeProps> = ({ data }) => {
               height: '18px',
               padding: '0 4px',
               borderRadius: '4px',
-              background: 'rgba(184, 88, 69, 0.1)',
-              border: '1px solid rgba(184, 88, 69, 0.2)',
+              background: 'rgba(24, 144, 255, 0.1)',
+              border: '1px solid rgba(24, 144, 255, 0.2)',
               fontSize: '10px',
               fontWeight: 600,
-              color: '#b85845',
+              color: '#1890ff',
               letterSpacing: '0.2px'
             }}>
               {level}
@@ -136,10 +136,10 @@ const AgentNodeComponent: React.FC<AgentNodeProps> = ({ data }) => {
               width: '18px',
               height: '18px',
               borderRadius: '4px',
-              background: 'rgba(212, 165, 116, 0.1)',
-              border: '1px solid rgba(212, 165, 116, 0.2)'
+              background: 'rgba(64, 169, 255, 0.1)',
+              border: '1px solid rgba(64, 169, 255, 0.2)'
             }}>
-              <RefreshCw size={10} strokeWidth={2} style={{ color: '#d4a574' }} />
+              <RefreshCw size={10} strokeWidth={2} style={{ color: '#faad14' }} />
             </div>
           </Tooltip>
         )}
@@ -154,10 +154,10 @@ const AgentNodeComponent: React.FC<AgentNodeProps> = ({ data }) => {
               width: '18px',
               height: '18px',
               borderRadius: '4px',
-              background: 'rgba(212, 165, 116, 0.15)',
-              border: '1px solid rgba(212, 165, 116, 0.3)'
+              background: 'rgba(64, 169, 255, 0.15)',
+              border: '1px solid rgba(64, 169, 255, 0.3)'
             }}>
-              <AlertTriangle size={10} strokeWidth={2} style={{ color: '#d4a574' }} />
+              <AlertTriangle size={10} strokeWidth={2} style={{ color: '#faad14' }} />
             </div>
           </Tooltip>
         )}
@@ -172,13 +172,13 @@ const AgentNodeComponent: React.FC<AgentNodeProps> = ({ data }) => {
     let mainText = '';
 
     if (is_subgraph) {
-      mainIcon = <GitBranch size={11} strokeWidth={2} style={{ color: '#cd7f32', flexShrink: 0 }} />;
+      mainIcon = <GitBranch size={11} strokeWidth={2} style={{ color: '#91caff', flexShrink: 0 }} />;
       mainText = subgraph_name || 'N/A';
     } else if (agent_name) {
-      mainIcon = <Bot size={11} strokeWidth={2} style={{ color: '#a0826d', flexShrink: 0 }} />;
+      mainIcon = <Bot size={11} strokeWidth={2} style={{ color: '#40a9ff', flexShrink: 0 }} />;
       mainText = agent_name;
     } else if (model_name) {
-      mainIcon = <Zap size={11} strokeWidth={2} style={{ color: '#8b7355', flexShrink: 0 }} />;
+      mainIcon = <Zap size={11} strokeWidth={2} style={{ color: 'rgba(0, 0, 0, 0.65)', flexShrink: 0 }} />;
       mainText = model_name;
     }
 
@@ -220,7 +220,7 @@ const AgentNodeComponent: React.FC<AgentNodeProps> = ({ data }) => {
         {/* 工具信息（MCP + 系统工具） */}
         {((mcp_servers && mcp_servers.length > 0) || (system_tools && system_tools.length > 0)) && (
           <div style={blockStyle}>
-            <Wrench size={11} strokeWidth={2} style={{ color: '#8b7355', flexShrink: 0 }} />
+            <Wrench size={11} strokeWidth={2} style={{ color: 'rgba(0, 0, 0, 0.65)', flexShrink: 0 }} />
             <Text style={{ 
               fontSize: '11px',
               color: 'rgba(45, 45, 45, 0.75)',
@@ -266,31 +266,31 @@ const AgentNodeComponent: React.FC<AgentNodeProps> = ({ data }) => {
   // 确定节点样式
   const getNodeStyle = () => {
     // 基础样式
-    let borderColor = 'rgba(139, 115, 85, 0.25)';
-    let boxShadow = '0 2px 6px rgba(139, 115, 85, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8)';
-    let background = 'linear-gradient(to bottom, rgba(255, 255, 255, 0.95) 0%, rgba(250, 248, 245, 0.9) 100%)';
+    let borderColor = 'rgba(24, 144, 255, 0.25)';
+    let boxShadow = '0 2px 6px rgba(24, 144, 255, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8)';
+    let background = 'linear-gradient(to bottom, rgba(255, 255, 255, 0.95) 0%, rgba(230, 244, 255, 0.9) 100%)';
     let transform = 'none';
 
     if (selected) {
       // 选中状态 - 锈红色强调
-      borderColor = 'rgba(184, 88, 69, 0.5)';
-      boxShadow = '0 4px 12px rgba(184, 88, 69, 0.2), 0 0 0 2px rgba(184, 88, 69, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.9)';
-      background = 'linear-gradient(to bottom, rgba(255, 255, 255, 0.98) 0%, rgba(250, 248, 245, 0.95) 100%)';
+      borderColor = 'rgba(24, 144, 255, 0.5)';
+      boxShadow = '0 4px 12px rgba(24, 144, 255, 0.2), 0 0 0 2px rgba(24, 144, 255, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.9)';
+      background = 'linear-gradient(to bottom, rgba(255, 255, 255, 0.98) 0%, rgba(230, 244, 255, 0.95) 100%)';
       transform = 'translateY(-1px)';
     } else if (is_subgraph) {
       // 子图节点 - 青铜色调
-      borderColor = 'rgba(205, 127, 50, 0.4)';
-      boxShadow = '0 3px 8px rgba(205, 127, 50, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.85), inset 0 -1px 0 rgba(205, 127, 50, 0.08)';
-      background = 'linear-gradient(135deg, rgba(255, 252, 248, 0.95) 0%, rgba(250, 245, 238, 0.9) 100%)';
+      borderColor = 'rgba(105, 177, 255, 0.4)';
+      boxShadow = '0 3px 8px rgba(105, 177, 255, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.85), inset 0 -1px 0 rgba(105, 177, 255, 0.08)';
+      background = 'linear-gradient(135deg, rgba(240, 249, 255, 0.95) 0%, rgba(240, 249, 255, 0.9) 100%)';
     } else if (hasHandoffs) {
       // 循环节点 - 琥珀色调
-      borderColor = 'rgba(212, 165, 116, 0.4)';
-      boxShadow = '0 3px 8px rgba(212, 165, 116, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.85), inset 0 -1px 0 rgba(212, 165, 116, 0.08)';
-      background = 'linear-gradient(135deg, rgba(255, 253, 250, 0.95) 0%, rgba(252, 248, 242, 0.9) 100%)';
+      borderColor = 'rgba(64, 169, 255, 0.4)';
+      boxShadow = '0 3px 8px rgba(64, 169, 255, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.85), inset 0 -1px 0 rgba(64, 169, 255, 0.08)';
+      background = 'linear-gradient(135deg, rgba(245, 251, 255, 0.95) 0%, rgba(245, 251, 255, 0.9) 100%)';
     } else if (hasDisconnectedServers) {
       // 警告状态 - 琥珀边框
-      borderColor = 'rgba(212, 165, 116, 0.5)';
-      boxShadow = '0 2px 6px rgba(212, 165, 116, 0.12), 0 0 0 1px rgba(212, 165, 116, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.8)';
+      borderColor = 'rgba(64, 169, 255, 0.5)';
+      boxShadow = '0 2px 6px rgba(64, 169, 255, 0.12), 0 0 0 1px rgba(64, 169, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.8)';
     }
 
     return {
@@ -314,11 +314,11 @@ const AgentNodeComponent: React.FC<AgentNodeProps> = ({ data }) => {
         position={Position.Left}
         id="input"
         style={{ 
-          background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(250, 248, 245, 0.9) 100%)',
-          border: '2px solid rgba(139, 115, 85, 0.3)',
+          background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(230, 244, 255, 0.9) 100%)',
+          border: '2px solid rgba(24, 144, 255, 0.3)',
           width: '10px', 
           height: '10px',
-          boxShadow: '0 1px 3px rgba(139, 115, 85, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
+          boxShadow: '0 1px 3px rgba(24, 144, 255, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
           transition: 'all 0.3s cubic-bezier(0.23, 1, 0.32, 1)'
         }}
       />
@@ -330,11 +330,11 @@ const AgentNodeComponent: React.FC<AgentNodeProps> = ({ data }) => {
           position={Position.Top}
           id="handoff-source"
           style={{ 
-            background: 'linear-gradient(135deg, #d4a574 0%, #cd7f32 100%)',
+            background: '#faad14',
             border: '2px solid rgba(255, 255, 255, 0.9)',
             width: '11px', 
             height: '11px',
-            boxShadow: '0 2px 6px rgba(212, 165, 116, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.3)',
+            boxShadow: '0 2px 6px rgba(64, 169, 255, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.3)',
             transition: 'all 0.3s cubic-bezier(0.23, 1, 0.32, 1)'
           }}
         />
@@ -347,13 +347,13 @@ const AgentNodeComponent: React.FC<AgentNodeProps> = ({ data }) => {
         id="handoff-target"
         style={{ 
           background: hasHandoffs 
-            ? 'linear-gradient(135deg, #a0826d 0%, #8b7355 100%)'
-            : 'rgba(160, 130, 109, 0.3)',
+            ? 'linear-gradient(135deg, #40a9ff 0%, #69b1ff 100%)'
+            : 'rgba(64, 169, 255, 0.3)',
           border: '2px solid rgba(255, 255, 255, 0.9)',
           width: '9px', 
           height: '9px',
           boxShadow: hasHandoffs 
-            ? '0 1px 3px rgba(160, 130, 109, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+            ? '0 1px 3px rgba(64, 169, 255, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
             : 'none',
           opacity: hasHandoffs ? 1 : 0.4,
           transition: 'all 0.3s cubic-bezier(0.23, 1, 0.32, 1)'
@@ -373,7 +373,7 @@ const AgentNodeComponent: React.FC<AgentNodeProps> = ({ data }) => {
         headStyle={{
           padding: '10px 12px',
           minHeight: '44px',
-          borderBottom: '1px solid rgba(139, 115, 85, 0.12)',
+          borderBottom: '1px solid rgba(24, 144, 255, 0.12)',
           background: 'transparent'
         }}
       >
@@ -388,9 +388,9 @@ const AgentNodeComponent: React.FC<AgentNodeProps> = ({ data }) => {
             width: '10px',
             height: '10px',
             borderRadius: '50%',
-            background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+            background: '#1890ff',
             border: '2px solid rgba(255, 255, 255, 0.95)',
-            boxShadow: '0 1px 3px rgba(184, 88, 69, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+            boxShadow: '0 1px 3px rgba(24, 144, 255, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
           }} />
         )}
       </Card>
@@ -401,11 +401,11 @@ const AgentNodeComponent: React.FC<AgentNodeProps> = ({ data }) => {
         position={Position.Right}
         id="output"
         style={{ 
-          background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(250, 248, 245, 0.9) 100%)',
-          border: '2px solid rgba(139, 115, 85, 0.3)',
+          background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(230, 244, 255, 0.9) 100%)',
+          border: '2px solid rgba(24, 144, 255, 0.3)',
           width: '10px', 
           height: '10px',
-          boxShadow: '0 1px 3px rgba(139, 115, 85, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
+          boxShadow: '0 1px 3px rgba(24, 144, 255, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
           transition: 'all 0.3s cubic-bezier(0.23, 1, 0.32, 1)'
         }}
       />

@@ -168,9 +168,9 @@ const MessageDisplay: React.FC<MessageDisplayProps> = React.memo(({
           }}>
             {round.agent_name && (
               <Tag style={{
-                background: 'rgba(184, 88, 69, 0.08)',
-                color: '#b85845',
-                border: '1px solid rgba(184, 88, 69, 0.2)',
+                background: 'rgba(24, 144, 255, 0.08)',
+                color: '#1890ff',
+                border: '1px solid rgba(24, 144, 255, 0.2)',
                 borderRadius: '6px',
                 fontWeight: 500,
                 padding: '4px 12px',
@@ -182,9 +182,9 @@ const MessageDisplay: React.FC<MessageDisplayProps> = React.memo(({
             )}
             {round.model && (
               <Tag style={{
-                background: 'rgba(160, 130, 109, 0.08)',
-                color: '#a0826d',
-                border: '1px solid rgba(160, 130, 109, 0.2)',
+                background: 'rgba(64, 169, 255, 0.08)',
+                color: '#40a9ff',
+                border: '1px solid rgba(64, 169, 255, 0.2)',
                 borderRadius: '6px',
                 fontWeight: 500,
                 padding: '4px 12px',
@@ -196,9 +196,9 @@ const MessageDisplay: React.FC<MessageDisplayProps> = React.memo(({
             )}
             {round.prompt_tokens !== undefined && round.completion_tokens !== undefined && (
               <Tag style={{
-                background: 'rgba(139, 115, 85, 0.08)',
-                color: '#8b7355',
-                border: '1px solid rgba(139, 115, 85, 0.2)',
+                background: 'rgba(24, 144, 255, 0.08)',
+                color: 'rgba(0, 0, 0, 0.65)',
+                border: '1px solid rgba(24, 144, 255, 0.2)',
                 borderRadius: '6px',
                 fontWeight: 500,
                 padding: '4px 12px',
@@ -256,8 +256,8 @@ const MessageDisplay: React.FC<MessageDisplayProps> = React.memo(({
               width: '8px',
               height: '8px',
               borderRadius: '50%',
-              background: '#b85845',
-              boxShadow: '0 0 0 0 rgba(184, 88, 69, 0.4)',
+              background: '#1890ff',
+              boxShadow: '0 0 0 0 rgba(24, 144, 255, 0.4)',
               animation: 'inkDotPulse 2s ease-in-out infinite'
             }} />
             <span style={{
@@ -322,14 +322,14 @@ const MessageDisplay: React.FC<MessageDisplayProps> = React.memo(({
         marginBottom: '24px',
         padding: '20px 24px',
         background: 'rgba(255, 255, 255, 0.85)',
-        border: '1px solid rgba(139, 115, 85, 0.15)',
+        border: '1px solid rgba(24, 144, 255, 0.15)',
         borderRadius: '8px',
-        boxShadow: '0 2px 8px rgba(139, 115, 85, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
+        boxShadow: '0 2px 8px rgba(24, 144, 255, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
       }}>
         <div style={{
           marginBottom: '20px',
           paddingBottom: '12px',
-          borderBottom: '1px solid rgba(139, 115, 85, 0.1)',
+          borderBottom: '1px solid rgba(24, 144, 255, 0.1)',
         }}>
           <Text strong style={{
             fontSize: '16px',
@@ -362,14 +362,14 @@ const MessageDisplay: React.FC<MessageDisplayProps> = React.memo(({
                 alignItems: 'center',
                 gap: '12px',
                 padding: '10px 14px',
-                background: 'rgba(245, 243, 240, 0.6)',
+                background: 'rgba(230, 244, 255, 0.6)',
                 borderRadius: '6px',
-                border: '1px solid rgba(139, 115, 85, 0.1)',
+                border: '1px solid rgba(24, 144, 255, 0.1)',
               }}>
                 <Tag style={{
-                  background: 'rgba(160, 130, 109, 0.12)',
-                  color: '#a0826d',
-                  border: '1px solid rgba(160, 130, 109, 0.25)',
+                  background: 'rgba(64, 169, 255, 0.12)',
+                  color: '#40a9ff',
+                  border: '1px solid rgba(64, 169, 255, 0.25)',
                   borderRadius: '6px',
                   fontWeight: 500,
                   padding: '4px 12px',
@@ -381,9 +381,9 @@ const MessageDisplay: React.FC<MessageDisplayProps> = React.memo(({
                 <Space wrap size={8}>
                   {level.map(nodeName => (
                     <Tag key={nodeName} style={{
-                      background: 'rgba(184, 88, 69, 0.08)',
-                      color: '#b85845',
-                      border: '1px solid rgba(184, 88, 69, 0.2)',
+                      background: 'rgba(24, 144, 255, 0.08)',
+                      color: '#1890ff',
+                      border: '1px solid rgba(24, 144, 255, 0.2)',
                       borderRadius: '6px',
                       fontWeight: 500,
                       padding: '4px 10px',
@@ -403,7 +403,7 @@ const MessageDisplay: React.FC<MessageDisplayProps> = React.memo(({
           <div style={{
             marginTop: '20px',
             paddingTop: '16px',
-            borderTop: '1px solid rgba(139, 115, 85, 0.1)',
+            borderTop: '1px solid rgba(24, 144, 255, 0.1)',
           }}>
             <Text style={{
               fontSize: '13px',
@@ -417,9 +417,9 @@ const MessageDisplay: React.FC<MessageDisplayProps> = React.memo(({
             <Paragraph style={{
               margin: 0,
               padding: '12px 14px',
-              background: 'rgba(245, 243, 240, 0.6)',
+              background: 'rgba(230, 244, 255, 0.6)',
               borderRadius: '6px',
-              border: '1px solid rgba(139, 115, 85, 0.1)',
+              border: '1px solid rgba(24, 144, 255, 0.1)',
               fontSize: '14px',
               color: '#2d2d2d',
               lineHeight: '1.7',
@@ -435,7 +435,7 @@ const MessageDisplay: React.FC<MessageDisplayProps> = React.memo(({
   return (
     <div className="message-display" style={{
       scrollbarWidth: 'thin',
-      scrollbarColor: 'rgba(139, 115, 85, 0.3) transparent'
+      scrollbarColor: 'rgba(24, 144, 255, 0.3) transparent'
     }}>
       <div className="messages-container">
         {/* 渲染历史消息 */}

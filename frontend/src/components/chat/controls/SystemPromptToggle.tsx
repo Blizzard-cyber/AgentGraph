@@ -48,9 +48,9 @@ const SystemPromptToggle: React.FC<SystemPromptToggleProps> = ({
         onClick={onToggle}
         size={size}
         style={{
-          color: isSystemPromptMode ? '#b85845' : 'rgba(139, 115, 85, 0.75)',
+          color: isSystemPromptMode ? '#1890ff' : 'rgba(24, 144, 255, 0.75)',
           border: 'none',
-          background: isSystemPromptMode ? 'rgba(184, 88, 69, 0.1)' : 'transparent',
+          background: isSystemPromptMode ? 'rgba(24, 144, 255, 0.1)' : 'transparent',
           transition: 'all 0.2s ease',
           height: '28px',
           padding: '0 10px',
@@ -62,12 +62,12 @@ const SystemPromptToggle: React.FC<SystemPromptToggleProps> = ({
           gap: '4px'
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.color = '#b85845';
-          e.currentTarget.style.background = 'rgba(184, 88, 69, 0.1)';
+          e.currentTarget.style.color = '#1890ff';
+          e.currentTarget.style.background = 'rgba(24, 144, 255, 0.1)';
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.color = isSystemPromptMode ? '#b85845' : 'rgba(139, 115, 85, 0.75)';
-          e.currentTarget.style.background = isSystemPromptMode ? 'rgba(184, 88, 69, 0.1)' : 'transparent';
+          e.currentTarget.style.color = isSystemPromptMode ? '#1890ff' : 'rgba(24, 144, 255, 0.75)';
+          e.currentTarget.style.background = isSystemPromptMode ? 'rgba(24, 144, 255, 0.1)' : 'transparent';
         }}
       >
         {getButtonText()}

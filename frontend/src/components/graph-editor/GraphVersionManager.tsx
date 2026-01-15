@@ -123,7 +123,7 @@ const GraphVersionManager: React.FC<GraphVersionManagerProps> = ({
         },
         okButtonProps: {
           style: {
-            background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+            background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
             border: 'none',
             borderRadius: '6px'
           }
@@ -153,11 +153,11 @@ const GraphVersionManager: React.FC<GraphVersionManagerProps> = ({
   // 样式定义
   const createSectionStyle: CSSProperties = {
     background: 'rgba(255, 255, 255, 0.7)',
-    border: '1px solid rgba(139, 115, 85, 0.15)',
+    border: '1px solid rgba(24, 144, 255, 0.15)',
     borderRadius: '8px',
     padding: '20px',
     marginBottom: '24px',
-    boxShadow: '0 2px 6px rgba(139, 115, 85, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
+    boxShadow: '0 2px 6px rgba(24, 144, 255, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -191,17 +191,17 @@ const GraphVersionManager: React.FC<GraphVersionManagerProps> = ({
 
   const versionItemStyle: CSSProperties = {
     background: 'rgba(255, 255, 255, 0.7)',
-    border: '1px solid rgba(139, 115, 85, 0.15)',
+    border: '1px solid rgba(24, 144, 255, 0.15)',
     borderRadius: '8px',
     marginBottom: '12px',
-    boxShadow: '0 1px 3px rgba(139, 115, 85, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
+    boxShadow: '0 1px 3px rgba(24, 144, 255, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
     transition: 'all 0.3s cubic-bezier(0.23, 1, 0.32, 1)'
   };
 
   const latestVersionItemStyle: CSSProperties = {
     ...versionItemStyle,
-    border: '1px solid rgba(184, 88, 69, 0.25)',
-    boxShadow: '0 2px 6px rgba(184, 88, 69, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.9)'
+    border: '1px solid rgba(24, 144, 255, 0.25)',
+    boxShadow: '0 2px 6px rgba(24, 144, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.9)'
   };
 
   const versionHeaderStyle: CSSProperties = {
@@ -257,9 +257,9 @@ const GraphVersionManager: React.FC<GraphVersionManagerProps> = ({
 
   const tipsStyle: CSSProperties = {
     padding: '16px',
-    background: 'rgba(184, 88, 69, 0.06)',
+    background: 'rgba(24, 144, 255, 0.06)',
     borderRadius: '6px',
-    borderLeft: '3px solid #b85845',
+    borderLeft: '3px solid #1890ff',
     marginTop: '16px'
   };
 
@@ -288,9 +288,9 @@ const GraphVersionManager: React.FC<GraphVersionManagerProps> = ({
     <ConfigProvider
       theme={{
         token: {
-          colorPrimary: '#b85845',
-          colorPrimaryHover: '#a0826d',
-          colorBorder: 'rgba(139, 115, 85, 0.2)',
+          colorPrimary: '#1890ff',
+          colorPrimaryHover: '#40a9ff',
+          colorBorder: 'rgba(24, 144, 255, 0.2)',
           colorText: '#2d2d2d',
           borderRadius: 6,
         },
@@ -300,7 +300,7 @@ const GraphVersionManager: React.FC<GraphVersionManagerProps> = ({
       <Modal
         title={
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <History size={20} strokeWidth={1.5} style={{ color: '#b85845' }} />
+            <History size={20} strokeWidth={1.5} style={{ color: '#1890ff' }} />
             <span style={{ fontSize: '16px', fontWeight: 500, color: '#2d2d2d', letterSpacing: '0.5px' }}>
               {t('components.graphEditor.versionManager.title')}
             </span>
@@ -313,12 +313,12 @@ const GraphVersionManager: React.FC<GraphVersionManagerProps> = ({
         styles={{
           content: {
             borderRadius: '8px',
-            boxShadow: '0 8px 24px rgba(139, 115, 85, 0.15)',
-            background: 'linear-gradient(to bottom, #faf8f5 0%, #f5f3f0 100%)'
+            boxShadow: '0 8px 24px rgba(24, 144, 255, 0.15)',
+            background: '#ffffff'
           },
           header: {
             background: 'rgba(255, 255, 255, 0.6)',
-            borderBottom: '1px solid rgba(139, 115, 85, 0.1)',
+            borderBottom: '1px solid rgba(24, 144, 255, 0.1)',
             borderRadius: '8px 8px 0 0',
             padding: '20px 24px'
           },
@@ -340,14 +340,14 @@ const GraphVersionManager: React.FC<GraphVersionManagerProps> = ({
               icon={<Plus size={16} strokeWidth={1.5} />}
               onClick={() => setCreateVersionModalVisible(true)}
               style={{
-                background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+                background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
                 border: 'none',
                 borderRadius: '6px',
                 height: '36px',
                 fontSize: '14px',
                 fontWeight: 500,
                 letterSpacing: '0.3px',
-                boxShadow: '0 2px 6px rgba(184, 88, 69, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 2px 6px rgba(24, 144, 255, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
                 flexShrink: 0
               }}
             >
@@ -358,7 +358,7 @@ const GraphVersionManager: React.FC<GraphVersionManagerProps> = ({
           {/* Version history section */}
           <div>
             <div style={historyTitleStyle}>
-              <History size={16} strokeWidth={1.5} style={{ color: '#b85845' }} />
+              <History size={16} strokeWidth={1.5} style={{ color: '#1890ff' }} />
               <span>{t('components.graphEditor.versionManager.versionHistory')}</span>
               <span style={historyCountStyle}>({versions.length} {t('components.graphEditor.versionManager.versions')})</span>
             </div>
@@ -403,9 +403,9 @@ const GraphVersionManager: React.FC<GraphVersionManagerProps> = ({
                           </span>
                           {index === 0 && (
                             <Tag style={{
-                              background: 'rgba(184, 88, 69, 0.1)',
-                              color: '#b85845',
-                              border: '1px solid rgba(184, 88, 69, 0.3)',
+                              background: 'rgba(24, 144, 255, 0.1)',
+                              color: '#1890ff',
+                              border: '1px solid rgba(24, 144, 255, 0.3)',
                               borderRadius: '4px',
                               fontWeight: 500,
                               fontSize: '12px',
@@ -421,7 +421,7 @@ const GraphVersionManager: React.FC<GraphVersionManagerProps> = ({
                             size="small"
                             onClick={() => handleLoadVersion(version.version_id, version.commit_message)}
                             style={{
-                              color: '#8b7355',
+                              color: 'rgba(0, 0, 0, 0.65)',
                               padding: '4px 8px',
                               borderRadius: '4px'
                             }}
@@ -437,7 +437,7 @@ const GraphVersionManager: React.FC<GraphVersionManagerProps> = ({
                             okButtonProps={{
                               danger: true,
                               style: {
-                                background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+                                background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
                                 border: 'none',
                                 borderRadius: '6px'
                               }
@@ -445,8 +445,8 @@ const GraphVersionManager: React.FC<GraphVersionManagerProps> = ({
                             cancelButtonProps={{
                               style: {
                                 borderRadius: '6px',
-                                border: '1px solid rgba(139, 115, 85, 0.2)',
-                                color: '#8b7355'
+                                border: '1px solid rgba(24, 144, 255, 0.2)',
+                                color: 'rgba(0, 0, 0, 0.65)'
                               }
                             }}
                           >
@@ -455,7 +455,7 @@ const GraphVersionManager: React.FC<GraphVersionManagerProps> = ({
                               danger
                               size="small"
                               style={{
-                                color: '#b85845',
+                                color: '#1890ff',
                                 padding: '4px 8px',
                                 borderRadius: '4px'
                               }}
@@ -483,7 +483,7 @@ const GraphVersionManager: React.FC<GraphVersionManagerProps> = ({
       <Modal
         title={
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Plus size={18} strokeWidth={1.5} style={{ color: '#b85845' }} />
+            <Plus size={18} strokeWidth={1.5} style={{ color: '#1890ff' }} />
             <span style={{ fontSize: '16px', fontWeight: 500, color: '#2d2d2d' }}>{t('components.graphEditor.versionManager.createVersionTitle')}</span>
           </div>
         }
@@ -497,23 +497,23 @@ const GraphVersionManager: React.FC<GraphVersionManagerProps> = ({
         cancelText={t('components.graphEditor.versionManager.cancel')}
         okButtonProps={{
           style: {
-            background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+            background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
             border: 'none',
             borderRadius: '6px',
-            boxShadow: '0 2px 6px rgba(184, 88, 69, 0.25)'
+            boxShadow: '0 2px 6px rgba(24, 144, 255, 0.25)'
           }
         }}
         cancelButtonProps={{
           style: {
             borderRadius: '6px',
-            border: '1px solid rgba(139, 115, 85, 0.2)',
-            color: '#8b7355'
+            border: '1px solid rgba(24, 144, 255, 0.2)',
+            color: 'rgba(0, 0, 0, 0.65)'
           }
         }}
         styles={{
           content: {
             borderRadius: '8px',
-            boxShadow: '0 8px 24px rgba(139, 115, 85, 0.15)'
+            boxShadow: '0 8px 24px rgba(24, 144, 255, 0.15)'
           }
         }}
       >
@@ -534,7 +534,7 @@ const GraphVersionManager: React.FC<GraphVersionManagerProps> = ({
               maxLength={1000}
               style={{
                 borderRadius: '6px',
-                border: '1px solid rgba(139, 115, 85, 0.2)',
+                border: '1px solid rgba(24, 144, 255, 0.2)',
                 fontSize: '14px',
                 letterSpacing: '0.3px'
               }}

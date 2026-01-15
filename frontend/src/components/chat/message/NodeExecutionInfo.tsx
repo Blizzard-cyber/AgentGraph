@@ -47,11 +47,11 @@ const NodeExecutionInfo: React.FC<NodeExecutionInfoProps> = ({
   const getStatusColor = () => {
     switch (status) {
       case 'running':
-        return '#b85845';
+        return '#1890ff';
       case 'completed':
-        return '#a0826d';
+        return '#40a9ff';
       case 'pending':
-        return '#d4a574';
+        return '#69b1ff';
       default:
         return '#9ea19f';
     }
@@ -84,9 +84,9 @@ const NodeExecutionInfo: React.FC<NodeExecutionInfoProps> = ({
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
           <Tooltip title={mcpServers.join(', ')}>
             <Tag style={{
-              background: 'rgba(160, 130, 109, 0.08)',
-              color: '#a0826d',
-              border: '1px solid rgba(160, 130, 109, 0.2)',
+              background: 'rgba(64, 169, 255, 0.08)',
+              color: '#40a9ff',
+              border: '1px solid rgba(64, 169, 255, 0.2)',
               borderRadius: '6px',
               fontWeight: 500,
               padding: '2px 10px',

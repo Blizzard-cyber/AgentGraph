@@ -55,7 +55,7 @@ const EditPromptModal: React.FC<EditPromptModalProps> = ({
     <Modal
       title={
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Edit size={18} strokeWidth={1.5} style={{ color: '#8b7355' }} />
+          <Edit size={18} strokeWidth={1.5} style={{ color: 'rgba(0, 0, 0, 0.65)' }} />
           {t('pages.promptManager.editModal.title')}
         </div>
       }
