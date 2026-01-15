@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Layout, Button, Input, Tag, Spin, Space, Modal, Form, Typography } from 'antd';
-import { Plus, RefreshCw, Bot, Search as SearchIcon, Upload, Trash2 } from 'lucide-react';
+import { Plus, RefreshCw, Bot, Search as SearchIcon, Upload, Trash2, Cloud } from 'lucide-react';
 import { AgentConfig, importAgents } from '../services/agentService';
 import { useT } from '../i18n/hooks';
 import { useAgentManager } from '../hooks/useAgentManager';
@@ -9,6 +9,7 @@ import AgentCategoryPanel from '../components/agent-manager/AgentCategoryPanel';
 import AgentForm from '../components/agent-manager/AgentForm';
 import AgentDetail from '../components/agent-manager/AgentDetail';
 import AgentBatchDelete from '../components/agent-manager/AgentBatchDelete';
+import CloudImportModal from '../components/agent-manager/CloudImportModal';
 import { HEADER_STYLES, BUTTON_STYLES, INPUT_STYLES, MODAL_STYLES } from '../constants/agentManagerStyles';
 
 const { Header, Content } = Layout;
@@ -46,6 +47,7 @@ const AgentManager: React.FC = () => {
   // Modal 状态
   const [modalVisible, setModalVisible] = useState(false);
   const [detailModalVisible, setDetailModalVisible] = useState(false);
+  const [cloudImportModalVisible, setCloudImportModalVisible] = useState(false);
   const [editingAgent, setEditingAgent] = useState<string | null>(null);
   const [selectedAgent, setSelectedAgent] = useState<any>(null);
   const [importing, setImporting] = useState(false);
@@ -156,6 +158,21 @@ const AgentManager: React.FC = () => {
     input.click();
   };
 
+  /**
+   * 显示云端导入Modal
+   */
+  const showCloudImportModal = () => {
+    setCloudImportModalVisible(true);
+  };
+
+  /**
+   * 云端导入成功回调
+   */
+  const handleCloudImportSuccess = () => {
+    setCloudImportModalVisible(false);
+    loadAgents();
+  };
+
   const totalAgentsCount = filteredGroups.reduce((sum, group) => sum + group.agents.length, 0);
 
   return (
@@ -205,6 +222,18 @@ const AgentManager: React.FC = () => {
               onFocus={(e) => Object.assign(e.target.style, INPUT_STYLES.focus)}
               onBlur={(e) => Object.assign(e.target.style, INPUT_STYLES.blur)}
             />
+            <Button
+              icon={<Cloud size={16} strokeWidth={1.5} />}
+              onClick={showCloudImportModal}
+              style={{
+                ...BUTTON_STYLES.secondary,
+                background: 'linear-gradient(135deg, rgba(184, 88, 69, 0.08) 0%, rgba(184, 88, 69, 0.12) 100%)',
+                color: '#b85845',
+                border: '1.5px solid rgba(184, 88, 69, 0.2)',
+              }}
+            >
+              云端导入
+            </Button>
             <Button
               icon={<Upload size={16} strokeWidth={1.5} />}
               onClick={handleImport}
@@ -385,6 +414,13 @@ const AgentManager: React.FC = () => {
       >
         <AgentDetail agent={selectedAgent} />
       </Modal>
+
+      {/* 云端导入 Modal */}
+      <CloudImportModal
+        visible={cloudImportModalVisible}
+        onClose={() => setCloudImportModalVisible(false)}
+        onSuccess={handleCloudImportSuccess}
+      />
 
       {/* 批量删除抽屉 */}
       <AgentBatchDelete
