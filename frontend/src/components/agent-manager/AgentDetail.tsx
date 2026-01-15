@@ -21,12 +21,12 @@ const AgentDetail: React.FC<AgentDetailProps> = ({ agent }) => {
       bordered
       column={1}
       labelStyle={{
-        background: 'rgba(250, 248, 245, 0.6)',
+        background: 'rgba(230, 244, 255, 0.6)',
         color: 'rgba(45, 45, 45, 0.85)',
         fontWeight: 500,
         fontSize: '14px',
         padding: '12px 16px',
-        borderRight: '1px solid rgba(139, 115, 85, 0.15)'
+        borderRight: '1px solid rgba(24, 144, 255, 0.15)'
       }}
       contentStyle={{
         background: '#fff',
@@ -35,7 +35,7 @@ const AgentDetail: React.FC<AgentDetailProps> = ({ agent }) => {
         padding: '12px 16px'
       }}
       style={{
-        border: '1px solid rgba(139, 115, 85, 0.15)',
+        border: '1px solid rgba(24, 144, 255, 0.15)',
         borderRadius: '6px',
         overflow: 'hidden'
       }}
@@ -67,10 +67,10 @@ const AgentDetail: React.FC<AgentDetailProps> = ({ agent }) => {
           fontSize: '13px',
           lineHeight: 1.6,
           color: 'rgba(45, 45, 45, 0.85)',
-          background: 'rgba(250, 248, 245, 0.4)',
+          background: 'rgba(230, 244, 255, 0.4)',
           padding: '8px 12px',
           borderRadius: '4px',
-          border: '1px solid rgba(139, 115, 85, 0.1)'
+          border: '1px solid rgba(24, 144, 255, 0.1)'
         }}>
           {agent.agent_config.instruction || t('pages.agentManager.none')}
         </pre>

@@ -76,9 +76,9 @@ const MCPToolSelector: React.FC<MCPToolSelectorProps> = ({
           onClick={() => setShowPanel(!showPanel)}
           size={size}
           style={{
-            color: enabledMcpCount > 0 ? '#b85845' : 'rgba(139, 115, 85, 0.75)',
+            color: enabledMcpCount > 0 ? '#1890ff' : 'rgba(24, 144, 255, 0.75)',
             border: 'none',
-            background: showPanel || enabledMcpCount > 0 ? 'rgba(184, 88, 69, 0.1)' : 'transparent',
+            background: showPanel || enabledMcpCount > 0 ? 'rgba(24, 144, 255, 0.1)' : 'transparent',
             transition: 'all 0.2s ease',
             width: '28px',
             height: '28px',
@@ -89,12 +89,12 @@ const MCPToolSelector: React.FC<MCPToolSelectorProps> = ({
             padding: 0
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.color = '#b85845';
-            e.currentTarget.style.background = 'rgba(184, 88, 69, 0.1)';
+            e.currentTarget.style.color = '#1890ff';
+            e.currentTarget.style.background = 'rgba(24, 144, 255, 0.1)';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.color = enabledMcpCount > 0 ? '#b85845' : 'rgba(139, 115, 85, 0.75)';
-            e.currentTarget.style.background = showPanel || enabledMcpCount > 0 ? 'rgba(184, 88, 69, 0.1)' : 'transparent';
+            e.currentTarget.style.color = enabledMcpCount > 0 ? '#1890ff' : 'rgba(24, 144, 255, 0.75)';
+            e.currentTarget.style.background = showPanel || enabledMcpCount > 0 ? 'rgba(24, 144, 255, 0.1)' : 'transparent';
           }}
         />
       </Tooltip>
@@ -109,15 +109,15 @@ const MCPToolSelector: React.FC<MCPToolSelectorProps> = ({
           minWidth: '260px',
           maxWidth: '320px',
           background: 'rgba(255, 255, 255, 0.95)',
-          border: '1px solid rgba(139, 115, 85, 0.2)',
+          border: '1px solid rgba(24, 144, 255, 0.2)',
           borderRadius: '8px',
-          boxShadow: '0 4px 16px rgba(139, 115, 85, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
+          boxShadow: '0 4px 16px rgba(24, 144, 255, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
           zIndex: 1000,
           animation: 'slideUp 0.2s ease-out'
         }}>
           <div style={{
             padding: '12px 16px',
-            borderBottom: '1px solid rgba(139, 115, 85, 0.15)'
+            borderBottom: '1px solid rgba(24, 144, 255, 0.15)'
           }}>
             <Text strong style={{ color: '#2d2d2d', fontSize: '13px' }}>{t('components.mcpToolSelector.title')}</Text>
           </div>
@@ -159,7 +159,7 @@ const MCPToolSelector: React.FC<MCPToolSelectorProps> = ({
                   transition: 'all 0.2s ease'
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'rgba(184, 88, 69, 0.05)';
+                  e.currentTarget.style.background = 'rgba(24, 144, 255, 0.05)';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.background = 'transparent';
@@ -177,8 +177,8 @@ const MCPToolSelector: React.FC<MCPToolSelectorProps> = ({
                         height: '6px',
                         borderRadius: '50%',
                         flexShrink: 0,
-                        background: isConnected ? '#b85845' : '#d4c4b0',
-                        boxShadow: isConnected ? '0 0 0 2px rgba(184, 88, 69, 0.2)' : 'none'
+                        background: isConnected ? '#1890ff' : '#d4c4b0',
+                        boxShadow: isConnected ? '0 0 0 2px rgba(24, 144, 255, 0.2)' : 'none'
                       }}
                       title={isConnected ? t('components.mcpToolSelector.connected') : t('components.mcpToolSelector.disconnected')}
                     />

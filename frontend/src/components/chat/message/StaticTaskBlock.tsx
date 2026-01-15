@@ -28,8 +28,8 @@ const ReasoningDisplay: React.FC<{ content: string }> = ({ content }) => {
       margin: '12px 0',
       borderRadius: '6px',
       background: 'rgba(255, 255, 255, 0.85)',
-      border: '1px solid rgba(184, 88, 69, 0.2)',
-      boxShadow: '0 1px 3px rgba(139, 115, 85, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
+      border: '1px solid rgba(24, 144, 255, 0.2)',
+      boxShadow: '0 1px 3px rgba(24, 144, 255, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
       transition: 'all 0.3s cubic-bezier(0.23, 1, 0.32, 1)'
     }}>
       <div
@@ -44,12 +44,12 @@ const ReasoningDisplay: React.FC<{ content: string }> = ({ content }) => {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <Bot size={16} strokeWidth={1.5} style={{ color: '#b85845' }} />
+          <Bot size={16} strokeWidth={1.5} style={{ color: '#1890ff' }} />
           <Text strong style={{ color: '#2d2d2d', fontSize: '14px' }}>AI思考过程</Text>
           <Tag style={{
-            background: 'rgba(184, 88, 69, 0.08)',
-            color: '#b85845',
-            border: '1px solid rgba(184, 88, 69, 0.25)',
+            background: 'rgba(24, 144, 255, 0.08)',
+            color: '#1890ff',
+            border: '1px solid rgba(24, 144, 255, 0.25)',
             borderRadius: '6px',
             fontWeight: 500,
             padding: '2px 10px',
@@ -59,16 +59,16 @@ const ReasoningDisplay: React.FC<{ content: string }> = ({ content }) => {
           </Tag>
         </div>
         {expanded ? (
-          <ChevronDown size={18} strokeWidth={1.5} style={{ color: '#8b7355' }} />
+          <ChevronDown size={18} strokeWidth={1.5} style={{ color: 'rgba(0, 0, 0, 0.65)' }} />
         ) : (
-          <ChevronRight size={18} strokeWidth={1.5} style={{ color: '#8b7355' }} />
+          <ChevronRight size={18} strokeWidth={1.5} style={{ color: 'rgba(0, 0, 0, 0.65)' }} />
         )}
       </div>
 
       {expanded && (
         <div style={{
           padding: '0 14px 12px',
-          borderTop: '1px solid rgba(139, 115, 85, 0.15)',
+          borderTop: '1px solid rgba(24, 144, 255, 0.15)',
           maxHeight: '400px',
           overflow: 'auto'
         }}>
@@ -91,8 +91,8 @@ const ToolCallDisplay: React.FC<{ toolCall: any; result?: string }> = ({ toolCal
       margin: '12px 0',
       borderRadius: '6px',
       background: 'rgba(255, 255, 255, 0.85)',
-      border: '1px solid rgba(160, 130, 109, 0.2)',
-      boxShadow: '0 1px 3px rgba(139, 115, 85, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
+      border: '1px solid rgba(64, 169, 255, 0.2)',
+      boxShadow: '0 1px 3px rgba(24, 144, 255, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
       transition: 'all 0.3s cubic-bezier(0.23, 1, 0.32, 1)'
     }}>
       <div
@@ -107,12 +107,12 @@ const ToolCallDisplay: React.FC<{ toolCall: any; result?: string }> = ({ toolCal
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <ToolOutlined style={{ color: '#a0826d', fontSize: '16px' }} />
+          <ToolOutlined style={{ color: '#40a9ff', fontSize: '16px' }} />
           <Text strong style={{ color: '#2d2d2d', fontSize: '14px' }}>{toolCall.function?.name}</Text>
           <Tag style={{
-            background: 'rgba(160, 130, 109, 0.08)',
-            color: '#a0826d',
-            border: '1px solid rgba(160, 130, 109, 0.2)',
+            background: 'rgba(64, 169, 255, 0.08)',
+            color: '#40a9ff',
+            border: '1px solid rgba(64, 169, 255, 0.2)',
             borderRadius: '6px',
             fontWeight: 500,
             padding: '2px 10px',
@@ -122,16 +122,16 @@ const ToolCallDisplay: React.FC<{ toolCall: any; result?: string }> = ({ toolCal
           </Tag>
         </div>
         {expanded ? (
-          <ChevronDown size={18} strokeWidth={1.5} style={{ color: '#8b7355' }} />
+          <ChevronDown size={18} strokeWidth={1.5} style={{ color: 'rgba(0, 0, 0, 0.65)' }} />
         ) : (
-          <ChevronRight size={18} strokeWidth={1.5} style={{ color: '#8b7355' }} />
+          <ChevronRight size={18} strokeWidth={1.5} style={{ color: 'rgba(0, 0, 0, 0.65)' }} />
         )}
       </div>
 
       {expanded && (
         <div style={{
           padding: '0 14px 12px',
-          borderTop: '1px solid rgba(139, 115, 85, 0.15)',
+          borderTop: '1px solid rgba(24, 144, 255, 0.15)',
           maxHeight: '400px',
           overflow: 'auto'
         }}>
@@ -142,11 +142,11 @@ const ToolCallDisplay: React.FC<{ toolCall: any; result?: string }> = ({ toolCal
                 language="json"
                 style={oneLight}
                 customStyle={{
-                  background: 'rgba(245, 243, 240, 0.6)',
+                  background: 'rgba(230, 244, 255, 0.6)',
                   padding: '10px 12px',
                   fontSize: '12px',
                   borderRadius: '4px',
-                  border: '1px solid rgba(139, 115, 85, 0.1)'
+                  border: '1px solid rgba(24, 144, 255, 0.1)'
                 }}
               >
                 {toolCall.function?.arguments || '{}'}
@@ -160,9 +160,9 @@ const ToolCallDisplay: React.FC<{ toolCall: any; result?: string }> = ({ toolCal
               <div style={{
                 marginTop: '8px',
                 padding: '10px 12px',
-                background: 'rgba(245, 243, 240, 0.6)',
+                background: 'rgba(230, 244, 255, 0.6)',
                 borderRadius: '4px',
-                border: '1px solid rgba(139, 115, 85, 0.1)',
+                border: '1px solid rgba(24, 144, 255, 0.1)',
                 fontSize: '13px',
                 color: '#2d2d2d',
                 fontFamily: "'SF Mono', monospace"
@@ -210,31 +210,31 @@ const StaticTaskBlock: React.FC<StaticTaskBlockProps> = ({
         className="task-block-header"
         onClick={() => setExpanded(!expanded)}
         style={{
-          borderColor: 'rgba(160, 130, 109, 0.2)',
-          background: 'rgba(245, 243, 240, 0.6)'
+          borderColor: 'rgba(64, 169, 255, 0.2)',
+          background: 'rgba(230, 244, 255, 0.6)'
         }}
       >
         <div className="task-block-header-left">
           <div 
             className="task-status-indicator"
-            style={{ background: '#a0826d' }} 
+            style={{ background: '#40a9ff' }} 
           />
           <CheckCircle size={16} className="task-status-icon completed" />
           <span className="task-id">Task {taskData.task_id}</span>
           <Tag
             className="task-status-tag"
             style={{
-              background: 'rgba(160, 130, 109, 0.08)',
-              color: '#a0826d',
-              border: '1px solid rgba(160, 130, 109, 0.25)'
+              background: 'rgba(64, 169, 255, 0.08)',
+              color: '#40a9ff',
+              border: '1px solid rgba(64, 169, 255, 0.25)'
             }}
           >
             已完成
           </Tag>
           <Tag style={{
-            background: 'rgba(184, 88, 69, 0.08)',
-            color: '#b85845',
-            border: '1px solid rgba(184, 88, 69, 0.2)',
+            background: 'rgba(24, 144, 255, 0.08)',
+            color: '#1890ff',
+            border: '1px solid rgba(24, 144, 255, 0.2)',
             borderRadius: '6px',
             fontWeight: 500,
             padding: '2px 10px',
@@ -245,9 +245,9 @@ const StaticTaskBlock: React.FC<StaticTaskBlockProps> = ({
         </div>
         <div className="task-block-header-right">
           {expanded ? (
-            <ChevronDown size={18} strokeWidth={1.5} style={{ color: '#8b7355' }} />
+            <ChevronDown size={18} strokeWidth={1.5} style={{ color: 'rgba(0, 0, 0, 0.65)' }} />
           ) : (
-            <ChevronRight size={18} strokeWidth={1.5} style={{ color: '#8b7355' }} />
+            <ChevronRight size={18} strokeWidth={1.5} style={{ color: 'rgba(0, 0, 0, 0.65)' }} />
           )}
         </div>
       </div>

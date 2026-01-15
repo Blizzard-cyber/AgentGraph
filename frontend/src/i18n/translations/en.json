@@ -82,7 +82,9 @@
       "goToChat": "Go to Chat",
       "userMenuSubtitle": "Account Settings",
       "userSettings": "User Settings",
-      "adminPanel": "Admin Panel",
+      "adminPanel": "User Management",
+      "modelManagement": "Model Management",
+      "gatewaySettings": "Gateway Settings",
       "logout": "Logout",
       "logoutConfirmTitle": "Confirm Logout",
       "logoutConfirmMessage": "Are you sure you want to logout?",
@@ -649,7 +651,8 @@
       "importHint": "Supports multiple formats: plain text, Markdown, JSON, YAML, etc. AI will intelligently extract and categorize key information",
       "importSuccess": "Import successful",
       "importFailed": "Failed to import: {{error}}",
-      "importError": "Failed to import"
+      "importError": "Failed to import",
+      "noItems": "No items in this category yet"
     },
     "fileManager": {
       "title": "File Manager",

@@ -41,7 +41,7 @@ const DocumentsDrawer: React.FC<DocumentsDrawerProps> = ({
     if (ext === 'pdf') {
       return <FilePdfOutlined style={{ fontSize: '20px', color: '#f5222d' }} />;
     }
-    return <FileOutlined style={{ fontSize: '20px', color: '#8b7355' }} />;
+    return <FileOutlined style={{ fontSize: '20px', color: 'rgba(0, 0, 0, 0.65)' }} />;
   };
 
   // 格式化日期
@@ -100,7 +100,7 @@ const DocumentsDrawer: React.FC<DocumentsDrawerProps> = ({
                 onClick={handleDownloadAll}
                 style={{
                   marginLeft: 'auto',
-                  color: '#8b7355'
+                  color: 'rgba(0, 0, 0, 0.65)'
                 }}
               />
             </>

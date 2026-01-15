@@ -139,12 +139,12 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
               fontWeight: 500,
               letterSpacing: '0.5px',
               ...(activeView === 'preview' ? {
-                background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+                background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
                 border: 'none',
                 color: '#fff'
               } : {
-                border: '1px solid rgba(139, 115, 85, 0.25)',
-                color: '#8b7355',
+                border: '1px solid rgba(24, 144, 255, 0.25)',
+                color: 'rgba(0, 0, 0, 0.65)',
                 background: 'transparent'
               })
             }}
@@ -162,12 +162,12 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
               fontWeight: 500,
               letterSpacing: '0.5px',
               ...(activeView === 'edit' ? {
-                background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+                background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
                 border: 'none',
                 color: '#fff'
               } : {
-                border: '1px solid rgba(139, 115, 85, 0.25)',
-                color: '#8b7355',
+                border: '1px solid rgba(24, 144, 255, 0.25)',
+                color: 'rgba(0, 0, 0, 0.65)',
                 background: 'transparent'
               })
             }}
@@ -185,12 +185,12 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
               fontWeight: 500,
               letterSpacing: '0.5px',
               ...(activeView === 'split' ? {
-                background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+                background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
                 border: 'none',
                 color: '#fff'
               } : {
-                border: '1px solid rgba(139, 115, 85, 0.25)',
-                color: '#8b7355',
+                border: '1px solid rgba(24, 144, 255, 0.25)',
+                color: 'rgba(0, 0, 0, 0.65)',
                 background: 'transparent'
               })
             }}
@@ -205,10 +205,10 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
             icon={<Save size={14} />}
             onClick={onSave}
             style={{
-              background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+              background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
               border: 'none',
               borderRadius: '6px',
-              boxShadow: '0 2px 8px rgba(184, 88, 69, 0.25)',
+              boxShadow: '0 2px 8px rgba(24, 144, 255, 0.25)',
               fontWeight: 500,
               letterSpacing: '0.5px',
               height: '32px'
@@ -226,10 +226,10 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
             height: '60vh',
             overflow: 'auto',
             padding: '24px',
-            background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(250, 248, 245, 0.9) 100%)',
-            border: '1px solid rgba(139, 115, 85, 0.15)',
+            background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(230, 244, 255, 0.9) 100%)',
+            border: '1px solid rgba(24, 144, 255, 0.15)',
             borderRadius: '8px',
-            boxShadow: 'inset 0 1px 3px rgba(139, 115, 85, 0.08)',
+            boxShadow: 'inset 0 1px 3px rgba(24, 144, 255, 0.08)',
           }}
         >
           {renderMarkdown()}
@@ -248,14 +248,14 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
               fontFamily: 'monospace',
               fontSize: '14px',
               resize: 'none',
-              borderColor: 'rgba(139, 115, 85, 0.25)',
+              borderColor: 'rgba(24, 144, 255, 0.25)',
             }}
             onFocus={(e) => {
-              e.target.style.borderColor = '#b85845';
-              e.target.style.boxShadow = '0 0 0 2px rgba(184, 88, 69, 0.1)';
+              e.target.style.borderColor = '#1890ff';
+              e.target.style.boxShadow = '0 0 0 2px rgba(24, 144, 255, 0.1)';
             }}
             onBlur={(e) => {
-              e.target.style.borderColor = 'rgba(139, 115, 85, 0.25)';
+              e.target.style.borderColor = 'rgba(24, 144, 255, 0.25)';
               e.target.style.boxShadow = 'none';
             }}
             placeholder={t('pages.fileManager.markdownPreview.placeholder')}
@@ -263,7 +263,7 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
           {isDirty && (
             <div style={{ marginTop: '8px', textAlign: 'right' }}>
               <span style={{
-                color: '#d4a574',
+                color: '#69b1ff',
                 fontSize: '12px',
                 fontWeight: 500,
                 letterSpacing: '0.3px'
@@ -288,14 +288,14 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
                 fontFamily: 'monospace',
                 fontSize: '14px',
                 resize: 'none',
-                borderColor: 'rgba(139, 115, 85, 0.25)',
+                borderColor: 'rgba(24, 144, 255, 0.25)',
               }}
               onFocus={(e) => {
-                e.target.style.borderColor = '#b85845';
-                e.target.style.boxShadow = '0 0 0 2px rgba(184, 88, 69, 0.1)';
+                e.target.style.borderColor = '#1890ff';
+                e.target.style.boxShadow = '0 0 0 2px rgba(24, 144, 255, 0.1)';
               }}
               onBlur={(e) => {
-                e.target.style.borderColor = 'rgba(139, 115, 85, 0.25)';
+                e.target.style.borderColor = 'rgba(24, 144, 255, 0.25)';
                 e.target.style.boxShadow = 'none';
               }}
               placeholder={t('pages.fileManager.markdownPreview.placeholder')}
@@ -307,10 +307,10 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({
                 flex: 1,
                 overflow: 'auto',
                 padding: '16px',
-                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(250, 248, 245, 0.9) 100%)',
-                border: '1px solid rgba(139, 115, 85, 0.15)',
+                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(230, 244, 255, 0.9) 100%)',
+                border: '1px solid rgba(24, 144, 255, 0.15)',
                 borderRadius: '8px',
-                boxShadow: 'inset 0 1px 3px rgba(139, 115, 85, 0.08)',
+                boxShadow: 'inset 0 1px 3px rgba(24, 144, 255, 0.08)',
               }}
             >
               {renderMarkdown()}

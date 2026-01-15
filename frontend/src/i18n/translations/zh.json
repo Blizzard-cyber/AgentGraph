@@ -82,7 +82,9 @@
       "goToChat": "前往对话",
       "userMenuSubtitle": "账户设置",
       "userSettings": "个人设置",
-      "adminPanel": "管理后台",
+      "adminPanel": "用户管理",
+      "modelManagement": "模型管理",
+      "gatewaySettings": "网关设置",
       "logout": "退出登录",
       "logoutConfirmTitle": "确认退出",
       "logoutConfirmMessage": "您确定要退出登录吗？",
@@ -649,7 +651,8 @@
       "importHint": "支持多种格式：纯文本、Markdown、JSON、YAML等。AI会智能提取关键信息并分类存储",
       "importSuccess": "导入成功",
       "importFailed": "导入失败：{{error}}",
-      "importError": "导入失败"
+      "importError": "导入失败",
+      "noItems": "该分类下暂无记忆条目"
     },
     "fileManager": {
       "title": "文件管理",

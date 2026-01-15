@@ -43,8 +43,8 @@ const ShareModal: React.FC<ShareModalProps> = ({
       okButtonProps: {
         danger: true,
         style: {
-          background: '#b85845',
-          borderColor: '#b85845'
+          background: '#1890ff',
+          borderColor: '#1890ff'
         }
       },
       onOk: async () => {
@@ -98,8 +98,8 @@ const ShareModal: React.FC<ShareModalProps> = ({
             readOnly
             style={{
               borderRadius: '6px',
-              border: '1px solid rgba(139, 115, 85, 0.2)',
-              background: 'rgba(250, 248, 245, 0.6)',
+              border: '1px solid rgba(24, 144, 255, 0.2)',
+              background: 'rgba(230, 244, 255, 0.6)',
               fontSize: '14px',
               color: '#2d2d2d'
             }}
@@ -109,7 +109,7 @@ const ShareModal: React.FC<ShareModalProps> = ({
                 icon={<ExternalLink size={16} strokeWidth={1.5} />}
                 onClick={handleOpenInNewTab}
                 style={{
-                  color: '#8b7355',
+                  color: 'rgba(0, 0, 0, 0.65)',
                   padding: '4px'
                 }}
               />
@@ -125,8 +125,8 @@ const ShareModal: React.FC<ShareModalProps> = ({
             loading={deleting}
             disabled={deleting}
             style={{
-              color: '#b85845',
-              border: '1px solid rgba(184, 88, 69, 0.3)',
+              color: '#1890ff',
+              border: '1px solid rgba(24, 144, 255, 0.3)',
               borderRadius: '6px',
               background: 'rgba(255, 255, 255, 0.6)',
               padding: '4px 16px',
@@ -137,14 +137,14 @@ const ShareModal: React.FC<ShareModalProps> = ({
             onMouseEnter={(e) => {
               if (!deleting) {
                 e.currentTarget.style.color = '#fff';
-                e.currentTarget.style.borderColor = '#b85845';
-                e.currentTarget.style.background = '#b85845';
+                e.currentTarget.style.borderColor = '#1890ff';
+                e.currentTarget.style.background = '#1890ff';
               }
             }}
             onMouseLeave={(e) => {
               if (!deleting) {
-                e.currentTarget.style.color = '#b85845';
-                e.currentTarget.style.borderColor = 'rgba(184, 88, 69, 0.3)';
+                e.currentTarget.style.color = '#1890ff';
+                e.currentTarget.style.borderColor = 'rgba(24, 144, 255, 0.3)';
                 e.currentTarget.style.background = 'rgba(255, 255, 255, 0.6)';
               }
             }}
@@ -156,13 +156,13 @@ const ShareModal: React.FC<ShareModalProps> = ({
             icon={<Copy size={16} strokeWidth={1.5} />}
             onClick={handleCopyLink}
             style={{
-              background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+              background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
               border: 'none',
               borderRadius: '6px',
               padding: '4px 16px',
               fontSize: '14px',
               fontWeight: 500,
-              boxShadow: '0 2px 6px rgba(184, 88, 69, 0.25)',
+              boxShadow: '0 2px 6px rgba(24, 144, 255, 0.25)',
               transition: 'all 0.2s ease'
             }}
           >

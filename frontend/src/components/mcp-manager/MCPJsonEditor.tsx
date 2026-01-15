@@ -195,7 +195,7 @@ const MCPJsonEditor: React.FC<MCPJsonEditorProps> = ({
           {t('pages.mcpManager.jsonEditor.title')}
         </span>
         <Tooltip title={t('pages.mcpManager.jsonEditor.tooltip')}>
-          <Info size={16} strokeWidth={1.5} style={{ color: '#8b7355', cursor: 'pointer' }} />
+          <Info size={16} strokeWidth={1.5} style={{ color: 'rgba(0, 0, 0, 0.65)', cursor: 'pointer' }} />
         </Tooltip>
       </div>
 
@@ -211,7 +211,7 @@ const MCPJsonEditor: React.FC<MCPJsonEditorProps> = ({
           style={{
             margin: '0 0 16px 0',
             borderRadius: '6px',
-            border: '1px solid rgba(184, 88, 69, 0.3)',
+            border: '1px solid rgba(24, 144, 255, 0.3)',
             background: 'rgba(255, 245, 243, 0.9)'
           }}
         />
@@ -220,8 +220,8 @@ const MCPJsonEditor: React.FC<MCPJsonEditorProps> = ({
       <Card
         style={{
           borderRadius: '6px',
-          border: '1px solid rgba(139, 115, 85, 0.15)',
-          boxShadow: '0 1px 3px rgba(139, 115, 85, 0.06)',
+          border: '1px solid rgba(24, 144, 255, 0.15)',
+          boxShadow: '0 1px 3px rgba(24, 144, 255, 0.06)',
           background: 'rgba(255, 255, 255, 0.85)',
           overflow: 'hidden'
         }}
@@ -248,17 +248,17 @@ const MCPJsonEditor: React.FC<MCPJsonEditorProps> = ({
                 { token: 'function', foreground: 'b85845' },
               ],
               colors: {
-                'editor.background': '#faf8f5',
+                'editor.background': '#ffffff',
                 'editor.foreground': '#2d2d2d',
-                'editor.lineHighlightBackground': '#f5f3f0',
+                'editor.lineHighlightBackground': '#e6f4ff',
                 'editor.selectionBackground': '#e8dfd5',
                 'editor.inactiveSelectionBackground': '#f0ebe5',
                 'editorLineNumber.foreground': '#a89f92',
-                'editorLineNumber.activeForeground': '#8b7355',
-                'editorCursor.foreground': '#b85845',
+                'editorLineNumber.activeForeground': 'rgba(0, 0, 0, 0.65)',
+                'editorCursor.foreground': '#1890ff',
                 'editor.selectionHighlightBackground': '#e8dfd588',
                 'editorIndentGuide.background': '#e5ddd3',
-                'editorIndentGuide.activeBackground': '#8b7355',
+                'editorIndentGuide.activeBackground': 'rgba(0, 0, 0, 0.65)',
               },
             });
             // Set the custom theme
@@ -292,26 +292,26 @@ const MCPJsonEditor: React.FC<MCPJsonEditorProps> = ({
           style={{
             height: '36px',
             borderRadius: '6px',
-            border: '1px solid rgba(139, 115, 85, 0.2)',
+            border: '1px solid rgba(24, 144, 255, 0.2)',
             background: 'rgba(255, 255, 255, 0.85)',
-            color: '#8b7355',
+            color: 'rgba(0, 0, 0, 0.65)',
             fontSize: '14px',
             fontWeight: 500,
             letterSpacing: '0.3px',
-            boxShadow: '0 1px 3px rgba(139, 115, 85, 0.08)',
+            boxShadow: '0 1px 3px rgba(24, 144, 255, 0.08)',
             transition: 'all 0.3s ease',
             display: 'flex',
             alignItems: 'center',
             gap: '6px'
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.borderColor = '#b85845';
-            e.currentTarget.style.color = '#b85845';
+            e.currentTarget.style.borderColor = '#1890ff';
+            e.currentTarget.style.color = '#1890ff';
             e.currentTarget.style.background = 'rgba(255, 255, 255, 0.95)';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.borderColor = 'rgba(139, 115, 85, 0.2)';
-            e.currentTarget.style.color = '#8b7355';
+            e.currentTarget.style.borderColor = 'rgba(24, 144, 255, 0.2)';
+            e.currentTarget.style.color = 'rgba(0, 0, 0, 0.65)';
             e.currentTarget.style.background = 'rgba(255, 255, 255, 0.85)';
           }}
         >
@@ -324,26 +324,26 @@ const MCPJsonEditor: React.FC<MCPJsonEditorProps> = ({
           style={{
             height: '36px',
             borderRadius: '6px',
-            border: '1px solid rgba(139, 115, 85, 0.2)',
+            border: '1px solid rgba(24, 144, 255, 0.2)',
             background: 'rgba(255, 255, 255, 0.85)',
-            color: '#8b7355',
+            color: 'rgba(0, 0, 0, 0.65)',
             fontSize: '14px',
             fontWeight: 500,
             letterSpacing: '0.3px',
-            boxShadow: '0 1px 3px rgba(139, 115, 85, 0.08)',
+            boxShadow: '0 1px 3px rgba(24, 144, 255, 0.08)',
             transition: 'all 0.3s ease',
             display: 'flex',
             alignItems: 'center',
             gap: '6px'
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.borderColor = '#b85845';
-            e.currentTarget.style.color = '#b85845';
+            e.currentTarget.style.borderColor = '#1890ff';
+            e.currentTarget.style.color = '#1890ff';
             e.currentTarget.style.background = 'rgba(255, 255, 255, 0.95)';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.borderColor = 'rgba(139, 115, 85, 0.2)';
-            e.currentTarget.style.color = '#8b7355';
+            e.currentTarget.style.borderColor = 'rgba(24, 144, 255, 0.2)';
+            e.currentTarget.style.color = 'rgba(0, 0, 0, 0.65)';
             e.currentTarget.style.background = 'rgba(255, 255, 255, 0.85)';
           }}
         >
@@ -357,14 +357,14 @@ const MCPJsonEditor: React.FC<MCPJsonEditorProps> = ({
           loading={loading || saving}
           style={{
             height: '36px',
-            background: (!!error || loading || saving) ? 'rgba(139, 115, 85, 0.1)' : 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+            background: (!!error || loading || saving) ? 'rgba(24, 144, 255, 0.1)' : 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
             border: 'none',
             borderRadius: '6px',
-            color: (!!error || loading || saving) ? 'rgba(139, 115, 85, 0.4)' : '#fff',
+            color: (!!error || loading || saving) ? 'rgba(24, 144, 255, 0.4)' : '#fff',
             fontSize: '14px',
             fontWeight: 500,
             letterSpacing: '0.3px',
-            boxShadow: (!!error || loading || saving) ? 'none' : '0 2px 6px rgba(184, 88, 69, 0.25)',
+            boxShadow: (!!error || loading || saving) ? 'none' : '0 2px 6px rgba(24, 144, 255, 0.25)',
             transition: 'all 0.3s ease',
             display: 'flex',
             alignItems: 'center',
@@ -373,12 +373,12 @@ const MCPJsonEditor: React.FC<MCPJsonEditorProps> = ({
           }}
           onMouseEnter={(e) => {
             if (!error && !loading && !saving) {
-              e.currentTarget.style.boxShadow = '0 4px 12px rgba(184, 88, 69, 0.35)';
+              e.currentTarget.style.boxShadow = '0 4px 12px rgba(24, 144, 255, 0.35)';
             }
           }}
           onMouseLeave={(e) => {
             if (!error && !loading && !saving) {
-              e.currentTarget.style.boxShadow = '0 2px 6px rgba(184, 88, 69, 0.25)';
+              e.currentTarget.style.boxShadow = '0 2px 6px rgba(24, 144, 255, 0.25)';
             }
           }}
         >

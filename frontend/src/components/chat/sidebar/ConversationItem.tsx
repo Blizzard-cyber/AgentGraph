@@ -15,6 +15,7 @@ import { ConversationSummary } from '../../../types/conversation';
 import { useConversationStore } from '../../../store/conversationStore';
 import { useT } from '../../../i18n/hooks';
 import { useI18n } from '../../../i18n/I18nContext';
+import type { MenuInfo } from 'rc-menu/lib/interface';
 
 const { TextArea } = Input;
 
@@ -122,8 +123,9 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
             key: 'restore',
             icon: <Check size={14} strokeWidth={1.5} />,
             label: t('components.conversationItem.restoreToNormal'),
-            onClick: (e: any) => {
-              e.domEvent?.stopPropagation();
+            onClick: (e: MenuInfo) => {
+              // rc-menu MenuInfo contains domEvent; call stopPropagation if available
+              ((e.domEvent as unknown) as { stopPropagation?: () => void }).stopPropagation?.();
               handleRestore();
             },
           } as const,
@@ -135,12 +137,12 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
         <Star
           size={14}
           strokeWidth={1.5}
-          fill={conversation.status === 'favorite' ? '#d4a574' : 'none'}
+          fill={conversation.status === 'favorite' ? '#69b1ff' : 'none'}
         />
       ),
       label: conversation.status === 'favorite' ? t('components.conversationItem.unfavorite') : t('components.conversationItem.favorite'),
-      onClick: (e: any) => {
-        e.domEvent?.stopPropagation();
+      onClick: (e: MenuInfo) => {
+        ((e.domEvent as unknown) as { stopPropagation?: () => void }).stopPropagation?.();
         handleStatusToggle();
       },
     },
@@ -148,8 +150,8 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
       key: 'edit',
       icon: <Edit size={14} strokeWidth={1.5} />,
       label: t('components.conversationItem.editTitle'),
-      onClick: (e: any) => {
-        e.domEvent?.stopPropagation();
+      onClick: (e: MenuInfo) => {
+        ((e.domEvent as unknown) as { stopPropagation?: () => void }).stopPropagation?.();
         setEditModalVisible(true);
       },
     },
@@ -157,8 +159,8 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
       key: 'tags',
       icon: <TagIcon size={14} strokeWidth={1.5} />,
       label: t('components.conversationItem.editTags'),
-      onClick: (e: any) => {
-        e.domEvent?.stopPropagation();
+      onClick: (e: MenuInfo) => {
+        ((e.domEvent as unknown) as { stopPropagation?: () => void }).stopPropagation?.();
         setTagsModalVisible(true);
       },
     },
@@ -166,8 +168,8 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
       key: 'delete',
       icon: <Trash2 size={14} strokeWidth={1.5} />,
       label: conversation.status === 'deleted' ? t('components.conversationItem.permanentDelete') : t('common.delete'),
-      onClick: (e: any) => {
-        e.domEvent?.stopPropagation();
+      onClick: (e: MenuInfo) => {
+        ((e.domEvent as unknown) as { stopPropagation?: () => void }).stopPropagation?.();
         handleDelete();
       },
       danger: true,
@@ -237,7 +239,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
       {conversation.tags.length > 0 && (
         <div
           style={{
-            borderTop: '1px solid rgba(139, 115, 85, 0.12)',
+            borderTop: '1px solid rgba(24, 144, 255, 0.12)',
             paddingTop: '8px',
           }}
         >
@@ -256,9 +258,9 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
               <Tag
                 key={tag}
                 style={{
-                  background: 'rgba(139, 115, 85, 0.08)',
-                  color: '#8b7355',
-                  border: '1px solid rgba(139, 115, 85, 0.15)',
+                  background: 'rgba(24, 144, 255, 0.08)',
+                  color: 'rgba(0, 0, 0, 0.65)',
+                  border: '1px solid rgba(24, 144, 255, 0.15)',
                   borderRadius: '4px',
                   fontWeight: 400,
                   fontSize: '11px',
@@ -291,7 +293,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
     if (isActive) {
       return {
         ...base,
-        background: 'rgba(184, 88, 69, 0.08)',
+        background: 'rgba(24, 144, 255, 0.08)',
       };
     }
 
@@ -299,7 +301,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
     if (isBatchMode && isSelected) {
       return {
         ...base,
-        background: 'rgba(139, 115, 85, 0.06)',
+        background: 'rgba(24, 144, 255, 0.06)',
       };
     }
 
@@ -307,7 +309,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
     if (isHovered) {
       return {
         ...base,
-        background: 'rgba(139, 115, 85, 0.04)',
+        background: 'rgba(24, 144, 255, 0.04)',
       };
     }
 
@@ -331,8 +333,8 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
         overlayInnerStyle={{
           background: '#ffffff',
           color: '#2d2d2d',
-          border: '1px solid rgba(139, 115, 85, 0.12)',
-          boxShadow: '0 4px 12px rgba(139, 115, 85, 0.1)',
+          border: '1px solid rgba(24, 144, 255, 0.12)',
+          boxShadow: '0 4px 12px rgba(24, 144, 255, 0.1)',
           borderRadius: '6px',
           padding: '0',
         }}
@@ -376,7 +378,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
                       border: none !important;
                     }
                     .conversation-item-checkbox .ant-checkbox-input:focus + .ant-checkbox-inner {
-                      border-color: #8b7355 !important;
+                      border-color: rgba(0, 0, 0, 0.65) !important;
                       box-shadow: none !important;
                     }
                     .conversation-item-checkbox .ant-checkbox-wrapper:focus-within .ant-checkbox-inner {
@@ -395,7 +397,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
                     conversation.status === 'deleted'
                       ? 'rgba(45, 45, 45, 0.45)'
                       : conversation.status === 'favorite'
-                        ? '#d4a574'
+                        ? '#69b1ff'
                         : '#2d2d2d',
                   fontSize: '14px',
                   lineHeight: '1.6',
@@ -428,13 +430,13 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
                     justifyContent: 'center',
                     border: 'none',
                     background: 'transparent',
-                    color: '#8b7355',
+                    color: 'rgba(0, 0, 0, 0.65)',
                     padding: 0,
                   }}
                   onClick={(e) => e.stopPropagation()}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.background =
-                      'rgba(139, 115, 85, 0.08)';
+                      'rgba(24, 144, 255, 0.08)';
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.background = 'transparent';
@@ -455,23 +457,23 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
         cancelText={t('common.cancel')}
         okButtonProps={{
           style: {
-            background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+            background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
             border: 'none',
             borderRadius: '6px',
-            boxShadow: '0 2px 6px rgba(184, 88, 69, 0.25)',
+            boxShadow: '0 2px 6px rgba(24, 144, 255, 0.25)',
           }
         }}
         cancelButtonProps={{
           style: {
             borderRadius: '6px',
-            border: '1px solid rgba(139, 115, 85, 0.2)',
-            color: '#8b7355',
+            border: '1px solid rgba(24, 144, 255, 0.2)',
+            color: 'rgba(0, 0, 0, 0.65)',
           }
         }}
         styles={{
           content: {
             borderRadius: '8px',
-            boxShadow: '0 8px 24px rgba(139, 115, 85, 0.15)',
+            boxShadow: '0 8px 24px rgba(24, 144, 255, 0.15)',
           }
         }}
       >
@@ -483,9 +485,9 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
           style={{
             height: '40px',
             borderRadius: '6px',
-            border: '1px solid rgba(139, 115, 85, 0.2)',
+            border: '1px solid rgba(24, 144, 255, 0.2)',
             background: 'rgba(255, 255, 255, 0.85)',
-            boxShadow: '0 1px 3px rgba(139, 115, 85, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
+            boxShadow: '0 1px 3px rgba(24, 144, 255, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
           }}
         />
       </Modal>
@@ -499,23 +501,23 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
         cancelText={t('common.cancel')}
         okButtonProps={{
           style: {
-            background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+            background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
             border: 'none',
             borderRadius: '6px',
-            boxShadow: '0 2px 6px rgba(184, 88, 69, 0.25)',
+            boxShadow: '0 2px 6px rgba(24, 144, 255, 0.25)',
           }
         }}
         cancelButtonProps={{
           style: {
             borderRadius: '6px',
-            border: '1px solid rgba(139, 115, 85, 0.2)',
-            color: '#8b7355',
+            border: '1px solid rgba(24, 144, 255, 0.2)',
+            color: 'rgba(0, 0, 0, 0.65)',
           }
         }}
         styles={{
           content: {
             borderRadius: '8px',
-            boxShadow: '0 8px 24px rgba(139, 115, 85, 0.15)',
+            boxShadow: '0 8px 24px rgba(24, 144, 255, 0.15)',
           }
         }}
       >
@@ -526,9 +528,9 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
           rows={3}
           style={{
             borderRadius: '6px',
-            border: '1px solid rgba(139, 115, 85, 0.2)',
+            border: '1px solid rgba(24, 144, 255, 0.2)',
             background: 'rgba(255, 255, 255, 0.85)',
-            boxShadow: '0 1px 3px rgba(139, 115, 85, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
+            boxShadow: '0 1px 3px rgba(24, 144, 255, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
           }}
         />
       </Modal>
@@ -543,30 +545,30 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
         okButtonProps={{
           danger: true,
           style: {
-            background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+            background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
             border: 'none',
             borderRadius: '6px',
-            boxShadow: '0 2px 6px rgba(184, 88, 69, 0.25)',
+            boxShadow: '0 2px 6px rgba(24, 144, 255, 0.25)',
           }
         }}
         cancelButtonProps={{
           style: {
             borderRadius: '6px',
-            border: '1px solid rgba(139, 115, 85, 0.2)',
-            color: '#8b7355',
+            border: '1px solid rgba(24, 144, 255, 0.2)',
+            color: 'rgba(0, 0, 0, 0.65)',
           }
         }}
         styles={{
           content: {
             borderRadius: '8px',
-            boxShadow: '0 8px 24px rgba(139, 115, 85, 0.15)',
+            boxShadow: '0 8px 24px rgba(24, 144, 255, 0.15)',
           }
         }}
       >
         <p style={{ color: '#2d2d2d', marginBottom: '8px', lineHeight: '1.6', letterSpacing: '0.3px' }}>
           {t('components.conversationItem.deleteWarning')}
         </p>
-        <p style={{ color: '#b85845', fontWeight: 500, margin: 0 }}>
+        <p style={{ color: '#1890ff', fontWeight: 500, margin: 0 }}>
           <strong>{conversation.title}</strong>
         </p>
       </Modal>

@@ -36,7 +36,7 @@ const ReadmeModal: React.FC<ReadmeModalProps> = ({ visible, content, onClose }) 
         maxHeight: '60vh',
         overflow: 'auto',
         padding: '16px',
-        background: '#faf8f5',
+        background: '#ffffff',
         borderRadius: '6px'
       }}>
         <pre style={{

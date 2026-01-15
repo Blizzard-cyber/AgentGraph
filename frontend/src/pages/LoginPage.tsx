@@ -53,7 +53,7 @@ const LoginPage: React.FC = () => {
       justifyContent: 'center',
       alignItems: 'center',
       minHeight: '100vh',
-      background: '#faf8f5',
+      background: '#ffffff',
       padding: '20px',
       position: 'relative',
       overflow: 'hidden'
@@ -76,7 +76,7 @@ const LoginPage: React.FC = () => {
         width: '400px',
         height: '400px',
         borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(184, 88, 69, 0.08) 0%, transparent 70%)',
+        background: 'radial-gradient(circle, rgba(24, 144, 255, 0.08) 0%, transparent 70%)',
         pointerEvents: 'none'
       }} />
       <div style={{
@@ -86,7 +86,7 @@ const LoginPage: React.FC = () => {
         width: '350px',
         height: '350px',
         borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(139, 115, 85, 0.06) 0%, transparent 70%)',
+        background: 'radial-gradient(circle, rgba(24, 144, 255, 0.06) 0%, transparent 70%)',
         pointerEvents: 'none'
       }} />
 
@@ -96,8 +96,8 @@ const LoginPage: React.FC = () => {
         backdropFilter: 'blur(20px)',
         padding: '48px',
         borderRadius: '8px',
-        border: '1px solid rgba(139, 115, 85, 0.15)',
-        boxShadow: '0 4px 12px rgba(139, 115, 85, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
+        border: '1px solid rgba(24, 144, 255, 0.15)',
+        boxShadow: '0 4px 12px rgba(24, 144, 255, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
         width: '100%',
         maxWidth: '420px',
         position: 'relative',
@@ -134,8 +134,8 @@ const LoginPage: React.FC = () => {
             style={{
               marginBottom: '24px',
               borderRadius: '6px',
-              border: '1px solid rgba(139, 115, 85, 0.2)',
-              background: 'rgba(212, 165, 116, 0.08)'
+              border: '1px solid rgba(24, 144, 255, 0.2)',
+              background: 'rgba(64, 169, 255, 0.08)'
             }}
           />
         )}
@@ -154,7 +154,7 @@ const LoginPage: React.FC = () => {
                 fontWeight: 500,
                 fontSize: '14px'
               }}>
-                <User size={14} strokeWidth={1.5} style={{ color: '#8b7355' }} />
+                <User size={14} strokeWidth={1.5} style={{ color: 'rgba(0, 0, 0, 0.65)' }} />
                 {t('pages.login.username')}
               </Text>
               <Input
@@ -167,9 +167,9 @@ const LoginPage: React.FC = () => {
                 style={{
                   height: '40px',
                   borderRadius: '6px',
-                  border: '1px solid rgba(139, 115, 85, 0.2)',
+                  border: '1px solid rgba(24, 144, 255, 0.2)',
                   background: 'rgba(255, 255, 255, 0.85)',
-                  boxShadow: '0 1px 3px rgba(139, 115, 85, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6)'
+                  boxShadow: '0 1px 3px rgba(24, 144, 255, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6)'
                 }}
               />
             </div>
@@ -185,7 +185,7 @@ const LoginPage: React.FC = () => {
                 fontWeight: 500,
                 fontSize: '14px'
               }}>
-                <Lock size={14} strokeWidth={1.5} style={{ color: '#8b7355' }} />
+                <Lock size={14} strokeWidth={1.5} style={{ color: 'rgba(0, 0, 0, 0.65)' }} />
                 {t('pages.login.password')}
               </Text>
               <Input.Password
@@ -197,9 +197,9 @@ const LoginPage: React.FC = () => {
                 style={{
                   height: '40px',
                   borderRadius: '6px',
-                  border: '1px solid rgba(139, 115, 85, 0.2)',
+                  border: '1px solid rgba(24, 144, 255, 0.2)',
                   background: 'rgba(255, 255, 255, 0.85)',
-                  boxShadow: '0 1px 3px rgba(139, 115, 85, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6)'
+                  boxShadow: '0 1px 3px rgba(24, 144, 255, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6)'
                 }}
               />
             </div>
@@ -212,8 +212,8 @@ const LoginPage: React.FC = () => {
                 showIcon
                 style={{
                   borderRadius: '6px',
-                  border: '1px solid rgba(184, 88, 69, 0.3)',
-                  background: 'rgba(184, 88, 69, 0.08)'
+                  border: '1px solid rgba(24, 144, 255, 0.3)',
+                  background: 'rgba(24, 144, 255, 0.08)'
                 }}
               />
             )}
@@ -229,21 +229,21 @@ const LoginPage: React.FC = () => {
               style={{
                 height: '44px',
                 borderRadius: '6px',
-                background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+                background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
                 border: 'none',
                 fontSize: '16px',
                 fontWeight: 500,
                 letterSpacing: '0.5px',
-                boxShadow: '0 2px 6px rgba(184, 88, 69, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 2px 6px rgba(24, 144, 255, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
                 transition: 'all 0.3s cubic-bezier(0.23, 1, 0.32, 1)'
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = '0 4px 12px rgba(184, 88, 69, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.3)';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(24, 144, 255, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.3)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 2px 6px rgba(184, 88, 69, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
+                e.currentTarget.style.boxShadow = '0 2px 6px rgba(24, 144, 255, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
               }}
             >
               {loading ? t('pages.login.loggingIn') : t('pages.login.loginButton')}
@@ -256,25 +256,25 @@ const LoginPage: React.FC = () => {
           textAlign: 'center',
           marginTop: '24px',
           paddingTop: '24px',
-          borderTop: '1px solid rgba(139, 115, 85, 0.1)'
+          borderTop: '1px solid rgba(24, 144, 255, 0.1)'
         }}>
           <Text style={{ color: 'rgba(45, 45, 45, 0.65)', fontSize: '14px' }}>
             {t('pages.login.registerLink')}
             <Link
               to="/register"
               style={{
-                color: '#b85845',
+                color: '#1890ff',
                 textDecoration: 'none',
                 fontWeight: 500,
                 marginLeft: '6px',
                 transition: 'color 0.2s ease'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.color = '#a0826d';
+                e.currentTarget.style.color = '#40a9ff';
                 e.currentTarget.style.textDecoration = 'underline';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.color = '#b85845';
+                e.currentTarget.style.color = '#1890ff';
                 e.currentTarget.style.textDecoration = 'none';
               }}
             >
@@ -288,7 +288,7 @@ const LoginPage: React.FC = () => {
           textAlign: 'center',
           marginTop: '20px',
           paddingTop: '16px',
-          borderTop: '1px solid rgba(139, 115, 85, 0.1)'
+          borderTop: '1px solid rgba(24, 144, 255, 0.1)'
         }}>
           <Text style={{
             color: 'rgba(45, 45, 45, 0.45)',

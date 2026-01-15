@@ -29,8 +29,8 @@ const ReasoningDisplay: React.FC<ReasoningDisplayProps> = ({ content }) => {
       margin: '12px 0',
       borderRadius: '6px',
       background: 'rgba(255, 255, 255, 0.85)',
-      border: '1px solid rgba(184, 88, 69, 0.2)',
-      boxShadow: '0 1px 3px rgba(139, 115, 85, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
+      border: '1px solid rgba(24, 144, 255, 0.2)',
+      boxShadow: '0 1px 3px rgba(24, 144, 255, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
       transition: 'all 0.3s cubic-bezier(0.23, 1, 0.32, 1)'
     }}>
       <div
@@ -45,14 +45,14 @@ const ReasoningDisplay: React.FC<ReasoningDisplayProps> = ({ content }) => {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <Bot size={16} strokeWidth={1.5} style={{ color: '#b85845' }} />
+          <Bot size={16} strokeWidth={1.5} style={{ color: '#1890ff' }} />
           <Text strong style={{ color: '#2d2d2d', fontSize: '14px' }}>
             {t('pages.chatSystem.messageDisplay.aiThinking')}
           </Text>
           <Tag style={{
-            background: 'rgba(184, 88, 69, 0.08)',
-            color: '#b85845',
-            border: '1px solid rgba(184, 88, 69, 0.25)',
+            background: 'rgba(24, 144, 255, 0.08)',
+            color: '#1890ff',
+            border: '1px solid rgba(24, 144, 255, 0.25)',
             borderRadius: '6px',
             fontWeight: 500,
             padding: '2px 10px',
@@ -62,20 +62,20 @@ const ReasoningDisplay: React.FC<ReasoningDisplayProps> = ({ content }) => {
           </Tag>
         </div>
         {expanded ? (
-          <ChevronDown size={18} strokeWidth={1.5} style={{ color: '#8b7355' }} />
+          <ChevronDown size={18} strokeWidth={1.5} style={{ color: 'rgba(0, 0, 0, 0.65)' }} />
         ) : (
-          <ChevronRight size={18} strokeWidth={1.5} style={{ color: '#8b7355' }} />
+          <ChevronRight size={18} strokeWidth={1.5} style={{ color: 'rgba(0, 0, 0, 0.65)' }} />
         )}
       </div>
 
       {expanded && (
         <div style={{
           padding: '0 14px 12px',
-          borderTop: '1px solid rgba(139, 115, 85, 0.15)',
+          borderTop: '1px solid rgba(24, 144, 255, 0.15)',
           maxHeight: '400px',
           overflow: 'auto',
           scrollbarWidth: 'thin',
-          scrollbarColor: 'rgba(139, 115, 85, 0.3) rgba(245, 243, 240, 0.6)'
+          scrollbarColor: 'rgba(24, 144, 255, 0.3) rgba(230, 244, 255, 0.6)'
         }} className="reasoning-scrollbar">
           <div style={{ marginTop: '12px' }}>
             <ReactMarkdown
@@ -94,12 +94,12 @@ const ReasoningDisplay: React.FC<ReasoningDisplayProps> = ({ content }) => {
                     </GlassCodeBlock>
                   ) : (
                     <code style={{
-                      background: 'rgba(139, 115, 85, 0.08)',
+                      background: 'rgba(24, 144, 255, 0.08)',
                       padding: '2px 6px',
                       borderRadius: '3px',
                       fontSize: '0.9em',
                       fontFamily: "'SF Mono', monospace",
-                      color: '#b85845'
+                      color: '#1890ff'
                     }} {...restProps}>
                       {codeChildren}
                     </code>

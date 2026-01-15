@@ -234,7 +234,7 @@ const ModeSelector: React.FC<ModeSelectorProps> = ({
       alignItems: 'center',
       justifyContent: 'center',
       padding: '32px',
-      background: '#faf8f5'
+      background: '#ffffff'
     }}
       data-tour="chat-mode-selector"
     >
@@ -262,11 +262,11 @@ const ModeSelector: React.FC<ModeSelectorProps> = ({
                     ? 'rgba(255, 255, 255, 0.85)'
                     : 'rgba(255, 255, 255, 0.5)',
                   border: isActive
-                    ? '1px solid rgba(139, 115, 85, 0.25)'
-                    : '1px solid rgba(139, 115, 85, 0.1)',
+                    ? '1px solid rgba(24, 144, 255, 0.25)'
+                    : '1px solid rgba(24, 144, 255, 0.1)',
                   boxShadow: isActive
-                    ? '0 2px 6px rgba(139, 115, 85, 0.08)'
-                    : '0 1px 2px rgba(139, 115, 85, 0.04)',
+                    ? '0 2px 6px rgba(24, 144, 255, 0.08)'
+                    : '0 1px 2px rgba(24, 144, 255, 0.04)',
                   cursor: 'pointer',
                   transition: 'all 0.2s ease',
                   textAlign: 'center'
@@ -274,15 +274,15 @@ const ModeSelector: React.FC<ModeSelectorProps> = ({
                 onMouseEnter={(e) => {
                   if (!isActive) {
                     e.currentTarget.style.background = 'rgba(255, 255, 255, 0.7)';
-                    e.currentTarget.style.borderColor = 'rgba(139, 115, 85, 0.2)';
-                    e.currentTarget.style.boxShadow = '0 2px 4px rgba(139, 115, 85, 0.06)';
+                    e.currentTarget.style.borderColor = 'rgba(24, 144, 255, 0.2)';
+                    e.currentTarget.style.boxShadow = '0 2px 4px rgba(24, 144, 255, 0.06)';
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (!isActive) {
                     e.currentTarget.style.background = 'rgba(255, 255, 255, 0.5)';
-                    e.currentTarget.style.borderColor = 'rgba(139, 115, 85, 0.1)';
-                    e.currentTarget.style.boxShadow = '0 1px 2px rgba(139, 115, 85, 0.04)';
+                    e.currentTarget.style.borderColor = 'rgba(24, 144, 255, 0.1)';
+                    e.currentTarget.style.boxShadow = '0 1px 2px rgba(24, 144, 255, 0.04)';
                   }
                 }}
               >
@@ -296,7 +296,7 @@ const ModeSelector: React.FC<ModeSelectorProps> = ({
                     size={20}
                     strokeWidth={1.5}
                     style={{
-                      color: isActive ? '#8b7355' : 'rgba(139, 115, 85, 0.5)',
+                      color: isActive ? 'rgba(0, 0, 0, 0.65)' : 'rgba(24, 144, 255, 0.5)',
                       transition: 'color 0.2s ease'
                     }}
                   />
@@ -328,10 +328,10 @@ const ModeSelector: React.FC<ModeSelectorProps> = ({
         {currentMode && (
           <div style={{
             background: 'rgba(255, 255, 255, 0.7)',
-            border: '1px solid rgba(139, 115, 85, 0.15)',
+            border: '1px solid rgba(24, 144, 255, 0.15)',
             borderRadius: '6px',
             padding: '20px',
-            boxShadow: '0 1px 3px rgba(139, 115, 85, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.5)'
+            boxShadow: '0 1px 3px rgba(24, 144, 255, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.5)'
           }}>
             <div style={{ position: 'relative' }}>
               <div style={{
@@ -467,9 +467,9 @@ const ModeSelector: React.FC<ModeSelectorProps> = ({
                                 margin: 0,
                                 fontSize: '11px',
                                 padding: '2px 6px',
-                                background: 'rgba(139, 115, 85, 0.1)',
-                                border: '1px solid rgba(139, 115, 85, 0.2)',
-                                color: '#8b7355'
+                                background: 'rgba(24, 144, 255, 0.1)',
+                                border: '1px solid rgba(24, 144, 255, 0.2)',
+                                color: 'rgba(0, 0, 0, 0.65)'
                               }}
                             >
                               {agent}
@@ -492,27 +492,27 @@ const ModeSelector: React.FC<ModeSelectorProps> = ({
                       height: '30px',
                       minWidth: '30px',
                       borderRadius: '50%',
-                      background: canStart() ? '#8b7355' : 'rgba(139, 115, 85, 0.25)',
+                      background: canStart() ? 'rgba(0, 0, 0, 0.65)' : 'rgba(24, 144, 255, 0.25)',
                       border: 'none',
                       color: 'white',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       cursor: canStart() ? 'pointer' : 'not-allowed',
-                      boxShadow: canStart() ? '0 1px 3px rgba(139, 115, 85, 0.2)' : 'none',
+                      boxShadow: canStart() ? '0 1px 3px rgba(24, 144, 255, 0.2)' : 'none',
                       padding: 0,
                       transition: 'all 0.2s ease'
                     }}
                     onMouseEnter={(e) => {
                       if (canStart()) {
-                        e.currentTarget.style.background = '#a0826d';
-                        e.currentTarget.style.boxShadow = '0 2px 4px rgba(139, 115, 85, 0.25)';
+                        e.currentTarget.style.background = '#40a9ff';
+                        e.currentTarget.style.boxShadow = '0 2px 4px rgba(24, 144, 255, 0.25)';
                       }
                     }}
                     onMouseLeave={(e) => {
                       if (canStart()) {
-                        e.currentTarget.style.background = '#8b7355';
-                        e.currentTarget.style.boxShadow = '0 1px 3px rgba(139, 115, 85, 0.2)';
+                        e.currentTarget.style.background = 'rgba(0, 0, 0, 0.65)';
+                        e.currentTarget.style.boxShadow = '0 1px 3px rgba(24, 144, 255, 0.2)';
                       }
                     }}
                   />

@@ -112,17 +112,17 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
             fontSize: '14px',
             lineHeight: '1.6',
             resize: 'none',
-            borderColor: 'rgba(139, 115, 85, 0.25)',
+            borderColor: 'rgba(24, 144, 255, 0.25)',
             borderRadius: '8px',
             wordBreak: 'break-word',
             overflowWrap: 'break-word'
           }}
           onFocus={(e) => {
-            e.target.style.borderColor = '#b85845';
-            e.target.style.boxShadow = '0 0 0 2px rgba(184, 88, 69, 0.1)';
+            e.target.style.borderColor = '#1890ff';
+            e.target.style.boxShadow = '0 0 0 2px rgba(24, 144, 255, 0.1)';
           }}
           onBlur={(e) => {
-            e.target.style.borderColor = 'rgba(139, 115, 85, 0.25)';
+            e.target.style.borderColor = 'rgba(24, 144, 255, 0.25)';
             e.target.style.boxShadow = 'none';
           }}
           placeholder={placeholder}
@@ -136,10 +136,10 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
             flex: 1,
             overflow: 'auto',
             padding: '16px',
-            background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(250, 248, 245, 0.9) 100%)',
-            border: '1px solid rgba(139, 115, 85, 0.15)',
+            background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(230, 244, 255, 0.9) 100%)',
+            border: '1px solid rgba(24, 144, 255, 0.15)',
             borderRadius: '8px',
-            boxShadow: 'inset 0 1px 3px rgba(139, 115, 85, 0.08)',
+            boxShadow: 'inset 0 1px 3px rgba(24, 144, 255, 0.08)',
             wordBreak: 'break-word',
             overflowWrap: 'break-word'
           }}

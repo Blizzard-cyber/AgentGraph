@@ -149,9 +149,9 @@ export const FileViewModal: React.FC<FileViewModalProps> = ({
           width: '100%'
         }}>
           <Space size="middle">
-            <FileText size={20} style={{ color: '#b85845' }} />
+            <FileText size={20} style={{ color: '#1890ff' }} />
             <Text strong style={{ fontSize: '16px', letterSpacing: '1px' }}>{filename}</Text>
-            {isDirty && <Text style={{ color: '#d4a574', fontSize: '16px' }}>●</Text>}
+            {isDirty && <Text style={{ color: '#69b1ff', fontSize: '16px' }}>●</Text>}
           </Space>
           <Space size="small">
             <Button
@@ -165,12 +165,12 @@ export const FileViewModal: React.FC<FileViewModalProps> = ({
                 fontWeight: 500,
                 letterSpacing: '0.5px',
                 ...(activeView === 'editor' ? {
-                  background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+                  background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
                   border: 'none',
                   color: '#fff'
                 } : {
-                  border: '1px solid rgba(139, 115, 85, 0.25)',
-                  color: '#8b7355',
+                  border: '1px solid rgba(24, 144, 255, 0.25)',
+                  color: 'rgba(0, 0, 0, 0.65)',
                   background: 'transparent'
                 })
               }}
@@ -188,12 +188,12 @@ export const FileViewModal: React.FC<FileViewModalProps> = ({
                 fontWeight: 500,
                 letterSpacing: '0.5px',
                 ...(activeView === 'history' ? {
-                  background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+                  background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
                   border: 'none',
                   color: '#fff'
                 } : {
-                  border: '1px solid rgba(139, 115, 85, 0.25)',
-                  color: '#8b7355',
+                  border: '1px solid rgba(24, 144, 255, 0.25)',
+                  color: 'rgba(0, 0, 0, 0.65)',
                   background: 'transparent'
                 })
               }}
@@ -213,18 +213,18 @@ export const FileViewModal: React.FC<FileViewModalProps> = ({
       styles={{
         header: {
           background: 'transparent',
-          borderBottom: '1px solid rgba(139, 115, 85, 0.15)',
+          borderBottom: '1px solid rgba(24, 144, 255, 0.15)',
           padding: '24px 32px'
         },
         body: {
           padding: 0,
-          background: 'rgba(250, 248, 245, 0.3)',
+          background: 'rgba(230, 244, 255, 0.3)',
           overflow: 'hidden'
         },
         footer: {
-          borderTop: '1px solid rgba(139, 115, 85, 0.15)',
+          borderTop: '1px solid rgba(24, 144, 255, 0.15)',
           padding: '20px 32px',
-          background: 'rgba(250, 248, 245, 0.5)'
+          background: 'rgba(230, 244, 255, 0.5)'
         }
       }}
       footer={
@@ -233,8 +233,8 @@ export const FileViewModal: React.FC<FileViewModalProps> = ({
             onClick={handleClose}
             style={{
               borderRadius: '6px',
-              border: '1px solid rgba(139, 115, 85, 0.25)',
-              color: '#8b7355',
+              border: '1px solid rgba(24, 144, 255, 0.25)',
+              color: 'rgba(0, 0, 0, 0.65)',
               fontWeight: 500,
               letterSpacing: '0.5px'
             }}
@@ -246,8 +246,8 @@ export const FileViewModal: React.FC<FileViewModalProps> = ({
             onClick={handleDownload}
             style={{
               borderRadius: '6px',
-              border: '1px solid rgba(139, 115, 85, 0.25)',
-              color: '#8b7355',
+              border: '1px solid rgba(24, 144, 255, 0.25)',
+              color: 'rgba(0, 0, 0, 0.65)',
               fontWeight: 500,
               letterSpacing: '0.5px'
             }}
@@ -262,25 +262,25 @@ export const FileViewModal: React.FC<FileViewModalProps> = ({
             cancelText={t('pages.fileManager.fileViewModal.deleteConfirmCancel')}
             okButtonProps={{
               style: {
-                background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+                background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
                 border: 'none',
                 borderRadius: '6px',
                 color: '#fff',
                 fontWeight: 500,
-                boxShadow: '0 2px 6px rgba(184, 88, 69, 0.25)'
+                boxShadow: '0 2px 6px rgba(24, 144, 255, 0.25)'
               }
             }}
             cancelButtonProps={{
               style: {
                 borderRadius: '6px',
-                border: '1px solid rgba(139, 115, 85, 0.2)',
-                color: '#8b7355',
+                border: '1px solid rgba(24, 144, 255, 0.2)',
+                color: 'rgba(0, 0, 0, 0.65)',
                 fontWeight: 500
               }
             }}
             overlayStyle={{
               borderRadius: '8px',
-              boxShadow: '0 4px 12px rgba(139, 115, 85, 0.2)'
+              boxShadow: '0 4px 12px rgba(24, 144, 255, 0.2)'
             }}
           >
             <Button
@@ -302,10 +302,10 @@ export const FileViewModal: React.FC<FileViewModalProps> = ({
             disabled={!isDirty}
             loading={saving}
             style={{
-              background: isDirty ? 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)' : undefined,
+              background: isDirty ? 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)' : undefined,
               border: 'none',
               borderRadius: '6px',
-              boxShadow: isDirty ? '0 2px 8px rgba(184, 88, 69, 0.25)' : undefined,
+              boxShadow: isDirty ? '0 2px 8px rgba(24, 144, 255, 0.25)' : undefined,
               fontWeight: 500,
               letterSpacing: '0.5px'
             }}
@@ -331,32 +331,32 @@ export const FileViewModal: React.FC<FileViewModalProps> = ({
           <div style={{
             marginBottom: '24px',
             padding: '20px 24px',
-            background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(250, 248, 245, 0.85) 100%)',
-            border: '1px solid rgba(139, 115, 85, 0.15)',
+            background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(230, 244, 255, 0.85) 100%)',
+            border: '1px solid rgba(24, 144, 255, 0.15)',
             borderRadius: '8px',
-            boxShadow: '0 1px 4px rgba(139, 115, 85, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.7)'
+            boxShadow: '0 1px 4px rgba(24, 144, 255, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.7)'
           }}>
-            <Space split={<span style={{ color: 'rgba(139, 115, 85, 0.3)', margin: '0 12px' }}>|</span>}>
+            <Space split={<span style={{ color: 'rgba(24, 144, 255, 0.3)', margin: '0 12px' }}>|</span>}>
               <Text type="secondary" style={{
                 fontSize: '13px',
                 color: 'rgba(45, 45, 45, 0.75)',
                 letterSpacing: '0.3px'
               }}>
-                <strong style={{ fontWeight: 600, color: '#8b7355' }}>{t('pages.fileManager.fileViewModal.path')}:</strong> {fileDetail.filename}
+                <strong style={{ fontWeight: 600, color: 'rgba(0, 0, 0, 0.65)' }}>{t('pages.fileManager.fileViewModal.path')}:</strong> {fileDetail.filename}
               </Text>
               <Text type="secondary" style={{
                 fontSize: '13px',
                 color: 'rgba(45, 45, 45, 0.75)',
                 letterSpacing: '0.3px'
               }}>
-                <strong style={{ fontWeight: 600, color: '#8b7355' }}>{t('pages.fileManager.fileViewModal.description')}:</strong> {fileDetail.summary}
+                <strong style={{ fontWeight: 600, color: 'rgba(0, 0, 0, 0.65)' }}>{t('pages.fileManager.fileViewModal.description')}:</strong> {fileDetail.summary}
               </Text>
               <Text type="secondary" style={{
                 fontSize: '13px',
                 color: 'rgba(45, 45, 45, 0.75)',
                 letterSpacing: '0.3px'
               }}>
-                <strong style={{ fontWeight: 600, color: '#8b7355' }}>{t('pages.fileManager.fileViewModal.version')}:</strong> {fileDetail.versions.length}
+                <strong style={{ fontWeight: 600, color: 'rgba(0, 0, 0, 0.65)' }}>{t('pages.fileManager.fileViewModal.version')}:</strong> {fileDetail.versions.length}
               </Text>
             </Space>
           </div>

@@ -266,7 +266,7 @@ async def lifespan(app: FastAPI):
             await model_service.initialize_gpustack_client()
             logger.info("GPUStack客户端初始化流程完成")
 
-            # 测试模型部署功能（通过环境变量 ENABLE_GPUSTACK_DEPLOYMENT_TEST=true 启用）
+            # 测试模型部署功能
             if model_service.gpustack_client:
                 logger.info("检测到启用模型部署测试，开始执行测试...")
                 await test_model_deployment(model_service.gpustack_client)

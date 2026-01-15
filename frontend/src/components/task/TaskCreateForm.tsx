@@ -156,13 +156,13 @@ const TaskCreateForm: React.FC<TaskCreateFormProps> = ({
       destroyOnClose
       styles={{
         header: {
-          borderBottom: '1px solid rgba(139, 115, 85, 0.15)',
+          borderBottom: '1px solid rgba(24, 144, 255, 0.15)',
           padding: '20px 24px',
-          background: 'rgba(250, 248, 245, 0.6)'
+          background: 'rgba(230, 244, 255, 0.6)'
         },
         body: {
           padding: 0,
-          backgroundColor: '#faf8f5'
+          backgroundColor: '#ffffff'
         }
       }}
       footer={
@@ -171,7 +171,7 @@ const TaskCreateForm: React.FC<TaskCreateFormProps> = ({
           justifyContent: 'flex-end',
           gap: '12px',
           padding: '16px 24px',
-          borderTop: '1px solid rgba(139, 115, 85, 0.15)',
+          borderTop: '1px solid rgba(24, 144, 255, 0.15)',
           backgroundColor: 'rgba(255, 255, 255, 0.85)'
         }}>
           <Button
@@ -181,7 +181,7 @@ const TaskCreateForm: React.FC<TaskCreateFormProps> = ({
             }}
             style={{
               borderRadius: '6px',
-              border: '1px solid rgba(139, 115, 85, 0.2)',
+              border: '1px solid rgba(24, 144, 255, 0.2)',
               color: 'rgba(45, 45, 45, 0.65)',
               height: '40px',
               padding: '8px 16px',
@@ -190,12 +190,12 @@ const TaskCreateForm: React.FC<TaskCreateFormProps> = ({
               transition: 'all 0.2s ease'
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(139, 115, 85, 0.08)';
-              e.currentTarget.style.borderColor = 'rgba(139, 115, 85, 0.3)';
+              e.currentTarget.style.background = 'rgba(24, 144, 255, 0.08)';
+              e.currentTarget.style.borderColor = 'rgba(24, 144, 255, 0.3)';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.background = 'transparent';
-              e.currentTarget.style.borderColor = 'rgba(139, 115, 85, 0.2)';
+              e.currentTarget.style.borderColor = 'rgba(24, 144, 255, 0.2)';
             }}
           >
             {t('pages.taskManager.taskCreateForm.cancel')}
@@ -204,7 +204,7 @@ const TaskCreateForm: React.FC<TaskCreateFormProps> = ({
             loading={loading}
             onClick={handleSubmit}
             style={{
-              background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+              background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
               border: 'none',
               borderRadius: '6px',
               color: '#fff',
@@ -212,19 +212,19 @@ const TaskCreateForm: React.FC<TaskCreateFormProps> = ({
               fontSize: '14px',
               fontWeight: 500,
               height: '40px',
-              boxShadow: '0 2px 6px rgba(184, 88, 69, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+              boxShadow: '0 2px 6px rgba(24, 144, 255, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
               transition: 'all 0.3s cubic-bezier(0.23, 1, 0.32, 1)'
             }}
             onMouseEnter={(e) => {
               if (!loading) {
                 e.currentTarget.style.transform = 'translateY(-1px)';
-                e.currentTarget.style.boxShadow = '0 4px 12px rgba(184, 88, 69, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.3)';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(24, 144, 255, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.3)';
               }
             }}
             onMouseLeave={(e) => {
               if (!loading) {
                 e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 2px 6px rgba(184, 88, 69, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
+                e.currentTarget.style.boxShadow = '0 2px 6px rgba(24, 144, 255, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
               }
             }}
           >
@@ -254,12 +254,12 @@ const TaskCreateForm: React.FC<TaskCreateFormProps> = ({
             placeholder={t('pages.taskManager.taskCreateForm.taskNamePlaceholder')}
             style={{
               borderRadius: '6px',
-              border: '1px solid rgba(139, 115, 85, 0.2)',
+              border: '1px solid rgba(24, 144, 255, 0.2)',
               fontSize: '14px',
               padding: '10px 14px',
               height: '40px',
               background: 'rgba(255, 255, 255, 0.85)',
-              boxShadow: '0 1px 3px rgba(139, 115, 85, 0.08)',
+              boxShadow: '0 1px 3px rgba(24, 144, 255, 0.08)',
               transition: 'all 0.3s ease'
             }}
           />
@@ -308,11 +308,11 @@ const TaskCreateForm: React.FC<TaskCreateFormProps> = ({
             maxLength={1000}
             style={{
               borderRadius: '6px',
-              border: '1px solid rgba(139, 115, 85, 0.2)',
+              border: '1px solid rgba(24, 144, 255, 0.2)',
               fontSize: '14px',
               resize: 'none',
               background: 'rgba(255, 255, 255, 0.85)',
-              boxShadow: '0 1px 3px rgba(139, 115, 85, 0.08)',
+              boxShadow: '0 1px 3px rgba(24, 144, 255, 0.08)',
               transition: 'all 0.3s ease'
             }}
           />
@@ -333,18 +333,18 @@ const TaskCreateForm: React.FC<TaskCreateFormProps> = ({
             style={{
               width: '100%',
               borderRadius: '6px',
-              border: '1px solid rgba(139, 115, 85, 0.2)',
+              border: '1px solid rgba(24, 144, 255, 0.2)',
               height: '40px',
               fontSize: '14px',
               background: 'rgba(255, 255, 255, 0.85)',
-              boxShadow: '0 1px 3px rgba(139, 115, 85, 0.08)'
+              boxShadow: '0 1px 3px rgba(24, 144, 255, 0.08)'
             }}
           />
         </Form.Item>
 
         <div style={{
           height: '1px',
-          background: 'linear-gradient(to right, transparent, rgba(139, 115, 85, 0.2) 50%, transparent)',
+          background: 'linear-gradient(to right, transparent, rgba(24, 144, 255, 0.2) 50%, transparent)',
           margin: '32px 0'
         }} />
 
@@ -390,11 +390,11 @@ const TaskCreateForm: React.FC<TaskCreateFormProps> = ({
               style={{
                 width: '100%',
                 borderRadius: '6px',
-                border: '1px solid rgba(139, 115, 85, 0.2)',
+                border: '1px solid rgba(24, 144, 255, 0.2)',
                 height: '40px',
                 fontSize: '14px',
                 background: 'rgba(255, 255, 255, 0.85)',
-                boxShadow: '0 1px 3px rgba(139, 115, 85, 0.08)'
+                boxShadow: '0 1px 3px rgba(24, 144, 255, 0.08)'
               }}
             />
           </Form.Item>
@@ -420,14 +420,14 @@ const TaskCreateForm: React.FC<TaskCreateFormProps> = ({
         {getNextExecutionPreview() && (
           <div style={{
             padding: '16px',
-            backgroundColor: 'rgba(160, 130, 109, 0.08)',
-            border: '1px solid rgba(160, 130, 109, 0.2)',
+            backgroundColor: 'rgba(64, 169, 255, 0.08)',
+            border: '1px solid rgba(64, 169, 255, 0.2)',
             borderRadius: '8px',
             marginBottom: '24px'
           }}>
             <div style={{
               fontSize: '13px',
-              color: '#8b7355',
+              color: 'rgba(0, 0, 0, 0.65)',
               fontWeight: 500
             }}>
               📅 {t('pages.taskManager.taskCreateForm.executionPreview')}

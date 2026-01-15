@@ -176,21 +176,21 @@ const AgentManager: React.FC = () => {
   const totalAgentsCount = filteredGroups.reduce((sum, group) => sum + group.agents.length, 0);
 
   return (
-    <Layout style={{ height: '100vh', background: '#faf8f5', display: 'flex', flexDirection: 'column' }}>
+    <Layout style={{ height: '100vh', background: '#ffffff', display: 'flex', flexDirection: 'column' }}>
       {/* Header */}
       <Header style={HEADER_STYLES.container}>
         <div style={HEADER_STYLES.decorativeLine} />
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '100%' }}>
           <Space size="large">
-            <Bot size={28} color="#b85845" strokeWidth={1.5} />
+            <Bot size={28} color="#1890ff" strokeWidth={1.5} />
             <Title level={4} style={HEADER_STYLES.title}>
               {t('pages.agentManager.title')}
             </Title>
             <Tag style={{
-              background: 'rgba(184, 88, 69, 0.08)',
-              color: '#b85845',
-              border: '1px solid rgba(184, 88, 69, 0.25)',
+              background: 'rgba(24, 144, 255, 0.08)',
+              color: '#1890ff',
+              border: '1px solid rgba(24, 144, 255, 0.25)',
               borderRadius: '6px',
               fontWeight: 500,
               padding: '4px 12px',
@@ -199,9 +199,9 @@ const AgentManager: React.FC = () => {
               {t('pages.agentManager.agentsCount', { count: totalAgentsCount })}
             </Tag>
             <Tag style={{
-              background: 'rgba(139, 115, 85, 0.08)',
-              color: '#8b7355',
-              border: '1px solid rgba(139, 115, 85, 0.25)',
+              background: 'rgba(24, 144, 255, 0.08)',
+              color: 'rgba(0, 0, 0, 0.65)',
+              border: '1px solid rgba(24, 144, 255, 0.25)',
               borderRadius: '6px',
               fontWeight: 500,
               padding: '4px 12px',
@@ -215,7 +215,7 @@ const AgentManager: React.FC = () => {
             <Input
               placeholder={t('pages.agentManager.searchPlaceholder')}
               allowClear
-              prefix={<SearchIcon size={16} strokeWidth={1.5} style={{ color: '#8b7355', marginRight: '4px' }} />}
+              prefix={<SearchIcon size={16} strokeWidth={1.5} style={{ color: 'rgba(0, 0, 0, 0.65)', marginRight: '4px' }} />}
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
               style={{ ...INPUT_STYLES.base, width: 280 }}
@@ -292,7 +292,7 @@ const AgentManager: React.FC = () => {
       <Modal
         title={
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Bot size={20} strokeWidth={1.5} style={{ color: '#b85845' }} />
+            <Bot size={20} strokeWidth={1.5} style={{ color: '#1890ff' }} />
             <span style={{
               color: '#2d2d2d',
               fontSize: '18px',
@@ -314,9 +314,9 @@ const AgentManager: React.FC = () => {
             style={{
               height: '40px',
               borderRadius: '6px',
-              border: '1px solid rgba(139, 115, 85, 0.2)',
+              border: '1px solid rgba(24, 144, 255, 0.2)',
               background: 'rgba(255, 255, 255, 0.85)',
-              color: '#8b7355',
+              color: 'rgba(0, 0, 0, 0.65)',
               fontWeight: 500,
               fontSize: '14px',
               letterSpacing: '0.3px',
@@ -331,14 +331,14 @@ const AgentManager: React.FC = () => {
             onClick={handleSubmit}
             style={{
               height: '40px',
-              background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+              background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
               border: 'none',
               borderRadius: '6px',
               color: '#fff',
               fontWeight: 500,
               fontSize: '14px',
               letterSpacing: '0.3px',
-              boxShadow: '0 2px 6px rgba(184, 88, 69, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+              boxShadow: '0 2px 6px rgba(24, 144, 255, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
               padding: '0 24px'
             }}
           >
@@ -379,9 +379,9 @@ const AgentManager: React.FC = () => {
             style={{
               height: '36px',
               borderRadius: '6px',
-              border: '1px solid rgba(139, 115, 85, 0.2)',
+              border: '1px solid rgba(24, 144, 255, 0.2)',
               background: 'rgba(255, 255, 255, 0.85)',
-              color: '#8b7355',
+              color: 'rgba(0, 0, 0, 0.65)',
               fontWeight: 500,
               fontSize: '14px',
               letterSpacing: '0.3px'
@@ -394,12 +394,12 @@ const AgentManager: React.FC = () => {
         styles={{
           content: {
             borderRadius: '8px',
-            boxShadow: '0 8px 24px rgba(139, 115, 85, 0.15)',
+            boxShadow: '0 8px 24px rgba(24, 144, 255, 0.15)',
             padding: 0
           },
           header: {
-            background: 'rgba(250, 248, 245, 0.6)',
-            borderBottom: '1px solid rgba(139, 115, 85, 0.15)',
+            background: 'rgba(230, 244, 255, 0.6)',
+            borderBottom: '1px solid rgba(24, 144, 255, 0.15)',
             padding: '16px 24px'
           },
           body: {
@@ -407,7 +407,7 @@ const AgentManager: React.FC = () => {
             background: '#fff'
           },
           footer: {
-            borderTop: '1px solid rgba(139, 115, 85, 0.15)',
+            borderTop: '1px solid rgba(24, 144, 255, 0.15)',
             padding: '12px 16px'
           }
         }}

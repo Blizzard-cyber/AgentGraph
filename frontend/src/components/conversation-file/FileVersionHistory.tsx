@@ -110,11 +110,11 @@ const FileVersionHistory: React.FC<FileVersionHistoryProps> = ({
 
     return (
       <pre style={{
-        background: 'linear-gradient(135deg, rgba(250, 248, 245, 0.8) 0%, rgba(255, 255, 255, 0.9) 100%)',
+        background: 'linear-gradient(135deg, rgba(230, 244, 255, 0.8) 0%, rgba(255, 255, 255, 0.9) 100%)',
         padding: '24px',
         borderRadius: '8px',
-        border: '1px solid rgba(139, 115, 85, 0.15)',
-        boxShadow: 'inset 0 1px 3px rgba(139, 115, 85, 0.08)',
+        border: '1px solid rgba(24, 144, 255, 0.15)',
+        boxShadow: 'inset 0 1px 3px rgba(24, 144, 255, 0.08)',
         overflow: 'auto',
         maxHeight: '60vh',
         fontSize: '13px',
@@ -177,19 +177,19 @@ const FileVersionHistory: React.FC<FileVersionHistoryProps> = ({
                 <List.Item
                   key={version.version_id}
                   style={{
-                    background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(250, 248, 245, 0.9) 100%)',
+                    background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(230, 244, 255, 0.9) 100%)',
                     padding: '20px 24px',
                     marginBottom: '16px',
                     borderRadius: '8px',
-                    border: '1px solid rgba(139, 115, 85, 0.15)',
-                    boxShadow: '0 1px 4px rgba(139, 115, 85, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.7)',
+                    border: '1px solid rgba(24, 144, 255, 0.15)',
+                    boxShadow: '0 1px 4px rgba(24, 144, 255, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.7)',
                     transition: 'all 0.3s ease'
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.boxShadow = '0 2px 8px rgba(139, 115, 85, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.8)';
+                    e.currentTarget.style.boxShadow = '0 2px 8px rgba(24, 144, 255, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.8)';
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.boxShadow = '0 1px 4px rgba(139, 115, 85, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.7)';
+                    e.currentTarget.style.boxShadow = '0 1px 4px rgba(24, 144, 255, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.7)';
                   }}
                 >
                   <div style={{
@@ -200,7 +200,7 @@ const FileVersionHistory: React.FC<FileVersionHistoryProps> = ({
                     gap: '16px'
                   }}>
                     <Space size="middle" style={{ flex: 1 }}>
-                      <Clock size={14} style={{ color: '#b85845', flexShrink: 0 }} />
+                      <Clock size={14} style={{ color: '#1890ff', flexShrink: 0 }} />
                       <Text style={{
                         fontWeight: 500,
                         color: '#2d2d2d',
@@ -236,8 +236,8 @@ const FileVersionHistory: React.FC<FileVersionHistoryProps> = ({
                         onClick={() => handleViewVersion(version)}
                         style={{
                           borderRadius: '4px',
-                          border: '1px solid rgba(139, 115, 85, 0.25)',
-                          color: '#8b7355',
+                          border: '1px solid rgba(24, 144, 255, 0.25)',
+                          color: 'rgba(0, 0, 0, 0.65)',
                           fontSize: '12px',
                           height: '28px',
                           padding: '0 12px'
@@ -252,8 +252,8 @@ const FileVersionHistory: React.FC<FileVersionHistoryProps> = ({
                           onClick={() => handleCompareVersion(version)}
                           style={{
                             borderRadius: '4px',
-                            border: '1px solid rgba(139, 115, 85, 0.25)',
-                            color: '#8b7355',
+                            border: '1px solid rgba(24, 144, 255, 0.25)',
+                            color: 'rgba(0, 0, 0, 0.65)',
                             fontSize: '12px',
                             height: '28px',
                             padding: '0 12px'
@@ -275,7 +275,7 @@ const FileVersionHistory: React.FC<FileVersionHistoryProps> = ({
       <Modal
         title={
           <Space size="middle">
-            <Eye size={18} style={{ color: '#b85845' }} />
+            <Eye size={18} style={{ color: '#1890ff' }} />
             <span style={{ fontWeight: 500, letterSpacing: '1px' }}>{t('pages.fileManager.fileVersionHistory.viewVersionTitle')}</span>
             {selectedVersion?.is_current && (
               <Tag style={{
@@ -297,17 +297,17 @@ const FileVersionHistory: React.FC<FileVersionHistoryProps> = ({
         styles={{
           header: {
             background: 'transparent',
-            borderBottom: '1px solid rgba(139, 115, 85, 0.15)',
+            borderBottom: '1px solid rgba(24, 144, 255, 0.15)',
             padding: '24px 32px'
           },
           body: {
             padding: '32px',
-            background: 'rgba(250, 248, 245, 0.3)'
+            background: 'rgba(230, 244, 255, 0.3)'
           },
           footer: {
-            borderTop: '1px solid rgba(139, 115, 85, 0.15)',
+            borderTop: '1px solid rgba(24, 144, 255, 0.15)',
             padding: '20px 32px',
-            background: 'rgba(250, 248, 245, 0.5)'
+            background: 'rgba(230, 244, 255, 0.5)'
           }
         }}
         footer={[
@@ -319,8 +319,8 @@ const FileVersionHistory: React.FC<FileVersionHistoryProps> = ({
             }}
             style={{
               borderRadius: '6px',
-              border: '1px solid rgba(139, 115, 85, 0.25)',
-              color: '#8b7355',
+              border: '1px solid rgba(24, 144, 255, 0.25)',
+              color: 'rgba(0, 0, 0, 0.65)',
               fontWeight: 500,
               letterSpacing: '0.5px'
             }}
@@ -352,11 +352,11 @@ const FileVersionHistory: React.FC<FileVersionHistoryProps> = ({
             <Divider />
             <div
               style={{
-                background: 'linear-gradient(135deg, rgba(250, 248, 245, 0.8) 0%, rgba(255, 255, 255, 0.9) 100%)',
+                background: 'linear-gradient(135deg, rgba(230, 244, 255, 0.8) 0%, rgba(255, 255, 255, 0.9) 100%)',
                 padding: '24px',
                 borderRadius: '8px',
-                border: '1px solid rgba(139, 115, 85, 0.15)',
-                boxShadow: 'inset 0 1px 3px rgba(139, 115, 85, 0.08)',
+                border: '1px solid rgba(24, 144, 255, 0.15)',
+                boxShadow: 'inset 0 1px 3px rgba(24, 144, 255, 0.08)',
                 maxHeight: '60vh',
                 overflow: 'auto',
               }}
@@ -381,7 +381,7 @@ const FileVersionHistory: React.FC<FileVersionHistoryProps> = ({
       <Modal
         title={
           <Space size="middle">
-            <DiffIcon size={18} style={{ color: '#b85845' }} />
+            <DiffIcon size={18} style={{ color: '#1890ff' }} />
             <span style={{ fontWeight: 500, letterSpacing: '1px' }}>{t('pages.fileManager.fileVersionHistory.compareTitle')}</span>
           </Space>
         }
@@ -394,17 +394,17 @@ const FileVersionHistory: React.FC<FileVersionHistoryProps> = ({
         styles={{
           header: {
             background: 'transparent',
-            borderBottom: '1px solid rgba(139, 115, 85, 0.15)',
+            borderBottom: '1px solid rgba(24, 144, 255, 0.15)',
             padding: '24px 32px'
           },
           body: {
             padding: '32px',
-            background: 'rgba(250, 248, 245, 0.3)'
+            background: 'rgba(230, 244, 255, 0.3)'
           },
           footer: {
-            borderTop: '1px solid rgba(139, 115, 85, 0.15)',
+            borderTop: '1px solid rgba(24, 144, 255, 0.15)',
             padding: '20px 32px',
-            background: 'rgba(250, 248, 245, 0.5)'
+            background: 'rgba(230, 244, 255, 0.5)'
           }
         }}
         footer={[
@@ -416,8 +416,8 @@ const FileVersionHistory: React.FC<FileVersionHistoryProps> = ({
             }}
             style={{
               borderRadius: '6px',
-              border: '1px solid rgba(139, 115, 85, 0.25)',
-              color: '#8b7355',
+              border: '1px solid rgba(24, 144, 255, 0.25)',
+              color: 'rgba(0, 0, 0, 0.65)',
               fontWeight: 500,
               letterSpacing: '0.5px'
             }}
@@ -449,9 +449,9 @@ const FileVersionHistory: React.FC<FileVersionHistoryProps> = ({
                   fontWeight: 500
                 }}>{t('pages.fileManager.fileVersionHistory.addedLines')}</Tag>
                 <Tag style={{
-                  background: 'rgba(139, 115, 85, 0.05)',
+                  background: 'rgba(24, 144, 255, 0.05)',
                   color: 'rgba(45, 45, 45, 0.6)',
-                  border: '1px solid rgba(139, 115, 85, 0.15)',
+                  border: '1px solid rgba(24, 144, 255, 0.15)',
                   borderRadius: '6px',
                   fontWeight: 500
                 }}>{t('pages.fileManager.fileVersionHistory.unchangedLines')}</Tag>

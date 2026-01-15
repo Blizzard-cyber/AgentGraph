@@ -44,7 +44,7 @@ const CreateGraphModal: React.FC<CreateGraphModalProps> = ({ visible, onOk, onCa
           alignItems: 'center',
           gap: '10px'
         }}>
-          <Workflow size={20} strokeWidth={1.5} style={{ color: '#b85845' }} />
+          <Workflow size={20} strokeWidth={1.5} style={{ color: '#1890ff' }} />
           <span style={{
             color: '#2d2d2d',
             fontSize: '18px',

@@ -54,19 +54,19 @@ const SystemToolTreeSelector: React.FC<SystemToolTreeSelectorProps> = ({
       <style>{`
         /* 输入框边框颜色 */
         .system-tool-tree-selector-wrapper .ant-select-selector {
-          border-color: rgba(139, 115, 85, 0.2) !important;
+          border-color: rgba(24, 144, 255, 0.2) !important;
           transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1) !important;
         }
         
         /* 聚焦状态 */
         .system-tool-tree-selector-wrapper.ant-select-focused .ant-select-selector {
-          border-color: rgba(184, 88, 69, 0.4) !important;
-          box-shadow: 0 0 0 2px rgba(184, 88, 69, 0.06) !important;
+          border-color: rgba(24, 144, 255, 0.4) !important;
+          box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.06) !important;
         }
         
         /* 悬停状态 */
         .system-tool-tree-selector-wrapper:not(.ant-select-disabled):hover .ant-select-selector {
-          border-color: rgba(184, 88, 69, 0.25) !important;
+          border-color: rgba(24, 144, 255, 0.25) !important;
         }
         
         /* 占位符文字 */
@@ -76,22 +76,22 @@ const SystemToolTreeSelector: React.FC<SystemToolTreeSelectorProps> = ({
         
         /* 清除按钮 */
         .system-tool-tree-selector-wrapper .ant-select-clear {
-          color: rgba(139, 115, 85, 0.65) !important;
+          color: rgba(24, 144, 255, 0.65) !important;
           transition: color 0.2s ease !important;
         }
         
         .system-tool-tree-selector-wrapper .ant-select-clear:hover {
-          color: #b85845 !important;
+          color: #1890ff !important;
         }
         
         /* 下拉箭头 */
         .system-tool-tree-selector-wrapper .ant-select-arrow {
-          color: rgba(139, 115, 85, 0.65) !important;
+          color: rgba(24, 144, 255, 0.65) !important;
         }
         
         /* 下拉面板 */
         .system-tool-tree-selector {
-          box-shadow: 0 2px 8px rgba(139, 115, 85, 0.08) !important;
+          box-shadow: 0 2px 8px rgba(24, 144, 255, 0.08) !important;
         }
         
         /* 树节点布局 */
@@ -125,7 +125,7 @@ const SystemToolTreeSelector: React.FC<SystemToolTreeSelectorProps> = ({
         
         /* 只在内容区域显示 hover 效果 */
         .system-tool-tree-selector .ant-select-tree .ant-select-tree-node-content-wrapper:hover {
-          background-color: rgba(184, 88, 69, 0.04) !important;
+          background-color: rgba(24, 144, 255, 0.04) !important;
         }
         
         /* 展开/折叠按钮 hover 时不显示背景 */
@@ -135,18 +135,18 @@ const SystemToolTreeSelector: React.FC<SystemToolTreeSelectorProps> = ({
         
         /* 复选框边框颜色 */
         .system-tool-tree-selector .ant-select-tree .ant-select-tree-checkbox-inner {
-          border-color: rgba(139, 115, 85, 0.25) !important;
+          border-color: rgba(24, 144, 255, 0.25) !important;
         }
         
         /* 复选框 hover 时显示主题色边框 */
         .system-tool-tree-selector .ant-select-tree .ant-select-tree-checkbox:hover .ant-select-tree-checkbox-inner {
-          border-color: rgba(184, 88, 69, 0.5) !important;
+          border-color: rgba(24, 144, 255, 0.5) !important;
         }
         
         /* 复选框选中状态 */
         .system-tool-tree-selector .ant-select-tree .ant-select-tree-checkbox-checked .ant-select-tree-checkbox-inner {
-          background-color: #b85845 !important;
-          border-color: #b85845 !important;
+          background-color: #1890ff !important;
+          border-color: #1890ff !important;
         }
       `}</style>
       <TreeSelect
@@ -197,7 +197,7 @@ const SystemToolTreeSelector: React.FC<SystemToolTreeSelectorProps> = ({
             style={{
               display: 'inline-block',
               fontSize: '14px',
-              color: '#8b7355',
+              color: 'rgba(0, 0, 0, 0.65)',
               transition: 'transform 0.3s cubic-bezier(0.23, 1, 0.32, 1)',
               transform: props.expanded ? 'rotate(90deg)' : 'rotate(0deg)'
             }}
@@ -221,9 +221,9 @@ const SystemToolTreeSelector: React.FC<SystemToolTreeSelectorProps> = ({
             closable={closable}
             onClose={onClose}
             style={{
-              background: 'rgba(139, 115, 85, 0.08)',
-              color: '#8b7355',
-              border: '1px solid rgba(139, 115, 85, 0.2)',
+              background: 'rgba(24, 144, 255, 0.08)',
+              color: 'rgba(0, 0, 0, 0.65)',
+              border: '1px solid rgba(24, 144, 255, 0.2)',
               borderRadius: '6px',
               fontWeight: 500,
               fontSize: '12px',
@@ -238,9 +238,9 @@ const SystemToolTreeSelector: React.FC<SystemToolTreeSelectorProps> = ({
       maxTagPlaceholder={(omittedValues) => (
         <Tag
           style={{
-            background: 'rgba(139, 115, 85, 0.08)',
-            color: '#8b7355',
-            border: '1px solid rgba(139, 115, 85, 0.2)',
+            background: 'rgba(24, 144, 255, 0.08)',
+            color: 'rgba(0, 0, 0, 0.65)',
+            border: '1px solid rgba(24, 144, 255, 0.2)',
             borderRadius: '6px',
             fontWeight: 500,
             fontSize: '12px',

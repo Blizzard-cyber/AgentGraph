@@ -45,7 +45,7 @@ const AgentBatchDelete: React.FC<AgentBatchDeleteProps> = ({
     <Drawer
       title={
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <Trash2 size={20} strokeWidth={1.5} style={{ color: '#b85845' }} />
+          <Trash2 size={20} strokeWidth={1.5} style={{ color: '#1890ff' }} />
           <span style={{
             color: '#2d2d2d',
             fontSize: '18px',
@@ -67,9 +67,9 @@ const AgentBatchDelete: React.FC<AgentBatchDeleteProps> = ({
             style={{
               height: '40px',
               borderRadius: '6px',
-              border: '1px solid rgba(139, 115, 85, 0.2)',
+              border: '1px solid rgba(24, 144, 255, 0.2)',
               background: 'rgba(255, 255, 255, 0.85)',
-              color: '#8b7355',
+              color: 'rgba(0, 0, 0, 0.65)',
               fontWeight: 500,
               fontSize: '14px',
               letterSpacing: '0.3px',
@@ -99,16 +99,16 @@ const AgentBatchDelete: React.FC<AgentBatchDeleteProps> = ({
       }
       styles={{
         header: {
-          background: 'rgba(250, 248, 245, 0.6)',
-          borderBottom: '1px solid rgba(139, 115, 85, 0.15)',
+          background: 'rgba(230, 244, 255, 0.6)',
+          borderBottom: '1px solid rgba(24, 144, 255, 0.15)',
           padding: '16px 24px'
         },
         body: {
           padding: '24px',
-          background: '#faf8f5'
+          background: '#ffffff'
         },
         footer: {
-          borderTop: '1px solid rgba(139, 115, 85, 0.15)',
+          borderTop: '1px solid rgba(24, 144, 255, 0.15)',
           padding: '16px 24px'
         }
       }}
@@ -128,10 +128,10 @@ const AgentBatchDelete: React.FC<AgentBatchDeleteProps> = ({
         </Button>
         <div style={{
           padding: '8px 12px',
-          background: 'rgba(184, 88, 69, 0.08)',
-          border: '1px solid rgba(184, 88, 69, 0.2)',
+          background: 'rgba(24, 144, 255, 0.08)',
+          border: '1px solid rgba(24, 144, 255, 0.2)',
           borderRadius: '6px',
-          color: '#b85845',
+          color: '#1890ff',
           fontSize: '13px',
           fontWeight: 500
         }}>
@@ -148,7 +148,7 @@ const AgentBatchDelete: React.FC<AgentBatchDeleteProps> = ({
               color: '#2d2d2d',
               marginBottom: '8px',
               padding: '8px 12px',
-              background: 'rgba(139, 115, 85, 0.08)',
+              background: 'rgba(24, 144, 255, 0.08)',
               borderRadius: '6px'
             }}>
               {group.category}
@@ -159,7 +159,7 @@ const AgentBatchDelete: React.FC<AgentBatchDeleteProps> = ({
                 style={{
                   padding: '12px',
                   background: 'rgba(255, 255, 255, 0.85)',
-                  border: '1px solid rgba(139, 115, 85, 0.15)',
+                  border: '1px solid rgba(24, 144, 255, 0.15)',
                   borderRadius: '6px',
                   marginBottom: '8px',
                   cursor: 'pointer',
@@ -167,11 +167,11 @@ const AgentBatchDelete: React.FC<AgentBatchDeleteProps> = ({
                 }}
                 onClick={() => onToggleSelection(agent.name)}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = 'rgba(184, 88, 69, 0.3)';
-                  e.currentTarget.style.background = 'rgba(250, 248, 245, 0.9)';
+                  e.currentTarget.style.borderColor = 'rgba(24, 144, 255, 0.3)';
+                  e.currentTarget.style.background = 'rgba(230, 244, 255, 0.9)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = 'rgba(139, 115, 85, 0.15)';
+                  e.currentTarget.style.borderColor = 'rgba(24, 144, 255, 0.15)';
                   e.currentTarget.style.background = 'rgba(255, 255, 255, 0.85)';
                 }}
               >
@@ -195,9 +195,9 @@ const AgentBatchDelete: React.FC<AgentBatchDeleteProps> = ({
                           <Tag
                             key={tag}
                             style={{
-                              background: 'rgba(139, 115, 85, 0.08)',
-                              color: '#8b7355',
-                              border: '1px solid rgba(139, 115, 85, 0.2)',
+                              background: 'rgba(24, 144, 255, 0.08)',
+                              color: 'rgba(0, 0, 0, 0.65)',
+                              border: '1px solid rgba(24, 144, 255, 0.2)',
                               borderRadius: '4px',
                               fontSize: '11px',
                               padding: '2px 8px',

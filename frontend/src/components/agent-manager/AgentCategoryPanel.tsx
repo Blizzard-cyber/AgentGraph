@@ -38,7 +38,7 @@ const AgentCategoryPanel: React.FC<AgentCategoryPanelProps> = ({ groups, onView,
           size={18}
           strokeWidth={2}
           style={{
-            color: '#8b7355',
+            color: 'rgba(0, 0, 0, 0.65)',
             transform: isActive ? 'rotate(180deg)' : 'rotate(0deg)',
             transition: 'transform 0.3s ease'
           }}
@@ -50,7 +50,7 @@ const AgentCategoryPanel: React.FC<AgentCategoryPanelProps> = ({ groups, onView,
           key={group.category}
           header={
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '4px 0' }}>
-              <Sparkles size={18} color="#b85845" strokeWidth={1.5} />
+              <Sparkles size={18} color="#1890ff" strokeWidth={1.5} />
               <Text strong style={{
                 fontSize: '15px',
                 color: '#2d2d2d',
@@ -72,8 +72,8 @@ const AgentCategoryPanel: React.FC<AgentCategoryPanelProps> = ({ groups, onView,
           style={{
             marginBottom: '16px',
             borderRadius: '8px',
-            border: '1px solid rgba(139, 115, 85, 0.15)',
-            background: 'rgba(250, 248, 245, 0.6)',
+            border: '1px solid rgba(24, 144, 255, 0.15)',
+            background: 'rgba(230, 244, 255, 0.6)',
             overflow: 'hidden'
           }}
         >
