@@ -121,10 +121,10 @@ const GraphJsonEditor = forwardRef<GraphJsonEditorHandle, GraphJsonEditorProps>(
             onClose={() => setSyntaxError(null)}
             style={{
               borderRadius: '6px',
-              border: '1px solid rgba(184, 88, 69, 0.3)',
+              border: '1px solid rgba(24, 144, 255, 0.3)',
               background: 'rgba(255, 245, 243, 0.95)',
               backdropFilter: 'blur(8px)',
-              boxShadow: '0 2px 8px rgba(184, 88, 69, 0.15)'
+              boxShadow: '0 2px 8px rgba(24, 144, 255, 0.15)'
             }}
           />
         </div>
@@ -152,17 +152,17 @@ const GraphJsonEditor = forwardRef<GraphJsonEditorHandle, GraphJsonEditorProps>(
               { token: 'function', foreground: 'b85845' },
             ],
             colors: {
-              'editor.background': '#faf8f5',
+              'editor.background': '#ffffff',
               'editor.foreground': '#2d2d2d',
-              'editor.lineHighlightBackground': '#f5f3f0',
+              'editor.lineHighlightBackground': '#e6f4ff',
               'editor.selectionBackground': '#e8dfd5',
               'editor.inactiveSelectionBackground': '#f0ebe5',
               'editorLineNumber.foreground': '#a89f92',
-              'editorLineNumber.activeForeground': '#8b7355',
-              'editorCursor.foreground': '#b85845',
+              'editorLineNumber.activeForeground': '#1890ff',
+              'editorCursor.foreground': '#1890ff',
               'editor.selectionHighlightBackground': '#e8dfd588',
               'editorIndentGuide.background': '#e5ddd3',
-              'editorIndentGuide.activeBackground': '#8b7355',
+              'editorIndentGuide.activeBackground': '#1890ff',
             },
           });
           monaco.editor.setTheme('graph-editor-theme');
@@ -198,13 +198,13 @@ const GraphJsonEditor = forwardRef<GraphJsonEditorHandle, GraphJsonEditorProps>(
             height: '36px',
             padding: '0 16px',
             borderRadius: '6px',
-            border: '1px solid rgba(139, 115, 85, 0.2)',
+            border: '1px solid rgba(24, 144, 255, 0.2)',
             background: 'rgba(255, 255, 255, 0.95)',
-            color: '#8b7355',
+            color: 'rgba(0, 0, 0, 0.65)',
             fontSize: '14px',
             fontWeight: 500,
             letterSpacing: '0.3px',
-            boxShadow: '0 2px 8px rgba(139, 115, 85, 0.15)',
+            boxShadow: '0 2px 8px rgba(24, 144, 255, 0.15)',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
@@ -213,18 +213,18 @@ const GraphJsonEditor = forwardRef<GraphJsonEditorHandle, GraphJsonEditorProps>(
             backdropFilter: 'blur(8px)'
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.borderColor = '#b85845';
-            e.currentTarget.style.color = '#b85845';
+            e.currentTarget.style.borderColor = '#1890ff';
+            e.currentTarget.style.color = '#1890ff';
             e.currentTarget.style.background = 'rgba(255, 255, 255, 1)';
             e.currentTarget.style.transform = 'translateY(-2px)';
-            e.currentTarget.style.boxShadow = '0 4px 12px rgba(139, 115, 85, 0.25)';
+            e.currentTarget.style.boxShadow = '0 4px 12px rgba(24, 144, 255, 0.25)';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.borderColor = 'rgba(139, 115, 85, 0.2)';
-            e.currentTarget.style.color = '#8b7355';
+            e.currentTarget.style.borderColor = 'rgba(24, 144, 255, 0.2)';
+            e.currentTarget.style.color = 'rgba(0, 0, 0, 0.65)';
             e.currentTarget.style.background = 'rgba(255, 255, 255, 0.95)';
             e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = '0 2px 8px rgba(139, 115, 85, 0.15)';
+            e.currentTarget.style.boxShadow = '0 2px 8px rgba(24, 144, 255, 0.15)';
           }}
         >
           <Paintbrush size={16} strokeWidth={1.5} />

@@ -110,7 +110,7 @@ const MCPServerCard: React.FC<MCPServerCardProps> = ({
     return (
       <div>
         <Text strong style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '14px' }}>
-          <Cloud size={14} strokeWidth={1.5} style={{ color: '#8b7355' }} />
+          <Cloud size={14} strokeWidth={1.5} style={{ color: 'rgba(0, 0, 0, 0.65)' }} />
           {t('pages.mcpManager.card.envVars')}
         </Text>
         <div style={{ marginTop: '8px' }}>
@@ -122,15 +122,15 @@ const MCPServerCard: React.FC<MCPServerCardProps> = ({
                 size={16}
                 strokeWidth={1.5}
                 style={{
-                  color: '#8b7355',
+                  color: 'rgba(0, 0, 0, 0.65)',
                   transform: isActive ? 'rotate(180deg)' : 'rotate(0deg)',
                   transition: 'transform 0.3s ease'
                 }}
               />
             )}
             style={{
-              background: 'rgba(250, 248, 245, 0.6)',
-              border: '1px solid rgba(139, 115, 85, 0.12)',
+              background: 'rgba(230, 244, 255, 0.6)',
+              border: '1px solid rgba(24, 144, 255, 0.12)',
               borderRadius: '6px'
             }}
           >
@@ -146,7 +146,7 @@ const MCPServerCard: React.FC<MCPServerCardProps> = ({
                 background: 'rgba(255, 255, 255, 0.6)',
                 padding: '10px 12px',
                 borderRadius: '4px',
-                border: '1px solid rgba(139, 115, 85, 0.1)'
+                border: '1px solid rgba(24, 144, 255, 0.1)'
               }}>
                 {Object.entries(config.env).map(([key, value]) => (
                   <div key={key} style={{
@@ -156,13 +156,13 @@ const MCPServerCard: React.FC<MCPServerCardProps> = ({
                     gap: '8px'
                   }}>
                     <code style={{
-                      background: 'rgba(139, 115, 85, 0.08)',
-                      color: '#8b7355',
+                      background: 'rgba(24, 144, 255, 0.08)',
+                      color: 'rgba(0, 0, 0, 0.65)',
                       padding: '2px 8px',
                       borderRadius: '4px',
                       fontSize: '12px',
                       fontWeight: 500,
-                      border: '1px solid rgba(139, 115, 85, 0.15)'
+                      border: '1px solid rgba(24, 144, 255, 0.15)'
                     }}>
                       {key}
                     </code>
@@ -194,7 +194,7 @@ const MCPServerCard: React.FC<MCPServerCardProps> = ({
                   size={16}
                   strokeWidth={1.5}
                   style={{
-                    color: '#a0826d'
+                    color: '#40a9ff'
                   }}
                 />
               </Tooltip>
@@ -233,9 +233,9 @@ const MCPServerCard: React.FC<MCPServerCardProps> = ({
           ) : initAttempted ? (
             <Tag
               style={{
-                background: 'rgba(184, 88, 69, 0.1)',
-                color: '#b85845',
-                border: '1px solid rgba(184, 88, 69, 0.3)',
+                background: 'rgba(24, 144, 255, 0.1)',
+                color: '#1890ff',
+                border: '1px solid rgba(24, 144, 255, 0.3)',
                 borderRadius: '6px',
                 fontSize: '12px',
                 padding: '2px 10px',
@@ -250,9 +250,9 @@ const MCPServerCard: React.FC<MCPServerCardProps> = ({
           ) : (
             <Tag
               style={{
-                background: 'rgba(212, 165, 116, 0.1)',
-                color: '#d4a574',
-                border: '1px solid rgba(212, 165, 116, 0.3)',
+                background: 'rgba(64, 169, 255, 0.1)',
+                color: '#69b1ff',
+                border: '1px solid rgba(64, 169, 255, 0.3)',
                 borderRadius: '6px',
                 fontSize: '12px',
                 padding: '2px 10px',
@@ -275,7 +275,7 @@ const MCPServerCard: React.FC<MCPServerCardProps> = ({
               style={{
                 padding: '4px 10px',
                 borderRadius: '4px',
-                color: '#8b7355',
+                color: 'rgba(0, 0, 0, 0.65)',
                 cursor: loading ? 'not-allowed' : 'pointer',
                 display: 'flex',
                 alignItems: 'center',
@@ -285,12 +285,12 @@ const MCPServerCard: React.FC<MCPServerCardProps> = ({
               }}
               onMouseEnter={(e) => {
                 if (!loading) {
-                  e.currentTarget.style.color = '#b85845';
-                  e.currentTarget.style.background = 'rgba(184, 88, 69, 0.08)';
+                  e.currentTarget.style.color = '#1890ff';
+                  e.currentTarget.style.background = 'rgba(24, 144, 255, 0.08)';
                 }
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.color = '#8b7355';
+                e.currentTarget.style.color = 'rgba(0, 0, 0, 0.65)';
                 e.currentTarget.style.background = 'transparent';
               }}
             >
@@ -303,25 +303,25 @@ const MCPServerCard: React.FC<MCPServerCardProps> = ({
               style={{
                 padding: '4px 10px',
                 borderRadius: '4px',
-                background: config.disabled || connected || loading ? 'rgba(139, 115, 85, 0.1)' : 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
-                color: config.disabled || connected || loading ? 'rgba(139, 115, 85, 0.4)' : '#fff',
+                background: config.disabled || connected || loading ? 'rgba(24, 144, 255, 0.1)' : 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
+                color: config.disabled || connected || loading ? 'rgba(24, 144, 255, 0.4)' : '#fff',
                 cursor: config.disabled || connected || loading ? 'not-allowed' : 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '4px',
                 fontSize: '13px',
                 fontWeight: 500,
-                boxShadow: config.disabled || connected || loading ? 'none' : '0 1px 3px rgba(184, 88, 69, 0.2)',
+                boxShadow: config.disabled || connected || loading ? 'none' : '0 1px 3px rgba(24, 144, 255, 0.2)',
                 transition: 'all 0.2s ease'
               }}
               onMouseEnter={(e) => {
                 if (!config.disabled && !connected && !loading) {
-                  e.currentTarget.style.boxShadow = '0 2px 6px rgba(184, 88, 69, 0.3)';
+                  e.currentTarget.style.boxShadow = '0 2px 6px rgba(24, 144, 255, 0.3)';
                 }
               }}
               onMouseLeave={(e) => {
                 if (!config.disabled && !connected && !loading) {
-                  e.currentTarget.style.boxShadow = '0 1px 3px rgba(184, 88, 69, 0.2)';
+                  e.currentTarget.style.boxShadow = '0 1px 3px rgba(24, 144, 255, 0.2)';
                 }
               }}
             >
@@ -334,18 +334,18 @@ const MCPServerCard: React.FC<MCPServerCardProps> = ({
             style={{
               padding: '4px',
               borderRadius: '4px',
-              color: !connected ? 'rgba(139, 115, 85, 0.3)' : '#8b7355',
+              color: !connected ? 'rgba(24, 144, 255, 0.3)' : 'rgba(0, 0, 0, 0.65)',
               cursor: !connected ? 'not-allowed' : 'pointer',
               transition: 'all 0.2s ease'
             }}
             onMouseEnter={(e) => {
               if (connected) {
-                e.currentTarget.style.color = '#b85845';
-                e.currentTarget.style.background = 'rgba(184, 88, 69, 0.08)';
+                e.currentTarget.style.color = '#1890ff';
+                e.currentTarget.style.background = 'rgba(24, 144, 255, 0.08)';
               }
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.color = connected ? '#8b7355' : 'rgba(139, 115, 85, 0.3)';
+              e.currentTarget.style.color = connected ? 'rgba(0, 0, 0, 0.65)' : 'rgba(24, 144, 255, 0.3)';
               e.currentTarget.style.background = 'transparent';
             }}
           >
@@ -356,16 +356,16 @@ const MCPServerCard: React.FC<MCPServerCardProps> = ({
             style={{
               padding: '4px',
               borderRadius: '4px',
-              color: '#8b7355',
+              color: 'rgba(0, 0, 0, 0.65)',
               cursor: 'pointer',
               transition: 'all 0.2s ease'
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.color = '#b85845';
-              e.currentTarget.style.background = 'rgba(184, 88, 69, 0.08)';
+              e.currentTarget.style.color = '#1890ff';
+              e.currentTarget.style.background = 'rgba(24, 144, 255, 0.08)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.color = '#8b7355';
+              e.currentTarget.style.color = 'rgba(0, 0, 0, 0.65)';
               e.currentTarget.style.background = 'transparent';
             }}
           >
@@ -380,38 +380,38 @@ const MCPServerCard: React.FC<MCPServerCardProps> = ({
               disabled={!canDelete}
               okButtonProps={{
                 style: {
-                  background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+                  background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
                   border: 'none',
                   borderRadius: '6px',
                   color: '#fff',
                   fontWeight: 500,
-                  boxShadow: '0 2px 6px rgba(184, 88, 69, 0.25)'
+                  boxShadow: '0 2px 6px rgba(24, 144, 255, 0.25)'
                 }
               }}
               cancelButtonProps={{
                 style: {
                   borderRadius: '6px',
-                  border: '1px solid rgba(139, 115, 85, 0.2)',
-                  color: '#8b7355',
+                  border: '1px solid rgba(24, 144, 255, 0.2)',
+                  color: 'rgba(0, 0, 0, 0.65)',
                   fontWeight: 500
                 }
               }}
               overlayStyle={{
                 borderRadius: '8px',
-                boxShadow: '0 4px 12px rgba(139, 115, 85, 0.2)'
+                boxShadow: '0 4px 12px rgba(24, 144, 255, 0.2)'
               }}
             >
               <div
                 style={{
                   padding: '4px',
                   borderRadius: '4px',
-                  color: !canDelete ? 'rgba(184, 88, 69, 0.3)' : '#b85845',
+                  color: !canDelete ? 'rgba(24, 144, 255, 0.3)' : '#1890ff',
                   cursor: !canDelete ? 'not-allowed' : 'pointer',
                   transition: 'all 0.2s ease'
                 }}
                 onMouseEnter={(e) => {
                   if (canDelete) {
-                    e.currentTarget.style.background = 'rgba(184, 88, 69, 0.12)';
+                    e.currentTarget.style.background = 'rgba(24, 144, 255, 0.12)';
                   }
                 }}
                 onMouseLeave={(e) => {
@@ -426,8 +426,8 @@ const MCPServerCard: React.FC<MCPServerCardProps> = ({
       }
       style={{
         borderRadius: '6px',
-        border: '1px solid rgba(139, 115, 85, 0.15)',
-        boxShadow: '0 1px 3px rgba(139, 115, 85, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
+        border: '1px solid rgba(24, 144, 255, 0.15)',
+        boxShadow: '0 1px 3px rgba(24, 144, 255, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
         background: 'rgba(255, 255, 255, 0.85)',
         transition: 'all 0.3s cubic-bezier(0.23, 1, 0.32, 1)'
       }}
@@ -436,13 +436,13 @@ const MCPServerCard: React.FC<MCPServerCardProps> = ({
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.transform = 'translateY(-2px)';
-        e.currentTarget.style.boxShadow = '0 4px 12px rgba(184, 88, 69, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9)';
-        e.currentTarget.style.borderColor = 'rgba(184, 88, 69, 0.3)';
+        e.currentTarget.style.boxShadow = '0 4px 12px rgba(24, 144, 255, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9)';
+        e.currentTarget.style.borderColor = 'rgba(24, 144, 255, 0.3)';
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.transform = 'translateY(0)';
-        e.currentTarget.style.boxShadow = '0 1px 3px rgba(139, 115, 85, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)';
-        e.currentTarget.style.borderColor = 'rgba(139, 115, 85, 0.15)';
+        e.currentTarget.style.boxShadow = '0 1px 3px rgba(24, 144, 255, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)';
+        e.currentTarget.style.borderColor = 'rgba(24, 144, 255, 0.15)';
       }}
     >
       <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -456,14 +456,14 @@ const MCPServerCard: React.FC<MCPServerCardProps> = ({
               alignItems: 'center',
               gap: '6px'
             }}>
-              <User size={14} strokeWidth={1.5} style={{ color: '#8b7355' }} />
+              <User size={14} strokeWidth={1.5} style={{ color: 'rgba(0, 0, 0, 0.65)' }} />
               {t('pages.mcpManager.card.provider')}
             </span>
             <Tag
               style={{
-                background: isOwnServer ? 'rgba(184, 88, 69, 0.1)' : 'rgba(139, 115, 85, 0.08)',
-                color: isOwnServer ? '#b85845' : '#8b7355',
-                border: `1px solid ${isOwnServer ? 'rgba(184, 88, 69, 0.25)' : 'rgba(139, 115, 85, 0.2)'}`,
+                background: isOwnServer ? 'rgba(24, 144, 255, 0.1)' : 'rgba(24, 144, 255, 0.08)',
+                color: isOwnServer ? '#1890ff' : 'rgba(0, 0, 0, 0.65)',
+                border: `1px solid ${isOwnServer ? 'rgba(24, 144, 255, 0.25)' : 'rgba(24, 144, 255, 0.2)'}`,
                 borderRadius: '6px',
                 fontSize: '12px',
                 padding: '2px 10px'
@@ -496,9 +496,9 @@ const MCPServerCard: React.FC<MCPServerCardProps> = ({
           {isAIGenerated && (
             <Tag
               style={{
-                background: 'rgba(160, 130, 109, 0.1)',
-                color: '#a0826d',
-                border: '1px solid rgba(160, 130, 109, 0.25)',
+                background: 'rgba(64, 169, 255, 0.1)',
+                color: '#40a9ff',
+                border: '1px solid rgba(64, 169, 255, 0.25)',
                 borderRadius: '6px',
                 fontSize: '11px',
                 padding: '1px 8px'
@@ -535,9 +535,9 @@ const MCPServerCard: React.FC<MCPServerCardProps> = ({
                 <Tag
                   key={tool}
                   style={{
-                    background: 'rgba(139, 115, 85, 0.08)',
-                    color: '#8b7355',
-                    border: '1px solid rgba(139, 115, 85, 0.2)',
+                    background: 'rgba(24, 144, 255, 0.08)',
+                    color: 'rgba(0, 0, 0, 0.65)',
+                    border: '1px solid rgba(24, 144, 255, 0.2)',
                     borderRadius: '6px',
                     fontSize: '12px',
                     padding: '2px 10px'
@@ -582,20 +582,20 @@ const MCPServerCard: React.FC<MCPServerCardProps> = ({
           <div style={{
             padding: '12px',
             background: 'rgba(255, 245, 243, 0.9)',
-            border: '1px solid rgba(184, 88, 69, 0.3)',
+            border: '1px solid rgba(24, 144, 255, 0.3)',
             borderRadius: '6px'
           }}>
             <div style={{
               fontSize: '14px',
               fontWeight: 500,
-              color: '#b85845',
+              color: '#1890ff',
               marginBottom: '4px'
             }}>
               {t('pages.mcpManager.card.error')}
             </div>
             <div style={{
               fontSize: '13px',
-              color: 'rgba(184, 88, 69, 0.85)',
+              color: 'rgba(24, 144, 255, 0.85)',
               lineHeight: '1.6'
             }}>
               {error}

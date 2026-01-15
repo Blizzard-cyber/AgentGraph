@@ -54,7 +54,7 @@ const AgentCard: React.FC<AgentCardProps> = ({ agent, onView, onEdit, onDelete }
       <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
         {/* Agent 图标 */}
         <div style={CARD_STYLES.iconContainer}>
-          <Bot size={28} strokeWidth={1.5} style={{ color: '#b85845' }} />
+          <Bot size={28} strokeWidth={1.5} style={{ color: '#1890ff' }} />
         </div>
 
         {/* Agent 信息 */}
@@ -84,9 +84,9 @@ const AgentCard: React.FC<AgentCardProps> = ({ agent, onView, onEdit, onDelete }
                   <Tag
                     key={idx}
                     style={{
-                      background: 'rgba(184, 88, 69, 0.06)',
-                      color: 'rgba(184, 88, 69, 0.85)',
-                      border: '1px solid rgba(184, 88, 69, 0.15)',
+                      background: 'rgba(24, 144, 255, 0.06)',
+                      color: 'rgba(24, 144, 255, 0.85)',
+                      border: '1px solid rgba(24, 144, 255, 0.15)',
                       borderRadius: '4px',
                       fontWeight: 500,
                       fontSize: '12px',
@@ -139,25 +139,25 @@ const AgentCard: React.FC<AgentCardProps> = ({ agent, onView, onEdit, onDelete }
             cancelText={t('common.cancel')}
             okButtonProps={{
               style: {
-                background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+                background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
                 border: 'none',
                 borderRadius: '6px',
                 color: '#fff',
                 fontWeight: 500,
-                boxShadow: '0 2px 6px rgba(184, 88, 69, 0.25)'
+                boxShadow: '0 2px 6px rgba(24, 144, 255, 0.25)'
               }
             }}
             cancelButtonProps={{
               style: {
                 borderRadius: '6px',
-                border: '1px solid rgba(139, 115, 85, 0.2)',
-                color: '#8b7355',
+                border: '1px solid rgba(24, 144, 255, 0.2)',
+                color: 'rgba(0, 0, 0, 0.65)',
                 fontWeight: 500
               }
             }}
             overlayStyle={{
               borderRadius: '8px',
-              boxShadow: '0 4px 12px rgba(139, 115, 85, 0.2)'
+              boxShadow: '0 4px 12px rgba(24, 144, 255, 0.2)'
             }}
           >
             <Tooltip title={t('common.delete')}>

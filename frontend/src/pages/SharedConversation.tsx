@@ -129,7 +129,7 @@ const SharedConversation: React.FC = () => {
         justifyContent: 'center',
         alignItems: 'center',
         minHeight: '100vh',
-        background: '#faf8f5'
+        background: '#ffffff'
       }}>
         <Spin size="large" />
       </div>
@@ -144,7 +144,7 @@ const SharedConversation: React.FC = () => {
         justifyContent: 'center',
         alignItems: 'center',
         minHeight: '100vh',
-        background: '#faf8f5',
+        background: '#ffffff',
         padding: '32px'
       }}>
         <Empty
@@ -155,7 +155,7 @@ const SharedConversation: React.FC = () => {
           type="primary"
           onClick={() => navigate('/')}
           style={{
-            background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+            background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
             border: 'none',
             borderRadius: '6px'
           }}
@@ -169,16 +169,16 @@ const SharedConversation: React.FC = () => {
   return (
     <div style={{
       minHeight: '100vh',
-      background: '#faf8f5',
+      background: '#ffffff',
       display: 'flex',
       flexDirection: 'column'
     }}>
       {/* 头部 */}
       <div style={{
         padding: '24px 48px',
-        background: 'linear-gradient(to bottom, rgba(250, 248, 245, 0.95), rgba(245, 243, 240, 0.9))',
-        borderBottom: '1px solid rgba(139, 115, 85, 0.15)',
-        boxShadow: '0 2px 8px rgba(139, 115, 85, 0.06)',
+        background: 'linear-gradient(to bottom, rgba(230, 244, 255, 0.95), rgba(230, 244, 255, 0.9))',
+        borderBottom: '1px solid rgba(24, 144, 255, 0.15)',
+        boxShadow: '0 2px 8px rgba(24, 144, 255, 0.06)',
         position: 'sticky',
         top: 0,
         zIndex: 100
@@ -213,8 +213,8 @@ const SharedConversation: React.FC = () => {
               icon={<FileOutlined />}
               onClick={() => setDrawerVisible(true)}
               style={{
-                color: '#8b7355',
-                border: '1px solid rgba(139, 115, 85, 0.2)',
+                color: 'rgba(0, 0, 0, 0.65)',
+                border: '1px solid rgba(24, 144, 255, 0.2)',
                 borderRadius: '6px',
                 background: 'rgba(255, 255, 255, 0.6)'
               }}
@@ -236,8 +236,8 @@ const SharedConversation: React.FC = () => {
         <div style={{
           overflow: 'auto',
           borderRadius: '8px',
-          border: '1px solid rgba(139, 115, 85, 0.15)',
-          boxShadow: '0 2px 8px rgba(139, 115, 85, 0.06)',
+          border: '1px solid rgba(24, 144, 255, 0.15)',
+          boxShadow: '0 2px 8px rgba(24, 144, 255, 0.06)',
           background: 'rgba(255, 255, 255, 0.85)'
         }}>
           <MessageDisplay
@@ -292,8 +292,8 @@ const SharedConversation: React.FC = () => {
                 disabled={downloadingAll}
                 style={{
                   marginBottom: '16px',
-                  color: '#8b7355',
-                  border: '1px solid rgba(139, 115, 85, 0.2)',
+                  color: 'rgba(0, 0, 0, 0.65)',
+                  border: '1px solid rgba(24, 144, 255, 0.2)',
                   borderRadius: '6px'
                 }}
               >
@@ -307,8 +307,8 @@ const SharedConversation: React.FC = () => {
                   style={{
                     padding: '12px',
                     borderRadius: '6px',
-                    border: '1px solid rgba(139, 115, 85, 0.15)',
-                    background: 'rgba(250, 248, 245, 0.6)',
+                    border: '1px solid rgba(24, 144, 255, 0.15)',
+                    background: 'rgba(230, 244, 255, 0.6)',
                     marginBottom: '8px'
                   }}
                   extra={
@@ -319,13 +319,13 @@ const SharedConversation: React.FC = () => {
                       disabled={downloadingFile === filename}
                       onClick={() => handleDownloadFile(filename)}
                       style={{
-                        color: '#8b7355'
+                        color: 'rgba(0, 0, 0, 0.65)'
                       }}
                     />
                   }
                 >
                   <List.Item.Meta
-                    avatar={<FileOutlined style={{ fontSize: '20px', color: '#8b7355' }} />}
+                    avatar={<FileOutlined style={{ fontSize: '20px', color: 'rgba(0, 0, 0, 0.65)' }} />}
                     title={
                       <Text
                         style={{ fontSize: '14px', color: '#2d2d2d' }}

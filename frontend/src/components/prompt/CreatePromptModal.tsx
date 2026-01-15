@@ -44,7 +44,7 @@ const CreatePromptModal: React.FC<CreatePromptModalProps> = ({
     <Modal
       title={
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <FileText size={18} strokeWidth={1.5} style={{ color: '#8b7355' }} />
+          <FileText size={18} strokeWidth={1.5} style={{ color: 'rgba(0, 0, 0, 0.65)' }} />
           {t('pages.promptManager.createModal.title')}
         </div>
       }

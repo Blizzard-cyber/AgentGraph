@@ -85,7 +85,7 @@ const GraphSettingsModal: React.FC<GraphSettingsModalProps> = ({
         >
           <Input disabled style={{
             ...inputStyles.standard,
-            background: 'rgba(139, 115, 85, 0.05)',
+            background: 'rgba(24, 144, 255, 0.05)',
             cursor: 'not-allowed'
           }} />
         </Form.Item>

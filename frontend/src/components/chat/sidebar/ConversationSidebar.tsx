@@ -225,9 +225,9 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
       style={{
         width: '280px',
         minHeight: '100vh',
-        background: 'linear-gradient(to bottom, #faf8f5 0%, #f5f3f0 100%)',
-        borderRight: '1px solid rgba(139, 115, 85, 0.12)',
-        boxShadow: '2px 0 8px rgba(139, 115, 85, 0.06)',
+        background: 'linear-gradient(to bottom, #ffffff 0%, #e6f4ff 100%)',
+        borderRight: '1px solid rgba(24, 144, 255, 0.12)',
+        boxShadow: '2px 0 8px rgba(24, 144, 255, 0.06)',
         display: 'flex',
         flexDirection: 'column',
         transition: 'width 0.4s cubic-bezier(0.23, 1, 0.32, 1)',
@@ -239,7 +239,7 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
       <div
         style={{
           padding: '24px 20px',
-          borderBottom: '1px solid rgba(139, 115, 85, 0.08)',
+          borderBottom: '1px solid rgba(24, 144, 255, 0.08)',
           background: 'rgba(255, 255, 255, 0.5)',
           position: 'relative',
         }}
@@ -252,7 +252,7 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
             left: '20%',
             right: '20%',
             height: '1px',
-            background: 'linear-gradient(to right, transparent, rgba(139, 115, 85, 0.25) 50%, transparent)',
+            background: 'linear-gradient(to right, transparent, rgba(24, 144, 255, 0.25) 50%, transparent)',
           }}
         />
         {/* 搜索框和收起按钮 */}
@@ -280,7 +280,7 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
               flex: 1,
               height: '36px',
               borderRadius: '6px',
-              border: '1px solid rgba(139, 115, 85, 0.15)',
+              border: '1px solid rgba(24, 144, 255, 0.15)',
               background: '#ffffff',
               fontSize: '14px',
             }}
@@ -295,7 +295,7 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
               borderRadius: '6px',
               border: 'none',
               background: 'transparent',
-              color: '#8b7355',
+              color: 'rgba(0, 0, 0, 0.65)',
               padding: 0,
               display: 'flex',
               alignItems: 'center',
@@ -303,7 +303,7 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
               flexShrink: 0,
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(139, 115, 85, 0.08)';
+              e.currentTarget.style.background = 'rgba(24, 144, 255, 0.08)';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.background = 'transparent';
@@ -324,18 +324,18 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
                 width: '36px',
                 borderRadius: '6px',
                 border: 'none',
-                background: isBatchMode ? 'rgba(139, 115, 85, 0.08)' : 'transparent',
-                color: isBatchMode ? '#8b7355' : 'rgba(45, 45, 45, 0.65)',
+                background: isBatchMode ? 'rgba(24, 144, 255, 0.08)' : 'transparent',
+                color: isBatchMode ? 'rgba(0, 0, 0, 0.65)' : 'rgba(45, 45, 45, 0.65)',
                 padding: 0,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'rgba(139, 115, 85, 0.08)';
+                e.currentTarget.style.background = 'rgba(24, 144, 255, 0.08)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.background = isBatchMode ? 'rgba(139, 115, 85, 0.08)' : 'transparent';
+                e.currentTarget.style.background = isBatchMode ? 'rgba(24, 144, 255, 0.08)' : 'transparent';
               }}
             />
           </Tooltip>
@@ -362,7 +362,7 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
                 justifyContent: 'center',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'rgba(139, 115, 85, 0.08)';
+                e.currentTarget.style.background = 'rgba(24, 144, 255, 0.08)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.background = 'transparent';
@@ -391,7 +391,7 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
                   justifyContent: 'center',
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'rgba(139, 115, 85, 0.08)';
+                  e.currentTarget.style.background = 'rgba(24, 144, 255, 0.08)';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.background = 'transparent';
@@ -407,8 +407,8 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
         <div
           style={{
             padding: '12px 16px',
-            background: 'rgba(139, 115, 85, 0.03)',
-            borderBottom: '1px solid rgba(139, 115, 85, 0.08)',
+            background: 'rgba(24, 144, 255, 0.03)',
+            borderBottom: '1px solid rgba(24, 144, 255, 0.08)',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
@@ -435,7 +435,7 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
                 fontSize: '12px',
                 height: '24px',
                 padding: '0 8px',
-                color: '#8b7355',
+                color: 'rgba(0, 0, 0, 0.65)',
                 border: 'none',
               }}
             >
@@ -450,7 +450,7 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
                 fontSize: '12px',
                 height: '24px',
                 padding: '0 8px',
-                color: '#8b7355',
+                color: 'rgba(0, 0, 0, 0.65)',
                 border: 'none',
               }}
             >
@@ -460,7 +460,7 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
               style={{
                 width: '1px',
                 height: '14px',
-                background: 'rgba(139, 115, 85, 0.15)',
+                background: 'rgba(24, 144, 255, 0.15)',
               }}
             />
             <Button
@@ -472,7 +472,7 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
                 fontSize: '12px',
                 height: '24px',
                 padding: '0 8px',
-                color: '#b85845',
+                color: '#1890ff',
                 border: 'none',
               }}
             >
@@ -493,7 +493,7 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
           padding: '12px',
           // 滚动条样式
           scrollbarWidth: 'thin',
-          scrollbarColor: 'rgba(139, 115, 85, 0.25) transparent',
+          scrollbarColor: 'rgba(24, 144, 255, 0.25) transparent',
         }}
       >
         {loading ? (
@@ -534,7 +534,7 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
       <div
         style={{
           padding: '20px 16px',
-          borderTop: '1px solid rgba(139, 115, 85, 0.08)',
+          borderTop: '1px solid rgba(24, 144, 255, 0.08)',
           background: 'rgba(255, 255, 255, 0.5)',
           display: 'flex',
           flexDirection: 'row',
@@ -552,7 +552,7 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
             left: '20%',
             right: '20%',
             height: '1px',
-            background: 'linear-gradient(to right, transparent, rgba(139, 115, 85, 0.25) 50%, transparent)',
+            background: 'linear-gradient(to right, transparent, rgba(24, 144, 255, 0.25) 50%, transparent)',
           }}
         />
         {/* 用户头像下拉菜单 */}
@@ -569,7 +569,7 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
               color: 'rgba(45, 45, 45, 0.65)',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(139, 115, 85, 0.08)';
+              e.currentTarget.style.background = 'rgba(24, 144, 255, 0.08)';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.background = 'transparent';

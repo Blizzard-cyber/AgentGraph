@@ -29,8 +29,8 @@ const TourButton: React.FC<TourButtonProps> = ({ onClick, collapsed = false }) =
           height: 'auto'
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.background = 'rgba(184, 88, 69, 0.08)';
-          e.currentTarget.style.color = '#b85845';
+          e.currentTarget.style.background = 'rgba(24, 144, 255, 0.08)';
+          e.currentTarget.style.color = '#1890ff';
         }}
         onMouseLeave={(e) => {
           e.currentTarget.style.background = 'transparent';

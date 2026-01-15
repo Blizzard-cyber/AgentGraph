@@ -295,13 +295,13 @@ const PromptManager: React.FC = () => {
 
   return (
     <>
-      <Layout style={{ height: '100vh', background: '#faf8f5', display: 'flex', flexDirection: 'column' }}>
+      <Layout style={{ height: '100vh', background: '#ffffff', display: 'flex', flexDirection: 'column' }}>
         <Header style={HEADER_STYLES.container}>
           <div style={HEADER_STYLES.decorativeLine} />
 
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '100%' }}>
             <Space size="large">
-              <FileText size={28} color="#b85845" strokeWidth={1.5} />
+              <FileText size={28} color="#1890ff" strokeWidth={1.5} />
               <Title level={4} style={HEADER_STYLES.title}>
                 {t('pages.promptManager.title')}
               </Title>
@@ -316,7 +316,7 @@ const PromptManager: React.FC = () => {
             <Space>
               <Input
                 placeholder={t('pages.promptManager.searchPlaceholder')}
-                prefix={<Search size={16} strokeWidth={1.5} style={{ color: '#8b7355' }} />}
+                prefix={<Search size={16} strokeWidth={1.5} style={{ color: 'rgba(0, 0, 0, 0.65)' }} />}
                 value={searchText}
                 onChange={(e) => setSearchText(e.target.value)}
                 style={INPUT_STYLES.search}

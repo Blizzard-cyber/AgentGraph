@@ -139,12 +139,12 @@ const SmartMarkdown: React.FC<SmartMarkdownProps> = ({
       </GlassCodeBlock>
     ) : (
       <code style={{
-        background: 'rgba(139, 115, 85, 0.08)',
+        background: 'rgba(24, 144, 255, 0.08)',
         padding: '2px 6px',
         borderRadius: '3px',
         fontSize: '0.9em',
         fontFamily: "'SF Mono', monospace",
-        color: '#b85845'
+        color: '#1890ff'
       }} {...restProps}>
         {codeChildren}
       </code>
@@ -169,7 +169,7 @@ const SmartMarkdown: React.FC<SmartMarkdownProps> = ({
               return (
                 <div key={index} style={{
                   margin: '16px 0',
-                  border: '1px solid rgba(139, 115, 85, 0.15)',
+                  border: '1px solid rgba(24, 144, 255, 0.15)',
                   borderRadius: '8px',
                   overflow: 'hidden'
                 }}>
@@ -177,8 +177,8 @@ const SmartMarkdown: React.FC<SmartMarkdownProps> = ({
                   <div
                     style={{
                       padding: '8px 16px',
-                      background: 'rgba(139, 115, 85, 0.06)',
-                      borderBottom: isExpanded ? '1px solid rgba(139, 115, 85, 0.15)' : 'none',
+                      background: 'rgba(24, 144, 255, 0.06)',
+                      borderBottom: isExpanded ? '1px solid rgba(24, 144, 255, 0.15)' : 'none',
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
@@ -187,10 +187,10 @@ const SmartMarkdown: React.FC<SmartMarkdownProps> = ({
                     }}
                     onClick={() => toggleThinking(index)}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.background = 'rgba(139, 115, 85, 0.08)';
+                      e.currentTarget.style.background = 'rgba(24, 144, 255, 0.08)';
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.background = 'rgba(139, 115, 85, 0.06)';
+                      e.currentTarget.style.background = 'rgba(24, 144, 255, 0.06)';
                     }}
                   >
                     <div style={{
@@ -199,14 +199,14 @@ const SmartMarkdown: React.FC<SmartMarkdownProps> = ({
                       gap: '8px'
                     }}>
                       {isExpanded ? (
-                        <ChevronDown size={14} style={{ color: 'rgba(160, 130, 109, 0.8)' }} />
+                        <ChevronDown size={14} style={{ color: 'rgba(64, 169, 255, 0.8)' }} />
                       ) : (
-                        <ChevronRight size={14} style={{ color: 'rgba(160, 130, 109, 0.8)' }} />
+                        <ChevronRight size={14} style={{ color: 'rgba(64, 169, 255, 0.8)' }} />
                       )}
                       <span style={{
                         fontSize: '12px',
                         fontWeight: 600,
-                        color: 'rgba(160, 130, 109, 0.8)',
+                        color: 'rgba(64, 169, 255, 0.8)',
                         textTransform: 'uppercase',
                         letterSpacing: '0.5px'
                       }}>
@@ -215,7 +215,7 @@ const SmartMarkdown: React.FC<SmartMarkdownProps> = ({
                       <span style={{
                         fontSize: '11px',
                         color: 'rgba(45, 45, 45, 0.5)',
-                        background: 'rgba(139, 115, 85, 0.1)',
+                        background: 'rgba(24, 144, 255, 0.1)',
                         padding: '2px 6px',
                         borderRadius: '10px'
                       }}>
@@ -278,7 +278,7 @@ const SmartMarkdown: React.FC<SmartMarkdownProps> = ({
             return (
               <div key={index} style={{
                 margin: '16px 0',
-                border: '1px solid rgba(139, 115, 85, 0.15)',
+                border: '1px solid rgba(24, 144, 255, 0.15)',
                 borderRadius: '8px',
                 overflow: 'hidden'
               }}>
@@ -286,8 +286,8 @@ const SmartMarkdown: React.FC<SmartMarkdownProps> = ({
                 <div
                   style={{
                     padding: '8px 16px',
-                    background: 'rgba(139, 115, 85, 0.06)',
-                    borderBottom: isExpanded ? '1px solid rgba(139, 115, 85, 0.15)' : 'none',
+                    background: 'rgba(24, 144, 255, 0.06)',
+                    borderBottom: isExpanded ? '1px solid rgba(24, 144, 255, 0.15)' : 'none',
                     cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
@@ -296,10 +296,10 @@ const SmartMarkdown: React.FC<SmartMarkdownProps> = ({
                   }}
                   onClick={() => toggleThinking(index)}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.background = 'rgba(139, 115, 85, 0.08)';
+                    e.currentTarget.style.background = 'rgba(24, 144, 255, 0.08)';
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.background = 'rgba(139, 115, 85, 0.06)';
+                    e.currentTarget.style.background = 'rgba(24, 144, 255, 0.06)';
                   }}
                 >
                   <div style={{
@@ -308,14 +308,14 @@ const SmartMarkdown: React.FC<SmartMarkdownProps> = ({
                     gap: '8px'
                   }}>
                     {isExpanded ? (
-                      <ChevronDown size={14} style={{ color: 'rgba(160, 130, 109, 0.8)' }} />
+                      <ChevronDown size={14} style={{ color: 'rgba(64, 169, 255, 0.8)' }} />
                     ) : (
-                      <ChevronRight size={14} style={{ color: 'rgba(160, 130, 109, 0.8)' }} />
+                      <ChevronRight size={14} style={{ color: 'rgba(64, 169, 255, 0.8)' }} />
                     )}
                     <span style={{
                       fontSize: '12px',
                       fontWeight: 600,
-                      color: 'rgba(160, 130, 109, 0.8)',
+                      color: 'rgba(64, 169, 255, 0.8)',
                       textTransform: 'uppercase',
                       letterSpacing: '0.5px'
                     }}>
@@ -324,7 +324,7 @@ const SmartMarkdown: React.FC<SmartMarkdownProps> = ({
                     <span style={{
                       fontSize: '11px',
                       color: 'rgba(45, 45, 45, 0.5)',
-                      background: 'rgba(139, 115, 85, 0.1)',
+                      background: 'rgba(24, 144, 255, 0.1)',
                       padding: '2px 6px',
                       borderRadius: '10px'
                     }}>

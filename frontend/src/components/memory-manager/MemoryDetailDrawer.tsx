@@ -209,7 +209,7 @@ const MemoryDetailDrawer: React.FC<MemoryDetailDrawerProps> = ({
         onClose={onClose}
         open={visible}
         styles={{
-          body: { padding: '24px', background: '#faf8f5' },
+          body: { padding: '24px', background: '#ffffff' },
         }}
         extra={
           <Button
@@ -217,11 +217,11 @@ const MemoryDetailDrawer: React.FC<MemoryDetailDrawerProps> = ({
             icon={<Plus size={16} strokeWidth={1.5} />}
             onClick={handleAddMemory}
             style={{
-              background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+              background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
               border: 'none',
               borderRadius: '6px',
               fontWeight: 500,
-              boxShadow: '0 2px 6px rgba(184, 88, 69, 0.25)',
+              boxShadow: '0 2px 6px rgba(24, 144, 255, 0.25)',
             }}
           >
             {t('pages.memoryManager.addMemory')}
@@ -277,19 +277,19 @@ const MemoryDetailDrawer: React.FC<MemoryDetailDrawerProps> = ({
         cancelText={t('common.cancel')}
         okButtonProps={{
           style: {
-            background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+            background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
             border: 'none',
             borderRadius: '6px',
             color: '#fff',
             fontWeight: 500,
-            boxShadow: '0 2px 6px rgba(184, 88, 69, 0.25)'
+            boxShadow: '0 2px 6px rgba(24, 144, 255, 0.25)'
           }
         }}
         cancelButtonProps={{
           style: {
             borderRadius: '6px',
-            border: '1px solid rgba(139, 115, 85, 0.2)',
-            color: '#8b7355',
+            border: '1px solid rgba(24, 144, 255, 0.2)',
+            color: 'rgba(0, 0, 0, 0.65)',
             fontWeight: 500
           }
         }}

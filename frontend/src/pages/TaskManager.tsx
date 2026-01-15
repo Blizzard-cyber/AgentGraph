@@ -64,13 +64,13 @@ const TaskManager: React.FC = () => {
   };
 
   return (
-    <Layout style={{ height: '100vh', background: '#faf8f5', display: 'flex', flexDirection: 'column' }}>
+    <Layout style={{ height: '100vh', background: '#ffffff', display: 'flex', flexDirection: 'column' }}>
       <Header style={{
-        background: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(245, 243, 240, 0.6))',
+        background: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(230, 244, 255, 0.6))',
         backdropFilter: 'blur(20px)',
         padding: '0 48px',
         borderBottom: 'none',
-        boxShadow: '0 2px 8px rgba(139, 115, 85, 0.08)',
+        boxShadow: '0 2px 8px rgba(24, 144, 255, 0.08)',
         position: 'relative'
       }}>
         <div style={{
@@ -79,11 +79,11 @@ const TaskManager: React.FC = () => {
           left: '20%',
           right: '20%',
           height: '1px',
-          background: 'linear-gradient(to right, transparent, rgba(139, 115, 85, 0.3) 50%, transparent)'
+          background: 'linear-gradient(to right, transparent, rgba(24, 144, 255, 0.3) 50%, transparent)'
         }} />
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '100%' }}>
           <Space size="large">
-            <Calendar size={28} color="#b85845" strokeWidth={1.5} />
+            <Calendar size={28} color="#1890ff" strokeWidth={1.5} />
             <Title level={4} style={{
               margin: 0,
               color: '#2d2d2d',
@@ -94,9 +94,9 @@ const TaskManager: React.FC = () => {
               {t('pages.taskManager.title')}
             </Title>
             <Tag style={{
-              background: 'rgba(184, 88, 69, 0.08)',
-              color: '#b85845',
-              border: '1px solid rgba(184, 88, 69, 0.25)',
+              background: 'rgba(24, 144, 255, 0.08)',
+              color: '#1890ff',
+              border: '1px solid rgba(24, 144, 255, 0.25)',
               borderRadius: '6px',
               fontWeight: 500,
               padding: '4px 12px',
@@ -105,9 +105,9 @@ const TaskManager: React.FC = () => {
               {t('pages.taskManager.tasksCount', { count: stats.total })}
             </Tag>
             <Tag style={{
-              background: 'rgba(139, 115, 85, 0.08)',
-              color: '#8b7355',
-              border: '1px solid rgba(139, 115, 85, 0.25)',
+              background: 'rgba(24, 144, 255, 0.08)',
+              color: 'rgba(0, 0, 0, 0.65)',
+              border: '1px solid rgba(24, 144, 255, 0.25)',
               borderRadius: '6px',
               fontWeight: 500,
               padding: '4px 12px',
@@ -121,7 +121,7 @@ const TaskManager: React.FC = () => {
             style={{
               padding: '8px',
               borderRadius: '6px',
-              color: '#8b7355',
+              color: 'rgba(0, 0, 0, 0.65)',
               cursor: 'pointer',
               transition: 'all 0.2s ease',
               display: 'flex',
@@ -130,11 +130,11 @@ const TaskManager: React.FC = () => {
             }}
             onClick={() => navigate('/chat')}
             onMouseEnter={(e) => {
-              e.currentTarget.style.color = '#b85845';
-              e.currentTarget.style.background = 'rgba(184, 88, 69, 0.08)';
+              e.currentTarget.style.color = '#1890ff';
+              e.currentTarget.style.background = 'rgba(24, 144, 255, 0.08)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.color = '#8b7355';
+              e.currentTarget.style.color = 'rgba(0, 0, 0, 0.65)';
               e.currentTarget.style.background = 'transparent';
             }}
           >

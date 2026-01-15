@@ -40,7 +40,7 @@ const UsersTable: React.FC<UsersTableProps> = ({
             ...props.style
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = 'rgba(250, 248, 245, 0.5)';
+            e.currentTarget.style.background = 'rgba(230, 244, 255, 0.5)';
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.background = 'transparent';
@@ -62,7 +62,7 @@ const UsersTable: React.FC<UsersTableProps> = ({
             width: '36px',
             height: '36px',
             borderRadius: '50%',
-            background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+            background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
             color: COLORS.white,
             display: 'flex',
             alignItems: 'center',
@@ -177,7 +177,7 @@ const UsersTable: React.FC<UsersTableProps> = ({
     <div style={{
       background: COLORS.whiteAlpha85,
       borderRadius: '8px',
-      border: '1px solid rgba(139, 115, 85, 0.15)',
+      border: '1px solid rgba(24, 144, 255, 0.15)',
       boxShadow: SHADOWS.card,
       overflow: 'hidden',
       height: '750px',
@@ -200,8 +200,8 @@ const UsersTable: React.FC<UsersTableProps> = ({
       {/* 自定义底部：统计 + 分页 */}
       <div style={{
         padding: '16px',
-        background: 'rgba(250, 248, 245, 0.5)',
-        borderTop: '1px solid rgba(139, 115, 85, 0.1)',
+        background: 'rgba(230, 244, 255, 0.5)',
+        borderTop: '1px solid rgba(24, 144, 255, 0.1)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',

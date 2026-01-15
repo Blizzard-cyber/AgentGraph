@@ -38,7 +38,7 @@ const ImportPromptModal: React.FC<ImportPromptModalProps> = ({
     <Modal
       title={
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <UploadIcon size={18} strokeWidth={1.5} style={{ color: '#8b7355' }} />
+          <UploadIcon size={18} strokeWidth={1.5} style={{ color: 'rgba(0, 0, 0, 0.65)' }} />
           {t('pages.promptManager.importModal.title')}
         </div>
       }

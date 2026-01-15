@@ -46,9 +46,9 @@ const ToolDetailModal: React.FC<ToolDetailModalProps> = ({ visible, tool, onClos
           }}>
             <div style={{ marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
               <Tag style={{
-                background: required.includes(key) ? 'rgba(184, 88, 69, 0.08)' : 'rgba(139, 115, 85, 0.08)',
+                background: required.includes(key) ? 'rgba(24, 144, 255, 0.08)' : 'rgba(24, 144, 255, 0.08)',
                 color: required.includes(key) ? COLORS.primary : COLORS.secondary,
-                border: `1px solid ${required.includes(key) ? COLORS.borderPrimary : 'rgba(139, 115, 85, 0.2)'}`,
+                border: `1px solid ${required.includes(key) ? COLORS.borderPrimary : 'rgba(24, 144, 255, 0.2)'}`,
                 borderRadius: '4px',
                 fontWeight: 500,
                 fontSize: '12px',
@@ -109,7 +109,7 @@ const ToolDetailModal: React.FC<ToolDetailModalProps> = ({ visible, tool, onClos
             bordered 
             column={1}
             labelStyle={{
-              background: 'rgba(245, 243, 240, 0.6)',
+              background: 'rgba(230, 244, 255, 0.6)',
               color: COLORS.secondary,
               fontWeight: 500,
               fontSize: '13px',
@@ -124,7 +124,7 @@ const ToolDetailModal: React.FC<ToolDetailModalProps> = ({ visible, tool, onClos
             <Descriptions.Item label={t('pages.systemToolsManager.detailModal.toolName')}>
               <code style={{
                 fontSize: '13px',
-                background: 'rgba(139, 115, 85, 0.08)',
+                background: 'rgba(24, 144, 255, 0.08)',
                 padding: '2px 8px',
                 borderRadius: '4px',
                 color: COLORS.primary

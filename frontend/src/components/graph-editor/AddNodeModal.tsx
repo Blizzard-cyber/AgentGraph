@@ -1,6 +1,6 @@
 // src/components/graph-editor/AddNodeModal.tsx
 import React, { useState } from 'react';
-import { Modal, Form, Input, Select, Radio, InputNumber, Button, Row, Col, Tag } from 'antd';
+import { Modal, Form, Input, Select, Radio, InputNumber, Button, Row, Col} from 'antd';
 import { Plus } from 'lucide-react';
 import { useModelStore } from '../../store/modelStore';
 import { useMCPStore } from '../../store/mcpStore';
@@ -129,34 +129,34 @@ const AddNodeModal: React.FC<AddNodeModalProps> = ({ visible, onClose, onAdd }) 
   const inputStyle = {
     height: '40px',
     borderRadius: '6px',
-    border: '1px solid rgba(139, 115, 85, 0.2)',
+    border: '1px solid rgba(24, 144, 255, 0.2)',
     background: 'rgba(255, 255, 255, 0.9)',
     fontSize: '14px',
     color: '#2d2d2d',
-    boxShadow: '0 1px 3px rgba(139, 115, 85, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
+    boxShadow: '0 1px 3px rgba(24, 144, 255, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
     transition: 'all 0.3s ease'
   };
 
   const textAreaStyle = {
     borderRadius: '6px',
-    border: '1px solid rgba(139, 115, 85, 0.2)',
+    border: '1px solid rgba(24, 144, 255, 0.2)',
     background: 'rgba(255, 255, 255, 0.9)',
     fontSize: '13px',
     color: '#2d2d2d',
     lineHeight: '1.6',
     fontFamily: 'Monaco, Courier New, monospace',
-    boxShadow: '0 1px 3px rgba(139, 115, 85, 0.06)',
+    boxShadow: '0 1px 3px rgba(24, 144, 255, 0.06)',
     transition: 'all 0.3s ease'
   };
 
   const handleFocus = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    e.target.style.borderColor = '#b85845';
-    e.target.style.boxShadow = '0 0 0 3px rgba(184, 88, 69, 0.08)';
+    e.target.style.borderColor = '#1890ff';
+    e.target.style.boxShadow = '0 0 0 3px rgba(24, 144, 255, 0.08)';
   };
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    e.target.style.borderColor = 'rgba(139, 115, 85, 0.2)';
-    e.target.style.boxShadow = '0 1px 3px rgba(139, 115, 85, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.6)';
+    e.target.style.borderColor = 'rgba(24, 144, 255, 0.2)';
+    e.target.style.boxShadow = '0 1px 3px rgba(24, 144, 255, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.6)';
   };
 
   const labelStyle = { 
@@ -168,25 +168,25 @@ const AddNodeModal: React.FC<AddNodeModalProps> = ({ visible, onClose, onAdd }) 
   const sectionTitleStyle = {
     fontSize: '13px',
     fontWeight: 600,
-    color: '#b85845',
+    color: '#1890ff',
     marginBottom: '16px',
     letterSpacing: '0.5px',
     textTransform: 'uppercase' as const
   };
 
   const sectionStyle = {
-    background: 'rgba(250, 248, 245, 0.3)',
+    background: 'rgba(230, 244, 255, 0.3)',
     padding: '16px 20px',
     borderRadius: '8px',
     marginBottom: '20px',
-    border: '1px solid rgba(139, 115, 85, 0.1)'
+    border: '1px solid rgba(24, 144, 255, 0.1)'
   };
 
   return (
     <Modal
       title={
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <Plus size={20} strokeWidth={1.5} style={{ color: '#b85845' }} />
+          <Plus size={20} strokeWidth={1.5} style={{ color: '#1890ff' }} />
           <span style={{
             color: '#2d2d2d',
             fontSize: '18px',
@@ -204,13 +204,13 @@ const AddNodeModal: React.FC<AddNodeModalProps> = ({ visible, onClose, onAdd }) 
       styles={{
         content: {
           borderRadius: '10px',
-          boxShadow: '0 12px 40px rgba(139, 115, 85, 0.2)',
+          boxShadow: '0 12px 40px rgba(24, 144, 255, 0.2)',
           padding: 0,
           overflow: 'hidden'
         },
         header: {
-          background: 'linear-gradient(to bottom, rgba(250, 248, 245, 0.95), rgba(255, 255, 255, 0.9))',
-          borderBottom: '1px solid rgba(139, 115, 85, 0.12)',
+          background: 'linear-gradient(to bottom, rgba(230, 244, 255, 0.95), rgba(255, 255, 255, 0.9))',
+          borderBottom: '1px solid rgba(24, 144, 255, 0.12)',
           padding: '18px 28px',
           marginBottom: 0
         },
@@ -221,9 +221,9 @@ const AddNodeModal: React.FC<AddNodeModalProps> = ({ visible, onClose, onAdd }) 
           overflowY: 'auto'
         },
         footer: {
-          borderTop: '1px solid rgba(139, 115, 85, 0.12)',
+          borderTop: '1px solid rgba(24, 144, 255, 0.12)',
           padding: '16px 28px',
-          background: 'rgba(250, 248, 245, 0.3)',
+          background: 'rgba(230, 244, 255, 0.3)',
           marginTop: 0
         }
       }}
@@ -234,9 +234,9 @@ const AddNodeModal: React.FC<AddNodeModalProps> = ({ visible, onClose, onAdd }) 
           style={{
             height: '40px',
             borderRadius: '6px',
-            border: '1px solid rgba(139, 115, 85, 0.2)',
+            border: '1px solid rgba(24, 144, 255, 0.2)',
             background: 'rgba(255, 255, 255, 0.85)',
-            color: '#8b7355',
+            color: 'rgba(0, 0, 0, 0.65)',
             fontWeight: 500,
             fontSize: '14px',
             letterSpacing: '0.3px',
@@ -251,14 +251,14 @@ const AddNodeModal: React.FC<AddNodeModalProps> = ({ visible, onClose, onAdd }) 
           onClick={handleSubmit}
           style={{
             height: '40px',
-            background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+            background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
             border: 'none',
             borderRadius: '6px',
             color: '#fff',
             fontWeight: 500,
             fontSize: '14px',
             letterSpacing: '0.3px',
-            boxShadow: '0 2px 6px rgba(184, 88, 69, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+            boxShadow: '0 2px 6px rgba(24, 144, 255, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
             padding: '0 24px'
           }}
         >
@@ -322,7 +322,7 @@ const AddNodeModal: React.FC<AddNodeModalProps> = ({ visible, onClose, onAdd }) 
             background: 'rgba(255, 255, 255, 0.5)',
             padding: '16px',
             borderRadius: '6px',
-            border: '1px solid rgba(139, 115, 85, 0.1)'
+            border: '1px solid rgba(24, 144, 255, 0.1)'
           }}>
             <div style={{ marginBottom: '16px' }}>
               <Form.Item
@@ -409,7 +409,7 @@ const AddNodeModal: React.FC<AddNodeModalProps> = ({ visible, onClose, onAdd }) 
                           showSearch
                           style={{ fontSize: '14px' }}
                         >
-                          {models.map(model => (
+                          {models.filter(m => m.status === 'ready').map(model => (
                             <Option key={model.name} value={model.name}>{model.name}</Option>
                           ))}
                         </Select>

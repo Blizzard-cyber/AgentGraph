@@ -4,44 +4,39 @@
  */
 
 export const COLORS = {
-  primary: '#b85845',
-  primaryLight: 'rgba(184, 88, 69, 0.08)',
-  primaryBorder: 'rgba(184, 88, 69, 0.25)',
-  secondary: '#8b7355',
-  secondaryLight: 'rgba(139, 115, 85, 0.08)',
-  secondaryBorder: 'rgba(139, 115, 85, 0.2)',
-  text: '#2d2d2d',
-  textLight: 'rgba(45, 45, 45, 0.85)',
-  textMuted: 'rgba(45, 45, 45, 0.45)',
-  background: '#faf8f5',
-  backgroundLight: 'rgba(250, 248, 245, 0.6)',
+  primary: '#1890ff',
+  primaryLight: '#e6f4ff',
+  primaryBorder: '#91caff',
+  secondary: '#1890ff',
+  secondaryLight: 'rgba(24, 144, 255, 0.08)',
+  secondaryBorder: '#d9d9d9',
+  text: 'rgba(0, 0, 0, 0.85)',
+  textLight: 'rgba(0, 0, 0, 0.65)',
+  textMuted: 'rgba(0, 0, 0, 0.45)',
+  background: '#ffffff',
+  backgroundLight: '#fafafa',
   white: '#fff',
-  whiteTransparent: 'rgba(255, 255, 255, 0.85)',
+  whiteTransparent: '#ffffff',
 } as const;
 
 export const HEADER_STYLES = {
   container: {
-    background: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(245, 243, 240, 0.6))',
-    backdropFilter: 'blur(20px)',
+    background: '#ffffff',
+    backdropFilter: 'none',
     padding: '0 48px',
-    borderBottom: 'none',
-    boxShadow: '0 2px 8px rgba(139, 115, 85, 0.08)',
+    borderBottom: '1px solid #d9d9d9',
+    boxShadow: '0 1px 2px rgba(0, 0, 0, 0.03)',
     position: 'relative' as const,
   },
   decorativeLine: {
-    position: 'absolute' as const,
-    bottom: 0,
-    left: '20%',
-    right: '20%',
-    height: '1px',
-    background: 'linear-gradient(to right, transparent, rgba(139, 115, 85, 0.3) 50%, transparent)',
+    display: 'none',
   },
   title: {
     margin: 0,
-    color: COLORS.text,
+    color: 'rgba(0, 0, 0, 0.85)',
     fontWeight: 500,
-    letterSpacing: '2px',
-    fontSize: '18px',
+    letterSpacing: '0.5px',
+    fontSize: '16px',
   },
 };
 
@@ -68,21 +63,21 @@ export const TAG_STYLES = {
 
 export const BUTTON_STYLES = {
   primary: {
-    background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+    background: '#1890ff',
     border: 'none',
-    borderRadius: '6px',
+    borderRadius: '4px',
     color: '#fff',
     padding: '8px 16px',
     fontSize: '14px',
     fontWeight: 500,
     letterSpacing: '0.3px',
-    boxShadow: '0 2px 6px rgba(184, 88, 69, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+    boxShadow: '0 2px 0 rgba(0, 0, 0, 0.016)',
     transition: 'all 0.3s cubic-bezier(0.23, 1, 0.32, 1)',
   },
   secondary: {
-    color: COLORS.secondary,
+    color: 'rgba(0, 0, 0, 0.65)',
     background: 'transparent',
-    borderRadius: '6px',
+    borderRadius: '4px',
     transition: 'all 0.2s ease',
   },
 };
@@ -90,14 +85,14 @@ export const BUTTON_STYLES = {
 export const INPUT_STYLES = {
   search: {
     width: 240,
-    height: '40px',
-    padding: '10px 14px',
-    borderRadius: '6px',
-    border: `1px solid ${COLORS.secondaryBorder}`,
-    background: COLORS.whiteTransparent,
-    boxShadow: '0 1px 3px rgba(139, 115, 85, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
+    height: '32px',
+    padding: '4px 11px',
+    borderRadius: '4px',
+    border: '1px solid #d9d9d9',
+    background: '#ffffff',
+    boxShadow: 'none',
     fontSize: '14px',
-    color: COLORS.text,
+    color: 'rgba(0, 0, 0, 0.85)',
     letterSpacing: '0.3px',
     transition: 'all 0.3s ease',
   },
@@ -106,16 +101,16 @@ export const INPUT_STYLES = {
 export const CARD_STYLES = {
   base: {
     borderRadius: '6px',
-    border: '1px solid rgba(139, 115, 85, 0.15)',
-    boxShadow: '0 1px 3px rgba(139, 115, 85, 0.06)',
+    border: '1px solid rgba(24, 144, 255, 0.15)',
+    boxShadow: '0 1px 3px rgba(24, 144, 255, 0.06)',
     transition: 'all 0.3s cubic-bezier(0.23, 1, 0.32, 1)',
     background: COLORS.whiteTransparent,
     height: '100%',
   },
   hover: {
     transform: 'translateY(-2px)',
-    boxShadow: '0 4px 12px rgba(184, 88, 69, 0.12)',
-    borderColor: 'rgba(184, 88, 69, 0.3)',
+    boxShadow: '0 4px 12px rgba(24, 144, 255, 0.12)',
+    borderColor: 'rgba(24, 144, 255, 0.3)',
   },
 };
 
@@ -164,7 +159,7 @@ export const MODAL_STYLES = {
   },
   footer: {
     padding: '16px 24px 24px',
-    borderTop: '1px solid rgba(139, 115, 85, 0.15)',
+    borderTop: '1px solid rgba(24, 144, 255, 0.15)',
     display: 'flex',
     justifyContent: 'flex-end',
     gap: '8px',
@@ -176,8 +171,8 @@ export const COLLAPSE_STYLES = {
   panel: {
     marginBottom: '16px',
     borderRadius: '8px',
-    border: '1px solid rgba(139, 115, 85, 0.15)',
-    background: 'rgba(250, 248, 245, 0.6)',
+    border: '1px solid rgba(24, 144, 255, 0.15)',
+    background: 'rgba(230, 244, 255, 0.6)',
     overflow: 'hidden' as const,
   },
   header: {

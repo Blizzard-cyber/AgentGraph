@@ -39,7 +39,7 @@ const StreamingBlockDisplay: React.FC<StreamingBlockDisplayProps> = ({
             {!block.isComplete && (
               <span style={{
                 marginLeft: '2px',
-                color: '#b85845',
+                color: '#1890ff',
                 fontWeight: 'bold',
                 animation: 'typingCursor 1s infinite'
               }}>▋</span>

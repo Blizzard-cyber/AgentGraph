@@ -51,34 +51,34 @@ const AgentForm: React.FC<AgentFormProps> = ({
   }, [form, initialValues]);
 
   const inputFocusStyle = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    e.target.style.borderColor = '#b85845';
-    e.target.style.boxShadow = '0 0 0 3px rgba(184, 88, 69, 0.08)';
+    e.target.style.borderColor = '#1890ff';
+    e.target.style.boxShadow = '0 0 0 3px rgba(24, 144, 255, 0.08)';
   };
 
   const inputBlurStyle = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    e.target.style.borderColor = 'rgba(139, 115, 85, 0.2)';
-    e.target.style.boxShadow = '0 1px 3px rgba(139, 115, 85, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.6)';
+    e.target.style.borderColor = 'rgba(24, 144, 255, 0.2)';
+    e.target.style.boxShadow = '0 1px 3px rgba(24, 144, 255, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.6)';
   };
 
   const baseInputStyle = {
     height: '40px',
     borderRadius: '6px',
-    border: '1px solid rgba(139, 115, 85, 0.2)',
+    border: '1px solid rgba(24, 144, 255, 0.2)',
     background: 'rgba(255, 255, 255, 0.9)',
     fontSize: '14px',
     color: '#2d2d2d',
-    boxShadow: '0 1px 3px rgba(139, 115, 85, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
+    boxShadow: '0 1px 3px rgba(24, 144, 255, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
     transition: 'all 0.3s ease'
   };
 
   const textAreaStyle = {
     borderRadius: '6px',
-    border: '1px solid rgba(139, 115, 85, 0.2)',
+    border: '1px solid rgba(24, 144, 255, 0.2)',
     background: 'rgba(255, 255, 255, 0.9)',
     fontSize: '14px',
     color: '#2d2d2d',
     lineHeight: '1.6',
-    boxShadow: '0 1px 3px rgba(139, 115, 85, 0.06)',
+    boxShadow: '0 1px 3px rgba(24, 144, 255, 0.06)',
     transition: 'all 0.3s ease'
   };
 
@@ -160,7 +160,7 @@ const AgentForm: React.FC<AgentFormProps> = ({
                 showSearch
                 style={{ fontSize: '14px' }}
               >
-                {models.map((model) => (
+                {models.filter(m => m.status === 'ready').map((model) => (
                   <Option key={model} value={model}>{model}</Option>
                 ))}
               </Select>
@@ -264,9 +264,9 @@ const AgentForm: React.FC<AgentFormProps> = ({
                   closable={closable}
                   onClose={onClose}
                   style={{
-                    background: 'rgba(139, 115, 85, 0.08)',
-                    color: '#8b7355',
-                    border: '1px solid rgba(139, 115, 85, 0.2)',
+                    background: 'rgba(24, 144, 255, 0.08)',
+                    color: 'rgba(0, 0, 0, 0.65)',
+                    border: '1px solid rgba(24, 144, 255, 0.2)',
                     borderRadius: '6px',
                     fontWeight: 500,
                     fontSize: '12px',

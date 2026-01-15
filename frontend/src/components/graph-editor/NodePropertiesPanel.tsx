@@ -161,34 +161,34 @@ const NodePropertiesPanel: React.FC = () => {
   const inputStyle = {
     height: '40px',
     borderRadius: '6px',
-    border: '1px solid rgba(139, 115, 85, 0.2)',
+    border: '1px solid rgba(24, 144, 255, 0.2)',
     background: 'rgba(255, 255, 255, 0.9)',
     fontSize: '14px',
     color: '#2d2d2d',
-    boxShadow: '0 1px 3px rgba(139, 115, 85, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
+    boxShadow: '0 1px 3px rgba(24, 144, 255, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
     transition: 'all 0.3s ease'
   };
 
   const textAreaStyle = {
     borderRadius: '6px',
-    border: '1px solid rgba(139, 115, 85, 0.2)',
+    border: '1px solid rgba(24, 144, 255, 0.2)',
     background: 'rgba(255, 255, 255, 0.9)',
     fontSize: '13px',
     color: '#2d2d2d',
     lineHeight: '1.6',
     fontFamily: 'Monaco, Courier New, monospace',
-    boxShadow: '0 1px 3px rgba(139, 115, 85, 0.06)',
+    boxShadow: '0 1px 3px rgba(24, 144, 255, 0.06)',
     transition: 'all 0.3s ease'
   };
 
   const handleFocus = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    e.target.style.borderColor = '#b85845';
-    e.target.style.boxShadow = '0 0 0 3px rgba(184, 88, 69, 0.08)';
+    e.target.style.borderColor = '#1890ff';
+    e.target.style.boxShadow = '0 0 0 3px rgba(24, 144, 255, 0.08)';
   };
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    e.target.style.borderColor = 'rgba(139, 115, 85, 0.2)';
-    e.target.style.boxShadow = '0 1px 3px rgba(139, 115, 85, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.6)';
+    e.target.style.borderColor = 'rgba(24, 144, 255, 0.2)';
+    e.target.style.boxShadow = '0 1px 3px rgba(24, 144, 255, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.6)';
   };
 
   const labelStyle = { 
@@ -200,18 +200,18 @@ const NodePropertiesPanel: React.FC = () => {
   const sectionTitleStyle = {
     fontSize: '13px',
     fontWeight: 600,
-    color: '#b85845',
+    color: '#1890ff',
     marginBottom: '16px',
     letterSpacing: '0.5px',
     textTransform: 'uppercase' as const
   };
 
   const sectionStyle = {
-    background: 'rgba(250, 248, 245, 0.3)',
+    background: 'rgba(230, 244, 255, 0.3)',
     padding: '16px 20px',
     borderRadius: '8px',
     marginBottom: '20px',
-    border: '1px solid rgba(139, 115, 85, 0.1)'
+    border: '1px solid rgba(24, 144, 255, 0.1)'
   };
 
   return (
@@ -278,7 +278,7 @@ const NodePropertiesPanel: React.FC = () => {
             background: 'rgba(255, 255, 255, 0.5)',
             padding: '16px',
             borderRadius: '6px',
-            border: '1px solid rgba(139, 115, 85, 0.1)'
+            border: '1px solid rgba(24, 144, 255, 0.1)'
           }}>
             <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'center' }}>
               <span style={labelStyle}>{t('components.graphEditor.nodePropertiesPanel.nodeType')}</span>
@@ -379,7 +379,7 @@ const NodePropertiesPanel: React.FC = () => {
                             form.validateFields(['agent_name']);
                           }}
                         >
-                          {models.map(model => (
+                          {models.filter(m => m.status === 'ready').map(model => (
                             <Option key={model.name} value={model.name}>{model.name}</Option>
                           ))}
                         </Select>
@@ -610,9 +610,9 @@ const NodePropertiesPanel: React.FC = () => {
                         closable={closable}
                         onClose={onClose}
                         style={{
-                          background: isStart ? 'rgba(160, 130, 109, 0.08)' : 'rgba(139, 115, 85, 0.08)',
-                          color: isStart ? '#a0826d' : '#8b7355',
-                          border: isStart ? '1px solid rgba(160, 130, 109, 0.2)' : '1px solid rgba(139, 115, 85, 0.2)',
+                          background: isStart ? 'rgba(64, 169, 255, 0.08)' : 'rgba(24, 144, 255, 0.08)',
+                          color: isStart ? '#1890ff' : 'rgba(0, 0, 0, 0.45)',
+                          border: isStart ? '1px solid rgba(64, 169, 255, 0.2)' : '1px solid rgba(24, 144, 255, 0.2)',
                           borderRadius: '6px',
                           fontWeight: 500,
                           fontSize: '12px',
@@ -627,7 +627,7 @@ const NodePropertiesPanel: React.FC = () => {
                   }}
                 >
                   <Option key="start" value="start">
-                    <span style={{ color: '#a0826d', fontWeight: 'bold' }}>
+                    <span style={{ color: '#1890ff', fontWeight: 'bold' }}>
                       <PlayCircle size={14} strokeWidth={2} style={{ marginRight: '6px', verticalAlign: 'middle' }} />
                       {t('components.graphEditor.nodePropertiesPanel.start')} ({t('components.graphEditor.nodePropertiesPanel.userInput')})
                     </span>
@@ -665,9 +665,9 @@ const NodePropertiesPanel: React.FC = () => {
                         closable={closable}
                         onClose={onClose}
                         style={{
-                          background: isEnd ? 'rgba(184, 88, 69, 0.08)' : 'rgba(212, 165, 116, 0.08)',
-                          color: isEnd ? '#b85845' : '#d4a574',
-                          border: isEnd ? '1px solid rgba(184, 88, 69, 0.2)' : '1px solid rgba(212, 165, 116, 0.2)',
+                          background: isEnd ? 'rgba(24, 144, 255, 0.08)' : 'rgba(64, 169, 255, 0.08)',
+                          color: isEnd ? '#1890ff' : 'rgba(0, 0, 0, 0.45)',
+                          border: isEnd ? '1px solid rgba(24, 144, 255, 0.2)' : '1px solid rgba(64, 169, 255, 0.2)',
                           borderRadius: '6px',
                           fontWeight: 500,
                           fontSize: '12px',
@@ -682,7 +682,7 @@ const NodePropertiesPanel: React.FC = () => {
                   }}
                 >
                   <Option key="end" value="end">
-                    <span style={{ color: '#b85845', fontWeight: 'bold' }}>
+                    <span style={{ color: '#1890ff', fontWeight: 'bold' }}>
                       <ArrowRight size={14} strokeWidth={2} style={{ marginRight: '6px', verticalAlign: 'middle' }} />
                       {t('components.graphEditor.nodePropertiesPanel.end')} ({t('components.graphEditor.nodePropertiesPanel.finalResult')})
                     </span>
@@ -701,7 +701,7 @@ const NodePropertiesPanel: React.FC = () => {
       <div style={{
         marginTop: '32px',
         paddingTop: '24px',
-        borderTop: '1px solid rgba(139, 115, 85, 0.15)',
+        borderTop: '1px solid rgba(24, 144, 255, 0.15)',
         display: 'flex',
         justifyContent: 'center'
       }}>

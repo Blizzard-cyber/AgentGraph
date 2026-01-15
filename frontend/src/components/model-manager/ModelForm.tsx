@@ -140,7 +140,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
       width={600}
       styles={{
         header: {
-          borderBottom: '1px solid rgba(139, 115, 85, 0.15)',
+          borderBottom: '1px solid rgba(24, 144, 255, 0.15)',
           paddingBottom: '16px',
           marginBottom: '20px'
         },
@@ -154,9 +154,9 @@ const ModelForm: React.FC<ModelFormProps> = ({
           onClick={onClose}
           style={{
             borderRadius: '6px',
-            border: '1px solid rgba(139, 115, 85, 0.2)',
+            border: '1px solid rgba(24, 144, 255, 0.2)',
             background: 'rgba(255, 255, 255, 0.85)',
-            color: '#8b7355',
+            color: 'rgba(0, 0, 0, 0.65)',
             padding: '6px 16px',
             height: 'auto'
           }}
@@ -167,14 +167,14 @@ const ModelForm: React.FC<ModelFormProps> = ({
           key="submit"
           onClick={handleSubmit}
           style={{
-            background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+            background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
             border: 'none',
             borderRadius: '6px',
             color: '#fff',
             padding: '6px 16px',
             height: 'auto',
             fontWeight: 500,
-            boxShadow: '0 2px 6px rgba(184, 88, 69, 0.25)',
+            boxShadow: '0 2px 6px rgba(24, 144, 255, 0.25)',
             marginLeft: '8px'
           }}
         >
@@ -231,7 +231,11 @@ const ModelForm: React.FC<ModelFormProps> = ({
           rules={[{ required: true, message: t('pages.modelManager.form.providerRequired') }]}
         >
           <Select placeholder={t('pages.modelManager.form.providerPlaceholder')}>
-            <Select.Option value="openai">OpenAI</Select.Option>
+            <Select.Option value="openai">{t('pages.modelManager.form.providerOpenAI')}</Select.Option>
+            <Select.Option value="google">{t('pages.modelManager.form.providerGoogle')}</Select.Option>
+            <Select.Option value="anthropic">{t('pages.modelManager.form.providerAnthropic')}</Select.Option>
+            <Select.Option value="azure">{t('pages.modelManager.form.providerAzure')}</Select.Option>
+            <Select.Option value="custom">{t('pages.modelManager.form.providerCustom')}</Select.Option>
           </Select>
         </Form.Item>
 
@@ -244,6 +248,10 @@ const ModelForm: React.FC<ModelFormProps> = ({
         >
           <Select placeholder={t('pages.modelManager.form.modelTypePlaceholder')}>
             <Select.Option value="llm">{t('pages.modelManager.form.llmType')}</Select.Option>
+            <Select.Option value="vlm">{t('pages.modelManager.form.vlmType')}</Select.Option>
+            <Select.Option value="image_gen">{t('pages.modelManager.form.imageGenType')}</Select.Option>
+            <Select.Option value="audio">{t('pages.modelManager.form.audioType')}</Select.Option>
+            <Select.Option value="custom">{t('pages.modelManager.form.customType')}</Select.Option>
           </Select>
         </Form.Item>
 
@@ -252,8 +260,8 @@ const ModelForm: React.FC<ModelFormProps> = ({
           style={{
             marginTop: '16px',
             borderRadius: '8px',
-            border: '1px solid rgba(139, 115, 85, 0.15)',
-            background: 'rgba(250, 248, 245, 0.6)',
+            border: '1px solid rgba(24, 144, 255, 0.15)',
+            background: 'rgba(230, 244, 255, 0.6)',
             overflow: 'hidden'
           }}
         >
@@ -268,7 +276,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
             }}
             onClick={() => setAdvancedExpanded(!advancedExpanded)}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(250, 248, 245, 0.9)';
+              e.currentTarget.style.background = 'rgba(230, 244, 255, 0.9)';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.background = 'transparent';
@@ -285,7 +293,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
               size={18}
               strokeWidth={2}
               style={{
-                color: '#8b7355',
+                color: 'rgba(0, 0, 0, 0.65)',
                 transform: advancedExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
                 transition: 'transform 0.3s ease'
               }}
@@ -445,7 +453,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
               >
                 <Switch
                   style={{
-                    backgroundColor: 'rgba(139, 115, 85, 0.2)'
+                    backgroundColor: 'rgba(24, 144, 255, 0.2)'
                   }}
                   className="custom-switch"
                 />

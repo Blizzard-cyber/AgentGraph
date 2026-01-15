@@ -29,8 +29,8 @@ const MemoryItemCard: React.FC<MemoryItemCardProps> = ({ item, onEdit, onDelete 
       style={{
         marginBottom: '8px',
         borderRadius: '6px',
-        border: '1px solid rgba(139, 115, 85, 0.15)',
-        boxShadow: '0 1px 3px rgba(139, 115, 85, 0.06)',
+        border: '1px solid rgba(24, 144, 255, 0.15)',
+        boxShadow: '0 1px 3px rgba(24, 144, 255, 0.06)',
         background: 'rgba(255, 255, 255, 0.85)',
         transition: 'all 0.2s ease',
       }}
@@ -39,13 +39,13 @@ const MemoryItemCard: React.FC<MemoryItemCardProps> = ({ item, onEdit, onDelete 
       }}
       onMouseEnter={(e) => {
         const card = e.currentTarget;
-        card.style.borderColor = 'rgba(139, 115, 85, 0.25)';
-        card.style.boxShadow = '0 2px 6px rgba(139, 115, 85, 0.08)';
+        card.style.borderColor = 'rgba(24, 144, 255, 0.25)';
+        card.style.boxShadow = '0 2px 6px rgba(24, 144, 255, 0.08)';
       }}
       onMouseLeave={(e) => {
         const card = e.currentTarget;
-        card.style.borderColor = 'rgba(139, 115, 85, 0.15)';
-        card.style.boxShadow = '0 1px 3px rgba(139, 115, 85, 0.06)';
+        card.style.borderColor = 'rgba(24, 144, 255, 0.15)';
+        card.style.boxShadow = '0 1px 3px rgba(24, 144, 255, 0.06)';
       }}
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -76,7 +76,7 @@ const MemoryItemCard: React.FC<MemoryItemCardProps> = ({ item, onEdit, onDelete 
             style={{
               padding: '4px',
               borderRadius: '4px',
-              color: '#8b7355',
+              color: 'rgba(0, 0, 0, 0.65)',
               cursor: 'pointer',
               transition: 'all 0.2s ease',
               display: 'flex',
@@ -84,11 +84,11 @@ const MemoryItemCard: React.FC<MemoryItemCardProps> = ({ item, onEdit, onDelete 
               justifyContent: 'center',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.color = '#b85845';
-              e.currentTarget.style.background = 'rgba(184, 88, 69, 0.08)';
+              e.currentTarget.style.color = '#1890ff';
+              e.currentTarget.style.background = 'rgba(24, 144, 255, 0.08)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.color = '#8b7355';
+              e.currentTarget.style.color = 'rgba(0, 0, 0, 0.65)';
               e.currentTarget.style.background = 'transparent';
             }}
           >
@@ -101,32 +101,32 @@ const MemoryItemCard: React.FC<MemoryItemCardProps> = ({ item, onEdit, onDelete 
             cancelText={t('common.cancel')}
             okButtonProps={{
               style: {
-                background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+                background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
                 border: 'none',
                 borderRadius: '6px',
                 color: '#fff',
                 fontWeight: 500,
-                boxShadow: '0 2px 6px rgba(184, 88, 69, 0.25)'
+                boxShadow: '0 2px 6px rgba(24, 144, 255, 0.25)'
               }
             }}
             cancelButtonProps={{
               style: {
                 borderRadius: '6px',
-                border: '1px solid rgba(139, 115, 85, 0.2)',
-                color: '#8b7355',
+                border: '1px solid rgba(24, 144, 255, 0.2)',
+                color: 'rgba(0, 0, 0, 0.65)',
                 fontWeight: 500
               }
             }}
             overlayStyle={{
               borderRadius: '8px',
-              boxShadow: '0 4px 12px rgba(139, 115, 85, 0.2)'
+              boxShadow: '0 4px 12px rgba(24, 144, 255, 0.2)'
             }}
           >
             <div
               style={{
                 padding: '4px',
                 borderRadius: '4px',
-                color: '#8b7355',
+                color: 'rgba(0, 0, 0, 0.65)',
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
                 display: 'flex',
@@ -134,11 +134,11 @@ const MemoryItemCard: React.FC<MemoryItemCardProps> = ({ item, onEdit, onDelete 
                 justifyContent: 'center',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.color = '#b85845';
-                e.currentTarget.style.background = 'rgba(184, 88, 69, 0.08)';
+                e.currentTarget.style.color = '#1890ff';
+                e.currentTarget.style.background = 'rgba(24, 144, 255, 0.08)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.color = '#8b7355';
+                e.currentTarget.style.color = 'rgba(0, 0, 0, 0.65)';
                 e.currentTarget.style.background = 'transparent';
               }}
             >

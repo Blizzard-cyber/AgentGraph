@@ -8,9 +8,15 @@ services:
     restart: always
     ports:
       - "0.0.0.0:${MAG_NGINX_PORT:-8888}:80"  # 宿主机 ${MAG_NGINX_PORT:-8888} -> 容器 80
+    environment:
+      - GPUSTACK_SERVICE_HOST=${GPUSTACK_SERVICE_HOST}
+      - GPUSTACK_SERVICE_PORT=${GPUSTACK_SERVICE_PORT}
+      - HIGRESS_GATEWAY_HOST=${HIGRESS_GATEWAY_HOST}
+      - HIGRESS_CONSOLE_PORT=${HIGRESS_CONSOLE_PORT}
     volumes:
       - ../../frontend/dist:/usr/share/nginx/html:ro        # 前端构建产物
       - ../nginx/default.conf:/etc/nginx/conf.d/default.conf:ro  # Nginx 配置
+      - ./generate-config.sh:/docker-entrypoint.d/40-generate-config.sh:ro  # 配置生成脚本
 
     extra_hosts:
      - "host.docker.internal:host-gateway"

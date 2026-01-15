@@ -158,12 +158,12 @@ const TaskList: React.FC<TaskListProps> = ({
         background: 'rgba(255, 255, 255, 0.85)',
         borderRadius: '8px',
         padding: '16px 20px',
-        border: '1px solid rgba(139, 115, 85, 0.15)',
-        boxShadow: '0 1px 3px rgba(139, 115, 85, 0.06)'
+        border: '1px solid rgba(24, 144, 255, 0.15)',
+        boxShadow: '0 1px 3px rgba(24, 144, 255, 0.06)'
       }}>
         <Input
           placeholder={t('pages.taskManager.searchPlaceholder')}
-          prefix={<Search size={16} strokeWidth={1.5} style={{ color: '#8b7355' }} />}
+          prefix={<Search size={16} strokeWidth={1.5} style={{ color: 'rgba(0, 0, 0, 0.45)' }} />}
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
           allowClear
@@ -171,9 +171,9 @@ const TaskList: React.FC<TaskListProps> = ({
             width: '280px',
             height: '40px',
             borderRadius: '6px',
-            border: '1px solid rgba(139, 115, 85, 0.2)',
+            border: '1px solid rgba(24, 144, 255, 0.2)',
             background: 'rgba(255, 255, 255, 0.85)',
-            boxShadow: '0 1px 3px rgba(139, 115, 85, 0.08)'
+            boxShadow: '0 1px 3px rgba(24, 144, 255, 0.08)'
           }}
         />
 
@@ -207,13 +207,13 @@ const TaskList: React.FC<TaskListProps> = ({
             icon={<Plus size={16} strokeWidth={1.5} />}
             onClick={onCreateTask}
             style={{
-              background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+              background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
               border: 'none',
               borderRadius: '6px',
               height: '40px',
               padding: '0 20px',
               fontWeight: 500,
-              boxShadow: '0 2px 6px rgba(184, 88, 69, 0.25)'
+              boxShadow: '0 2px 6px rgba(24, 144, 255, 0.25)'
             }}
           >
             {t('pages.taskManager.createTask')}
@@ -224,7 +224,7 @@ const TaskList: React.FC<TaskListProps> = ({
               style={{
                 padding: '8px',
                 borderRadius: '6px',
-                color: '#8b7355',
+                color: 'rgba(0, 0, 0, 0.65)',
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
                 display: 'flex',
@@ -236,11 +236,11 @@ const TaskList: React.FC<TaskListProps> = ({
                 loadScheduledJobs();
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.color = '#b85845';
-                e.currentTarget.style.background = 'rgba(184, 88, 69, 0.08)';
+                e.currentTarget.style.color = '#1890ff';
+                e.currentTarget.style.background = 'rgba(24, 144, 255, 0.08)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.color = '#8b7355';
+                e.currentTarget.style.color = 'rgba(0, 0, 0, 0.65)';
                 e.currentTarget.style.background = 'transparent';
               }}
             >
@@ -253,7 +253,7 @@ const TaskList: React.FC<TaskListProps> = ({
               style={{
                 padding: '8px',
                 borderRadius: '6px',
-                color: '#8b7355',
+                color: 'rgba(0, 0, 0, 0.65)',
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
                 display: 'flex',
@@ -262,11 +262,11 @@ const TaskList: React.FC<TaskListProps> = ({
               }}
               onClick={onReloadScheduler}
               onMouseEnter={(e) => {
-                e.currentTarget.style.color = '#b85845';
-                e.currentTarget.style.background = 'rgba(184, 88, 69, 0.08)';
+                e.currentTarget.style.color = '#1890ff';
+                e.currentTarget.style.background = 'rgba(24, 144, 255, 0.08)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.color = '#8b7355';
+                e.currentTarget.style.color = 'rgba(0, 0, 0, 0.65)';
                 e.currentTarget.style.background = 'transparent';
               }}
             >
@@ -279,7 +279,7 @@ const TaskList: React.FC<TaskListProps> = ({
               onClick={handleClearFilter}
               type="text"
               style={{
-                color: '#8b7355',
+                color: 'rgba(0, 0, 0, 0.65)',
                 height: '40px'
               }}
             >
@@ -325,13 +325,13 @@ const TaskList: React.FC<TaskListProps> = ({
               icon={<Plus size={16} strokeWidth={1.5} />}
               onClick={onCreateTask}
               style={{
-                background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+                background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
                 border: 'none',
                 borderRadius: '6px',
                 height: '40px',
                 padding: '0 20px',
                 fontWeight: 500,
-                boxShadow: '0 2px 6px rgba(184, 88, 69, 0.25)',
+                boxShadow: '0 2px 6px rgba(24, 144, 255, 0.25)',
                 marginTop: '16px'
               }}
             >
@@ -354,8 +354,8 @@ const TaskList: React.FC<TaskListProps> = ({
                     hoverable
                     style={{
                       borderRadius: '8px',
-                      border: '1px solid rgba(139, 115, 85, 0.15)',
-                      boxShadow: '0 1px 3px rgba(139, 115, 85, 0.06)',
+                      border: '1px solid rgba(24, 144, 255, 0.15)',
+                      boxShadow: '0 1px 3px rgba(24, 144, 255, 0.06)',
                       transition: 'all 0.3s cubic-bezier(0.23, 1, 0.32, 1)',
                       background: 'rgba(255, 255, 255, 0.85)',
                       cursor: 'pointer',
@@ -367,13 +367,13 @@ const TaskList: React.FC<TaskListProps> = ({
                     onClick={() => handleCardClick(task.id)}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.transform = 'translateY(-2px)';
-                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(184, 88, 69, 0.12)';
-                      e.currentTarget.style.borderColor = 'rgba(184, 88, 69, 0.3)';
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(24, 144, 255, 0.12)';
+                      e.currentTarget.style.borderColor = 'rgba(24, 144, 255, 0.3)';
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.transform = 'translateY(0)';
-                      e.currentTarget.style.boxShadow = '0 1px 3px rgba(139, 115, 85, 0.06)';
-                      e.currentTarget.style.borderColor = 'rgba(139, 115, 85, 0.15)';
+                      e.currentTarget.style.boxShadow = '0 1px 3px rgba(24, 144, 255, 0.06)';
+                      e.currentTarget.style.borderColor = 'rgba(24, 144, 255, 0.15)';
                     }}
                   >
                     {/* 卡片头部 */}
@@ -414,7 +414,7 @@ const TaskList: React.FC<TaskListProps> = ({
                         }}>
                           {t('pages.taskManager.graph')}: {task.graph_name}
                         </Text>
-                        <span style={{ color: 'rgba(139, 115, 85, 0.3)' }}>•</span>
+                        <span style={{ color: 'rgba(24, 144, 255, 0.3)' }}>•</span>
                         <Text style={{
                           fontSize: '13px',
                           color: 'rgba(45, 45, 45, 0.65)'
@@ -427,7 +427,7 @@ const TaskList: React.FC<TaskListProps> = ({
                     {/* 调度信息 */}
                     <div style={{
                       padding: '12px',
-                      background: 'rgba(250, 248, 245, 0.6)',
+                      background: 'rgba(230, 244, 255, 0.6)',
                       borderRadius: '6px',
                       marginBottom: '12px',
                       display: 'flex',
@@ -437,13 +437,13 @@ const TaskList: React.FC<TaskListProps> = ({
                     }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         {task.schedule_type === ScheduleType.SINGLE ? (
-                          <CalendarIcon size={14} color="#8b7355" strokeWidth={1.5} />
+                          <CalendarIcon size={14} color="rgba(0, 0, 0, 0.65)" strokeWidth={1.5} />
                         ) : (
-                          <Repeat size={14} color="#8b7355" strokeWidth={1.5} />
+                          <Repeat size={14} color="rgba(0, 0, 0, 0.65)" strokeWidth={1.5} />
                         )}
                         <Text style={{
                           fontSize: '12px',
-                          color: '#8b7355',
+                          color: 'rgba(0, 0, 0, 0.65)',
                           fontWeight: 500
                         }}>
                           {task.schedule_type === ScheduleType.SINGLE ? t('pages.taskManager.singleTask') : t('pages.taskManager.recurringTask')}
@@ -470,7 +470,7 @@ const TaskList: React.FC<TaskListProps> = ({
                       justifyContent: 'space-between',
                       alignItems: 'center',
                       paddingTop: '12px',
-                      borderTop: '1px solid rgba(139, 115, 85, 0.1)'
+                      borderTop: '1px solid rgba(24, 144, 255, 0.1)'
                     }}>
                       <div>
                         <Text style={{
@@ -488,7 +488,7 @@ const TaskList: React.FC<TaskListProps> = ({
                             style={{
                               padding: '6px',
                               borderRadius: '4px',
-                              color: '#8b7355',
+                              color: 'rgba(0, 0, 0, 0.65)',
                               cursor: 'pointer',
                               transition: 'all 0.2s ease',
                               display: 'flex',
@@ -500,11 +500,11 @@ const TaskList: React.FC<TaskListProps> = ({
                               handleCardClick(task.id);
                             }}
                             onMouseEnter={(e) => {
-                              e.currentTarget.style.color = '#b85845';
-                              e.currentTarget.style.background = 'rgba(184, 88, 69, 0.08)';
+                              e.currentTarget.style.color = '#1890ff';
+                              e.currentTarget.style.background = 'rgba(24, 144, 255, 0.08)';
                             }}
                             onMouseLeave={(e) => {
-                              e.currentTarget.style.color = '#8b7355';
+                              e.currentTarget.style.color = 'rgba(0, 0, 0, 0.65)';
                               e.currentTarget.style.background = 'transparent';
                             }}
                           >
@@ -518,7 +518,7 @@ const TaskList: React.FC<TaskListProps> = ({
                               style={{
                                 padding: '6px',
                                 borderRadius: '4px',
-                                color: '#8b7355',
+                                color: 'rgba(0, 0, 0, 0.65)',
                                 cursor: 'pointer',
                                 transition: 'all 0.2s ease',
                                 display: 'flex',
@@ -527,11 +527,11 @@ const TaskList: React.FC<TaskListProps> = ({
                               }}
                               onClick={(e) => handleStatusToggle(task, e)}
                               onMouseEnter={(e) => {
-                                e.currentTarget.style.color = '#b85845';
-                                e.currentTarget.style.background = 'rgba(184, 88, 69, 0.08)';
+                                e.currentTarget.style.color = '#1890ff';
+                                e.currentTarget.style.background = 'rgba(24, 144, 255, 0.08)';
                               }}
                               onMouseLeave={(e) => {
-                                e.currentTarget.style.color = '#8b7355';
+                                e.currentTarget.style.color = 'rgba(0, 0, 0, 0.65)';
                                 e.currentTarget.style.background = 'transparent';
                               }}
                             >
@@ -549,7 +549,7 @@ const TaskList: React.FC<TaskListProps> = ({
                             style={{
                               padding: '6px',
                               borderRadius: '4px',
-                              color: '#8b7355',
+                              color: 'rgba(0, 0, 0, 0.65)',
                               cursor: 'pointer',
                               transition: 'all 0.2s ease',
                               display: 'flex',
@@ -562,7 +562,7 @@ const TaskList: React.FC<TaskListProps> = ({
                               e.currentTarget.style.background = 'rgba(239, 68, 68, 0.08)';
                             }}
                             onMouseLeave={(e) => {
-                              e.currentTarget.style.color = '#8b7355';
+                              e.currentTarget.style.color = 'rgba(0, 0, 0, 0.65)';
                               e.currentTarget.style.background = 'transparent';
                             }}
                           >

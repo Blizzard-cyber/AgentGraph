@@ -232,14 +232,14 @@ const MCPToolsViewer: React.FC<MCPToolsViewerProps> = ({
             loading={testLoading}
             style={{
               height: '36px',
-              background: testLoading ? 'rgba(139, 115, 85, 0.1)' : 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+              background: testLoading ? 'rgba(24, 144, 255, 0.1)' : 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
               border: 'none',
               borderRadius: '6px',
-              color: testLoading ? 'rgba(139, 115, 85, 0.4)' : '#fff',
+              color: testLoading ? 'rgba(24, 144, 255, 0.4)' : '#fff',
               fontSize: '14px',
               fontWeight: 500,
               letterSpacing: '0.3px',
-              boxShadow: testLoading ? 'none' : '0 2px 6px rgba(184, 88, 69, 0.25)',
+              boxShadow: testLoading ? 'none' : '0 2px 6px rgba(24, 144, 255, 0.25)',
               transition: 'all 0.3s ease',
               display: 'flex',
               alignItems: 'center',
@@ -248,12 +248,12 @@ const MCPToolsViewer: React.FC<MCPToolsViewerProps> = ({
             }}
             onMouseEnter={(e) => {
               if (!testLoading) {
-                e.currentTarget.style.boxShadow = '0 4px 12px rgba(184, 88, 69, 0.35)';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(24, 144, 255, 0.35)';
               }
             }}
             onMouseLeave={(e) => {
               if (!testLoading) {
-                e.currentTarget.style.boxShadow = '0 2px 6px rgba(184, 88, 69, 0.25)';
+                e.currentTarget.style.boxShadow = '0 2px 6px rgba(24, 144, 255, 0.25)';
               }
             }}
           >
@@ -275,15 +275,15 @@ const MCPToolsViewer: React.FC<MCPToolsViewerProps> = ({
         size="small"
         title={
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Bug size={16} strokeWidth={1.5} style={{ color: '#8b7355' }} />
+            <Bug size={16} strokeWidth={1.5} style={{ color: 'rgba(0, 0, 0, 0.65)' }} />
             <span style={{ fontSize: '14px', fontWeight: 500 }}>{t('pages.mcpManager.toolsViewer.testResult')}</span>
           </div>
         }
         style={{
           marginTop: '16px',
           borderRadius: '6px',
-          border: '1px solid rgba(139, 115, 85, 0.15)',
-          boxShadow: '0 1px 3px rgba(139, 115, 85, 0.06)'
+          border: '1px solid rgba(24, 144, 255, 0.15)',
+          boxShadow: '0 1px 3px rgba(24, 144, 255, 0.06)'
         }}
       >
         {result.status === 'success' ? (
@@ -344,7 +344,7 @@ const MCPToolsViewer: React.FC<MCPToolsViewerProps> = ({
             }
             style={{
               borderRadius: '6px',
-              border: '1px solid rgba(184, 88, 69, 0.3)',
+              border: '1px solid rgba(24, 144, 255, 0.3)',
               background: 'rgba(255, 245, 243, 0.9)'
             }}
           />
@@ -372,7 +372,7 @@ const MCPToolsViewer: React.FC<MCPToolsViewerProps> = ({
       styles={{
         content: {
           borderRadius: '8px',
-          boxShadow: '0 8px 24px rgba(139, 115, 85, 0.15)'
+          boxShadow: '0 8px 24px rgba(24, 144, 255, 0.15)'
         }
       }}
     >
@@ -424,12 +424,12 @@ const MCPToolsViewer: React.FC<MCPToolsViewerProps> = ({
                     overflow: 'hidden'
                   }}
                   contentStyle={{
-                    background: 'rgba(250, 248, 245, 0.4)',
+                    background: 'rgba(230, 244, 255, 0.4)',
                     fontSize: '14px',
                     color: 'rgba(45, 45, 45, 0.85)'
                   }}
                   labelStyle={{
-                    background: 'rgba(250, 248, 245, 0.6)',
+                    background: 'rgba(230, 244, 255, 0.6)',
                     fontSize: '14px',
                     fontWeight: 500,
                     color: '#2d2d2d'
@@ -459,8 +459,8 @@ const MCPToolsViewer: React.FC<MCPToolsViewerProps> = ({
                   size="small"
                   style={{
                     borderRadius: '6px',
-                    border: '1px solid rgba(139, 115, 85, 0.15)',
-                    boxShadow: '0 1px 3px rgba(139, 115, 85, 0.06)'
+                    border: '1px solid rgba(24, 144, 255, 0.15)',
+                    boxShadow: '0 1px 3px rgba(24, 144, 255, 0.06)'
                   }}
                 >
                   {generateTestForm(tool)}

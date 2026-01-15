@@ -33,7 +33,7 @@ const PromptCategoryPanel: React.FC<PromptCategoryPanelProps> = ({ groups, onEdi
           size={18}
           strokeWidth={1.5}
           style={{
-            color: '#8b7355',
+            color: 'rgba(0, 0, 0, 0.65)',
             transform: isActive ? 'rotate(180deg)' : 'rotate(0deg)',
             transition: 'transform 0.3s cubic-bezier(0.23, 1, 0.32, 1)',
           }}
@@ -49,7 +49,7 @@ const PromptCategoryPanel: React.FC<PromptCategoryPanelProps> = ({ groups, onEdi
           key={group.category}
           header={
             <div style={COLLAPSE_STYLES.header}>
-              <BookOpen size={18} color="#b85845" strokeWidth={1.5} />
+              <BookOpen size={18} color="#1890ff" strokeWidth={1.5} />
               <Text strong style={COLLAPSE_STYLES.headerText}>
                 {group.category}
               </Text>

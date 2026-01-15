@@ -11,16 +11,16 @@
 }
 
 .conversation-list-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(139, 115, 85, 0.2);
+  background: rgba(24, 144, 255, 0.2);
   border-radius: 3px;
   transition: background 0.3s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .conversation-list-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(139, 115, 85, 0.35);
+  background: rgba(24, 144, 255, 0.35);
 }
 
 /* 滚动时的视觉反馈 */
 .conversation-list-scrollbar::-webkit-scrollbar-thumb:active {
-  background: rgba(184, 88, 69, 0.4);
+  background: rgba(24, 144, 255, 0.4);
 }

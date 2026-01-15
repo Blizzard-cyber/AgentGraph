@@ -98,9 +98,9 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
           size={size}
           loading={loadingPrompts}
           style={{
-            color: showPanel ? '#d4a574' : 'rgba(139, 115, 85, 0.75)',
+            color: showPanel ? '#69b1ff' : 'rgba(24, 144, 255, 0.75)',
             border: 'none',
-            background: showPanel ? 'rgba(212, 165, 116, 0.1)' : 'transparent',
+            background: showPanel ? 'rgba(64, 169, 255, 0.1)' : 'transparent',
             transition: 'all 0.2s ease',
             width: '28px',
             height: '28px',
@@ -111,12 +111,12 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
             padding: 0
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.color = '#d4a574';
-            e.currentTarget.style.background = 'rgba(212, 165, 116, 0.1)';
+            e.currentTarget.style.color = '#69b1ff';
+            e.currentTarget.style.background = 'rgba(64, 169, 255, 0.1)';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.color = showPanel ? '#d4a574' : 'rgba(139, 115, 85, 0.75)';
-            e.currentTarget.style.background = showPanel ? 'rgba(212, 165, 116, 0.1)' : 'transparent';
+            e.currentTarget.style.color = showPanel ? '#69b1ff' : 'rgba(24, 144, 255, 0.75)';
+            e.currentTarget.style.background = showPanel ? 'rgba(64, 169, 255, 0.1)' : 'transparent';
           }}
         />
       </Tooltip>
@@ -131,15 +131,15 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
           minWidth: '260px',
           maxWidth: '320px',
           background: 'rgba(255, 255, 255, 0.95)',
-          border: '1px solid rgba(139, 115, 85, 0.2)',
+          border: '1px solid rgba(24, 144, 255, 0.2)',
           borderRadius: '8px',
-          boxShadow: '0 4px 16px rgba(139, 115, 85, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
+          boxShadow: '0 4px 16px rgba(24, 144, 255, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
           zIndex: 1000,
           animation: 'slideUp 0.2s ease-out'
         }}>
           <div style={{
             padding: '12px 16px',
-            borderBottom: '1px solid rgba(139, 115, 85, 0.15)'
+            borderBottom: '1px solid rgba(24, 144, 255, 0.15)'
           }}>
             <Text strong style={{ color: '#2d2d2d', fontSize: '13px' }}>{t('components.promptSelector.selectPrompt')}</Text>
           </div>
@@ -167,7 +167,7 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
                     transition: 'all 0.2s ease'
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.background = 'rgba(212, 165, 116, 0.05)';
+                    e.currentTarget.style.background = 'rgba(64, 169, 255, 0.05)';
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.background = 'transparent';

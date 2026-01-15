@@ -76,7 +76,8 @@ const ImportModal: React.FC<ImportModalProps> = ({ visible, owner, onClose, onSu
     }
   };
 
-  const modelOptions = models.map((model) => ({
+  const readyModels = models.filter(m => m.status === 'ready');
+  const modelOptions = readyModels.map((model) => ({
     label: model.name,
     value: model.name,
   }));
@@ -85,7 +86,7 @@ const ImportModal: React.FC<ImportModalProps> = ({ visible, owner, onClose, onSu
     <Modal
       title={
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Upload size={18} strokeWidth={1.5} style={{ color: '#b85845' }} />
+          <Upload size={18} strokeWidth={1.5} style={{ color: '#1890ff' }} />
           <span>{t('pages.memoryManager.import')}</span>
         </div>
       }
@@ -98,7 +99,7 @@ const ImportModal: React.FC<ImportModalProps> = ({ visible, owner, onClose, onSu
       width={640}
       okButtonProps={{
         style: {
-          background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+          background: '#1890ff',
           border: 'none',
         },
       }}
