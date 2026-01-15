@@ -57,7 +57,7 @@ const AgentSelector: React.FC<AgentSelectorProps> = ({
       height: '100%', 
       display: 'flex', 
       flexDirection: 'column',
-      background: '#faf8f5'
+      background: '#ffffff'
     }}>
       {loading ? (
         <div style={{

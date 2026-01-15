@@ -120,7 +120,7 @@ export const UserAvatar: React.FC = () => {
                     className="submenu-item"
                     onClick={() => handleLanguageChange('en')}
                     style={{
-                      color: locale === 'en' ? '#b85845' : undefined,
+                      color: locale === 'en' ? '#1890ff' : undefined,
                       fontWeight: locale === 'en' ? 600 : undefined,
                     }}
                   >
@@ -130,7 +130,7 @@ export const UserAvatar: React.FC = () => {
                     className="submenu-item"
                     onClick={() => handleLanguageChange('zh')}
                     style={{
-                      color: locale === 'zh' ? '#b85845' : undefined,
+                      color: locale === 'zh' ? '#1890ff' : undefined,
                       fontWeight: locale === 'zh' ? 600 : undefined,
                     }}
                   >

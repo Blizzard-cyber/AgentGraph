@@ -88,7 +88,7 @@ const TaskDetail: React.FC = () => {
 
   if (loading) {
     return (
-      <Layout style={{ height: '100vh', background: '#faf8f5', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      <Layout style={{ height: '100vh', background: '#ffffff', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <Spin size="large" tip={t('pages.taskManager.taskDetail.loadingTask')} />
       </Layout>
     );
@@ -96,7 +96,7 @@ const TaskDetail: React.FC = () => {
 
   if (error) {
     return (
-      <Layout style={{ height: '100vh', background: '#faf8f5' }}>
+      <Layout style={{ height: '100vh', background: '#ffffff' }}>
         <Content style={{ padding: '48px' }}>
           <Alert
             message={t('pages.taskManager.taskDetail.loadFailed')}
@@ -119,7 +119,7 @@ const TaskDetail: React.FC = () => {
 
   if (!currentTask) {
     return (
-      <Layout style={{ height: '100vh', background: '#faf8f5' }}>
+      <Layout style={{ height: '100vh', background: '#ffffff' }}>
         <Content style={{ padding: '48px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <Empty
             description={t('pages.taskManager.taskDetail.taskNotFound')}
@@ -147,13 +147,13 @@ const TaskDetail: React.FC = () => {
   const isOverdue = nextRun ? nextRun.isBefore(dayjs()) : false;
 
   return (
-    <Layout style={{ height: '100vh', background: '#faf8f5', display: 'flex', flexDirection: 'column' }}>
+    <Layout style={{ height: '100vh', background: '#ffffff', display: 'flex', flexDirection: 'column' }}>
       <Header style={{
-        background: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(245, 243, 240, 0.6))',
+        background: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(230, 244, 255, 0.6))',
         backdropFilter: 'blur(20px)',
         padding: '0 48px',
         borderBottom: 'none',
-        boxShadow: '0 2px 8px rgba(139, 115, 85, 0.08)',
+        boxShadow: '0 2px 8px rgba(24, 144, 255, 0.08)',
         position: 'relative'
       }}>
         <div style={{
@@ -162,7 +162,7 @@ const TaskDetail: React.FC = () => {
           left: '20%',
           right: '20%',
           height: '1px',
-          background: 'linear-gradient(to right, transparent, rgba(139, 115, 85, 0.3) 50%, transparent)'
+          background: 'linear-gradient(to right, transparent, rgba(24, 144, 255, 0.3) 50%, transparent)'
         }} />
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '100%' }}>
           <Space size="large">
@@ -170,7 +170,7 @@ const TaskDetail: React.FC = () => {
               style={{
                 padding: '8px',
                 borderRadius: '6px',
-                color: '#8b7355',
+                color: 'rgba(0, 0, 0, 0.65)',
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
                 display: 'flex',
@@ -179,11 +179,11 @@ const TaskDetail: React.FC = () => {
               }}
               onClick={() => navigate('/tasks')}
               onMouseEnter={(e) => {
-                e.currentTarget.style.color = '#b85845';
-                e.currentTarget.style.background = 'rgba(184, 88, 69, 0.08)';
+                e.currentTarget.style.color = '#1890ff';
+                e.currentTarget.style.background = 'rgba(24, 144, 255, 0.08)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.color = '#8b7355';
+                e.currentTarget.style.color = 'rgba(0, 0, 0, 0.65)';
                 e.currentTarget.style.background = 'transparent';
               }}
             >
@@ -225,8 +225,8 @@ const TaskDetail: React.FC = () => {
             <Card
               style={{
                 borderRadius: '8px',
-                border: '1px solid rgba(139, 115, 85, 0.15)',
-                boxShadow: '0 1px 3px rgba(139, 115, 85, 0.06)',
+                border: '1px solid rgba(24, 144, 255, 0.15)',
+                boxShadow: '0 1px 3px rgba(24, 144, 255, 0.06)',
                 background: 'rgba(255, 255, 255, 0.85)',
                 height: '100%'
               }}
@@ -326,9 +326,9 @@ const TaskDetail: React.FC = () => {
                       display: 'block',
                       wordBreak: 'break-word',
                       padding: '6px 10px',
-                      background: 'rgba(250, 248, 245, 0.6)',
+                      background: 'rgba(230, 244, 255, 0.6)',
                       borderRadius: '4px',
-                      border: '1px solid rgba(139, 115, 85, 0.1)'
+                      border: '1px solid rgba(24, 144, 255, 0.1)'
                     }}>
                       {currentTask.input_text}
                     </Text>
@@ -339,7 +339,7 @@ const TaskDetail: React.FC = () => {
               <div style={{
                 marginTop: '20px',
                 paddingTop: '16px',
-                borderTop: '1px solid rgba(139, 115, 85, 0.1)',
+                borderTop: '1px solid rgba(24, 144, 255, 0.1)',
                 display: 'flex',
                 justifyContent: 'flex-end',
                 gap: '8px',
@@ -352,8 +352,8 @@ const TaskDetail: React.FC = () => {
                   size="small"
                   style={{
                     borderRadius: '6px',
-                    border: '1px solid rgba(139, 115, 85, 0.2)',
-                    color: '#8b7355',
+                    border: '1px solid rgba(24, 144, 255, 0.2)',
+                    color: 'rgba(0, 0, 0, 0.65)',
                     display: 'flex',
                     alignItems: 'center',
                     gap: '4px'
@@ -368,8 +368,8 @@ const TaskDetail: React.FC = () => {
                   size="small"
                   style={{
                     borderRadius: '6px',
-                    border: '1px solid rgba(139, 115, 85, 0.2)',
-                    color: '#8b7355',
+                    border: '1px solid rgba(24, 144, 255, 0.2)',
+                    color: 'rgba(0, 0, 0, 0.65)',
                     display: 'flex',
                     alignItems: 'center',
                     gap: '4px'
@@ -404,8 +404,8 @@ const TaskDetail: React.FC = () => {
           }
           style={{
             borderRadius: '8px',
-            border: '1px solid rgba(139, 115, 85, 0.15)',
-            boxShadow: '0 1px 3px rgba(139, 115, 85, 0.06)',
+            border: '1px solid rgba(24, 144, 255, 0.15)',
+            boxShadow: '0 1px 3px rgba(24, 144, 255, 0.06)',
             background: 'rgba(255, 255, 255, 0.85)'
           }}
         >
@@ -421,28 +421,28 @@ const TaskDetail: React.FC = () => {
                     hoverable
                     style={{
                       borderRadius: '6px',
-                      border: '1px solid rgba(139, 115, 85, 0.15)',
-                      boxShadow: '0 1px 3px rgba(139, 115, 85, 0.06)',
+                      border: '1px solid rgba(24, 144, 255, 0.15)',
+                      boxShadow: '0 1px 3px rgba(24, 144, 255, 0.06)',
                       transition: 'all 0.3s cubic-bezier(0.23, 1, 0.32, 1)',
-                      background: 'rgba(250, 248, 245, 0.6)'
+                      background: 'rgba(230, 244, 255, 0.6)'
                     }}
                     styles={{
                       body: { padding: '16px' }
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.transform = 'translateY(-2px)';
-                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(184, 88, 69, 0.12)';
-                      e.currentTarget.style.borderColor = 'rgba(184, 88, 69, 0.3)';
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(24, 144, 255, 0.12)';
+                      e.currentTarget.style.borderColor = 'rgba(24, 144, 255, 0.3)';
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.transform = 'translateY(0)';
-                      e.currentTarget.style.boxShadow = '0 1px 3px rgba(139, 115, 85, 0.06)';
-                      e.currentTarget.style.borderColor = 'rgba(139, 115, 85, 0.15)';
+                      e.currentTarget.style.boxShadow = '0 1px 3px rgba(24, 144, 255, 0.06)';
+                      e.currentTarget.style.borderColor = 'rgba(24, 144, 255, 0.15)';
                     }}
                   >
                     <div style={{ marginBottom: '12px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
-                        <Clock size={14} color="#8b7355" strokeWidth={1.5} />
+                        <Clock size={14} color="rgba(0, 0, 0, 0.65)" strokeWidth={1.5} />
                         <Text strong style={{ fontSize: '13px', color: '#2d2d2d' }}>
                           {dayjs(history.executed_at).format('MM-DD HH:mm:ss')}
                         </Text>
@@ -481,19 +481,19 @@ const TaskDetail: React.FC = () => {
                           }}
                           onClick={() => handleJumpToChat(execution.conversation_id)}
                           onMouseEnter={(e) => {
-                            e.currentTarget.style.background = 'rgba(184, 88, 69, 0.08)';
+                            e.currentTarget.style.background = 'rgba(24, 144, 255, 0.08)';
                           }}
                           onMouseLeave={(e) => {
                             e.currentTarget.style.background = 'rgba(255, 255, 255, 0.6)';
                           }}
                         >
-                          <LinkIcon size={12} color="#8b7355" strokeWidth={1.5} />
+                          <LinkIcon size={12} color="rgba(0, 0, 0, 0.65)" strokeWidth={1.5} />
                           <Text code style={{
                             fontSize: '11px',
                             background: 'transparent',
                             padding: 0,
                             fontFamily: 'Monaco, Courier New, monospace',
-                            color: '#8b7355'
+                            color: 'rgba(0, 0, 0, 0.65)'
                           }}>
                             {execution.conversation_id.slice(-12)}
                           </Text>

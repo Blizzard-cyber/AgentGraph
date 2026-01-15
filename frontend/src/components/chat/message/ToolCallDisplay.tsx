@@ -60,8 +60,8 @@ const ToolCallDisplay: React.FC<ToolCallDisplayProps> = ({
       margin: '12px 0',
       borderRadius: '6px',
       background: 'rgba(255, 255, 255, 0.85)',
-      border: '1px solid rgba(160, 130, 109, 0.2)',
-      boxShadow: '0 1px 3px rgba(139, 115, 85, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
+      border: '1px solid rgba(64, 169, 255, 0.2)',
+      boxShadow: '0 1px 3px rgba(24, 144, 255, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
       transition: 'all 0.3s cubic-bezier(0.23, 1, 0.32, 1)'
     }}>
       <div
@@ -76,12 +76,12 @@ const ToolCallDisplay: React.FC<ToolCallDisplayProps> = ({
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <ToolOutlined style={{ color: '#a0826d', fontSize: '16px' }} />
+          <ToolOutlined style={{ color: '#40a9ff', fontSize: '16px' }} />
           <Text strong style={{ color: '#2d2d2d', fontSize: '14px' }}>{toolCall.function?.name}</Text>
           <Tag style={{
-            background: 'rgba(160, 130, 109, 0.08)',
-            color: '#a0826d',
-            border: '1px solid rgba(160, 130, 109, 0.2)',
+            background: 'rgba(64, 169, 255, 0.08)',
+            color: '#40a9ff',
+            border: '1px solid rgba(64, 169, 255, 0.2)',
             borderRadius: '6px',
             fontWeight: 500,
             padding: '2px 10px',
@@ -89,23 +89,23 @@ const ToolCallDisplay: React.FC<ToolCallDisplayProps> = ({
           }}>
             {t('pages.chatSystem.messageDisplay.toolCall')}
           </Tag>
-          {isStreaming && !result && <LoadingOutlined style={{ color: '#b85845', fontSize: '14px' }} />}
+          {isStreaming && !result && <LoadingOutlined style={{ color: '#1890ff', fontSize: '14px' }} />}
         </div>
         {expanded ? (
-          <ChevronDown size={18} strokeWidth={1.5} style={{ color: '#8b7355' }} />
+          <ChevronDown size={18} strokeWidth={1.5} style={{ color: 'rgba(0, 0, 0, 0.65)' }} />
         ) : (
-          <ChevronRight size={18} strokeWidth={1.5} style={{ color: '#8b7355' }} />
+          <ChevronRight size={18} strokeWidth={1.5} style={{ color: 'rgba(0, 0, 0, 0.65)' }} />
         )}
       </div>
 
       {expanded && (
         <div style={{
           padding: '0 14px 12px',
-          borderTop: '1px solid rgba(139, 115, 85, 0.15)',
+          borderTop: '1px solid rgba(24, 144, 255, 0.15)',
           maxHeight: '400px',
           overflow: 'auto',
           scrollbarWidth: 'thin',
-          scrollbarColor: 'rgba(139, 115, 85, 0.3) rgba(245, 243, 240, 0.6)'
+          scrollbarColor: 'rgba(24, 144, 255, 0.3) rgba(230, 244, 255, 0.6)'
         }} className="tool-call-scrollbar" ref={paramsRef}>
           <div style={{ marginTop: '12px' }}>
             <Text style={{ color: 'rgba(45, 45, 45, 0.65)', fontSize: '12px', fontWeight: 500 }}>
@@ -116,11 +116,11 @@ const ToolCallDisplay: React.FC<ToolCallDisplayProps> = ({
                 language="json"
                 style={customCodeStyle}
                 customStyle={{
-                  background: 'rgba(245, 243, 240, 0.6)',
+                  background: 'rgba(230, 244, 255, 0.6)',
                   padding: '10px 12px',
                   fontSize: '12px',
                   borderRadius: '4px',
-                  border: '1px solid rgba(139, 115, 85, 0.1)'
+                  border: '1px solid rgba(24, 144, 255, 0.1)'
                 }}
               >
                 {toolCall.function?.arguments || '{}'}
@@ -136,9 +136,9 @@ const ToolCallDisplay: React.FC<ToolCallDisplayProps> = ({
               <div style={{
                 marginTop: '8px',
                 padding: '10px 12px',
-                background: 'rgba(245, 243, 240, 0.6)',
+                background: 'rgba(230, 244, 255, 0.6)',
                 borderRadius: '4px',
-                border: '1px solid rgba(139, 115, 85, 0.1)'
+                border: '1px solid rgba(24, 144, 255, 0.1)'
               }}>
                 <Text style={{ fontSize: '13px', color: '#2d2d2d', fontFamily: "'SF Mono', monospace" }}>
                   {result}

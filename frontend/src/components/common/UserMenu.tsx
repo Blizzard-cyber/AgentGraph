@@ -3,10 +3,11 @@ import React from 'react';
 import { Dropdown, App, message } from 'antd';
 import type { MenuProps } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, Settings, Languages, Shield } from 'lucide-react';
+import { LogOut, Settings, Languages, Shield, Database, Network } from 'lucide-react';
 import { useT } from '../../i18n/hooks';
 import { useI18n } from '../../i18n';
 import { getCurrentUserDisplayName, getCurrentUserRole } from '../../config/user';
+import { getExternalServices } from '../../config/externalServices';
 import { logout as logoutAPI } from '../../services/authService';
 import { removeToken } from '../../utils/auth';
 import { setUserLanguage } from '../../services/userSettingsService';
@@ -36,6 +37,7 @@ const UserMenu: React.FC<UserMenuProps> = ({
   const { modal } = App.useApp();
   const currentUserDisplayName = getCurrentUserDisplayName();
   const currentUserRole = getCurrentUserRole();
+  const externalServices = getExternalServices();
 
   const handleLogout = () => {
     modal.confirm({
@@ -66,38 +68,38 @@ const UserMenu: React.FC<UserMenuProps> = ({
         },
         header: {
           padding: '24px 24px 16px',
-          borderBottom: '1px solid rgba(139, 115, 85, 0.1)',
+          borderBottom: '1px solid rgba(24, 144, 255, 0.1)',
         },
         footer: {
           padding: '16px 24px',
-          borderTop: '1px solid rgba(139, 115, 85, 0.1)',
+          borderTop: '1px solid rgba(24, 144, 255, 0.1)',
         },
         mask: {
           backdropFilter: 'blur(4px)',
         },
         content: {
           borderRadius: '8px',
-          border: '1px solid rgba(139, 115, 85, 0.15)',
-          boxShadow: '0 8px 24px rgba(139, 115, 85, 0.15)',
+          border: '1px solid rgba(24, 144, 255, 0.15)',
+          boxShadow: '0 8px 24px rgba(24, 144, 255, 0.15)',
           background: 'rgba(255, 255, 255, 0.95)',
         }
       },
       okButtonProps: {
         style: {
-          background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+          background: '#1890ff',
           border: 'none',
           borderRadius: '6px',
           height: '36px',
           padding: '0 20px',
           fontWeight: 500,
           letterSpacing: '0.3px',
-          boxShadow: '0 2px 6px rgba(184, 88, 69, 0.25)',
+          boxShadow: '0 2px 6px rgba(24, 144, 255, 0.25)',
         }
       },
       cancelButtonProps: {
         style: {
-          background: 'rgba(139, 115, 85, 0.08)',
-          border: '1px solid rgba(139, 115, 85, 0.2)',
+          background: 'rgba(24, 144, 255, 0.08)',
+          border: '1px solid rgba(24, 144, 255, 0.2)',
           borderRadius: '6px',
           height: '36px',
           padding: '0 20px',
@@ -157,6 +159,30 @@ const UserMenu: React.FC<UserMenuProps> = ({
         icon: <Shield size={16} strokeWidth={1.5} />,
         label: t('pages.workspace.adminPanel'),
         onClick: () => navigate('/admin'),
+      },
+      {
+        type: 'divider' as const,
+      },
+      {
+        key: 'model-management',
+        icon: <Database size={16} strokeWidth={1.5} />,
+        label: t('pages.workspace.modelManagement'),
+        onClick: () => {
+          // 从环境变量读取配置
+          window.location.href = externalServices.gpuStack.url;
+        },
+      },
+      {
+        type: 'divider' as const,
+      },
+      {
+        key: 'gateway-settings',
+        icon: <Network size={16} strokeWidth={1.5} />,
+        label: t('pages.workspace.gatewaySettings'),
+        onClick: () => {
+          // 从环境变量读取配置
+          window.location.href = externalServices.higressConsole.url;
+        },
       }
     ] : []),
     {
@@ -172,7 +198,7 @@ const UserMenu: React.FC<UserMenuProps> = ({
           label: t('components.languageSwitcher.english'),
           onClick: () => handleLanguageChange('en'),
           style: {
-            color: locale === 'en' ? '#b85845' : undefined,
+            color: locale === 'en' ? '#1890ff' : undefined,
             fontWeight: locale === 'en' ? 500 : undefined,
           }
         },
@@ -181,7 +207,7 @@ const UserMenu: React.FC<UserMenuProps> = ({
           label: t('components.languageSwitcher.chinese'),
           onClick: () => handleLanguageChange('zh'),
           style: {
-            color: locale === 'zh' ? '#b85845' : undefined,
+            color: locale === 'zh' ? '#1890ff' : undefined,
             fontWeight: locale === 'zh' ? 500 : undefined,
           }
         },
@@ -196,7 +222,7 @@ const UserMenu: React.FC<UserMenuProps> = ({
       label: t('pages.workspace.logout'),
       onClick: handleLogout,
       style: {
-        color: 'rgba(184, 88, 69, 0.85)',
+        color: 'rgba(24, 144, 255, 0.85)',
       }
     },
   ];
@@ -214,15 +240,15 @@ const UserMenu: React.FC<UserMenuProps> = ({
           background: 'rgba(255, 255, 255, 0.95)',
           backdropFilter: 'blur(20px)',
           borderRadius: '8px',
-          border: '1px solid rgba(139, 115, 85, 0.15)',
-          boxShadow: '0 4px 12px rgba(139, 115, 85, 0.12)',
+          border: '1px solid rgba(24, 144, 255, 0.15)',
+          boxShadow: '0 4px 12px rgba(24, 144, 255, 0.12)',
           overflow: 'hidden',
         }}>
           {!collapsed && (
             <div style={{
               padding: '12px 16px',
-              borderBottom: '1px solid rgba(139, 115, 85, 0.1)',
-              background: 'rgba(250, 248, 245, 0.5)',
+              borderBottom: '1px solid rgba(24, 144, 255, 0.1)',
+              background: 'rgba(230, 244, 255, 0.5)',
             }}>
               <div style={{
                 fontSize: '13px',
@@ -262,7 +288,7 @@ const UserMenu: React.FC<UserMenuProps> = ({
           justifyContent: collapsed ? 'center' : 'flex-start',
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.background = 'rgba(139, 115, 85, 0.08)';
+          e.currentTarget.style.background = 'rgba(24, 144, 255, 0.08)';
         }}
         onMouseLeave={(e) => {
           e.currentTarget.style.background = 'transparent';
@@ -272,7 +298,7 @@ const UserMenu: React.FC<UserMenuProps> = ({
           width: '32px',
           height: '32px',
           borderRadius: '50%',
-          background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+          background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -280,7 +306,7 @@ const UserMenu: React.FC<UserMenuProps> = ({
           fontSize: '14px',
           fontWeight: 500,
           flexShrink: 0,
-          boxShadow: '0 2px 6px rgba(184, 88, 69, 0.25)',
+          boxShadow: '0 2px 6px rgba(24, 144, 255, 0.25)',
         }}>
           {currentUserDisplayName.charAt(0).toUpperCase()}
         </div>

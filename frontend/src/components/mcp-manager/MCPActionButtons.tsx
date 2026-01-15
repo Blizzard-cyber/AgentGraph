@@ -61,7 +61,7 @@ const MCPActionButtons: React.FC<MCPActionButtonsProps> = ({
           e.currentTarget.style.background = MCP_COLORS.whiteAlpha95;
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.borderColor = 'rgba(139, 115, 85, 0.2)';
+          e.currentTarget.style.borderColor = 'rgba(24, 144, 255, 0.2)';
           e.currentTarget.style.color = MCP_COLORS.tertiary;
           e.currentTarget.style.background = MCP_COLORS.whiteAlpha85;
         }}
@@ -77,7 +77,7 @@ const MCPActionButtons: React.FC<MCPActionButtonsProps> = ({
         style={getMCPOutlineButtonStyle()}
         onMouseEnter={(e) => {
           if (!disabled) {
-            e.currentTarget.style.background = 'rgba(184, 88, 69, 0.08)';
+            e.currentTarget.style.background = 'rgba(24, 144, 255, 0.08)';
             e.currentTarget.style.borderColor = MCP_COLORS.primary;
           }
         }}

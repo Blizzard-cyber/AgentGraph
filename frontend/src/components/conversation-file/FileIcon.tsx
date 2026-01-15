@@ -21,14 +21,14 @@ interface FileIconProps {
 
 export const FileIcon: React.FC<FileIconProps> = ({ filename, isDirectory = false, style }) => {
   if (isDirectory) {
-    return <Folder size={18} style={{ color: '#d4a574', ...style }} />;
+    return <Folder size={18} style={{ color: '#69b1ff', ...style }} />;
   }
 
   const ext = getFileExtension(filename);
 
   // Markdown files
   if (['md', 'markdown'].includes(ext)) {
-    return <FileCode size={18} style={{ color: '#b85845', ...style }} />;
+    return <FileCode size={18} style={{ color: '#1890ff', ...style }} />;
   }
 
   // Code files
@@ -53,7 +53,7 @@ export const FileIcon: React.FC<FileIconProps> = ({ filename, isDirectory = fals
 
   // Text files
   if (['txt', 'log', 'csv'].includes(ext)) {
-    return <FileText size={18} style={{ color: '#8b7355', ...style }} />;
+    return <FileText size={18} style={{ color: 'rgba(0, 0, 0, 0.65)', ...style }} />;
   }
 
   // Config files
@@ -66,14 +66,14 @@ export const FileIcon: React.FC<FileIconProps> = ({ filename, isDirectory = fals
     return <FileSpreadsheet size={18} style={{ color: '#52c41a', ...style }} />;
   }
   if (['doc', 'docx'].includes(ext)) {
-    return <FileText size={18} style={{ color: '#b85845', ...style }} />;
+    return <FileText size={18} style={{ color: '#1890ff', ...style }} />;
   }
   if (['ppt', 'pptx'].includes(ext)) {
-    return <Presentation size={18} style={{ color: '#d4a574', ...style }} />;
+    return <Presentation size={18} style={{ color: '#69b1ff', ...style }} />;
   }
 
   // Default
-  return <File size={18} style={{ color: '#8b7355', ...style }} />;
+  return <File size={18} style={{ color: 'rgba(0, 0, 0, 0.65)', ...style }} />;
 };
 
 export default FileIcon;

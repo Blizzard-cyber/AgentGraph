@@ -55,9 +55,9 @@ const MCPSelector: React.FC<MCPSelectorProps> = ({
             closable={closable}
             onClose={onClose}
             style={{
-              background: 'rgba(139, 115, 85, 0.08)',
-              color: '#8b7355',
-              border: '1px solid rgba(139, 115, 85, 0.2)',
+              background: 'rgba(24, 144, 255, 0.08)',
+              color: 'rgba(0, 0, 0, 0.65)',
+              border: '1px solid rgba(24, 144, 255, 0.2)',
               borderRadius: '6px',
               fontWeight: 500,
               fontSize: '12px',
@@ -72,9 +72,9 @@ const MCPSelector: React.FC<MCPSelectorProps> = ({
       maxTagPlaceholder={(omittedValues) => (
         <Tag
           style={{
-            background: 'rgba(139, 115, 85, 0.08)',
-            color: '#8b7355',
-            border: '1px solid rgba(139, 115, 85, 0.2)',
+            background: 'rgba(24, 144, 255, 0.08)',
+            color: 'rgba(0, 0, 0, 0.65)',
+            border: '1px solid rgba(24, 144, 255, 0.2)',
             borderRadius: '6px',
             fontWeight: 500,
             fontSize: '12px',

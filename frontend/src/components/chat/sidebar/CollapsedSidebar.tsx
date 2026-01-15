@@ -23,9 +23,9 @@ const CollapsedSidebar: React.FC<CollapsedSidebarProps> = ({
       style={{
         width: '72px',
         minHeight: '100vh',
-        background: 'linear-gradient(to bottom, #faf8f5 0%, #f5f3f0 100%)',
-        borderRight: '1px solid rgba(139, 115, 85, 0.12)',
-        boxShadow: '2px 0 8px rgba(139, 115, 85, 0.06)',
+        background: 'linear-gradient(to bottom, #ffffff 0%, #e6f4ff 100%)',
+        borderRight: '1px solid rgba(24, 144, 255, 0.12)',
+        boxShadow: '2px 0 8px rgba(24, 144, 255, 0.06)',
         display: 'flex',
         flexDirection: 'column',
         transition: 'width 0.4s cubic-bezier(0.23, 1, 0.32, 1)',
@@ -41,7 +41,7 @@ const CollapsedSidebar: React.FC<CollapsedSidebarProps> = ({
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          borderBottom: '1px solid rgba(139, 115, 85, 0.08)',
+          borderBottom: '1px solid rgba(24, 144, 255, 0.08)',
           background: 'rgba(255, 255, 255, 0.5)',
           position: 'relative',
         }}
@@ -54,7 +54,7 @@ const CollapsedSidebar: React.FC<CollapsedSidebarProps> = ({
             left: '15%',
             right: '15%',
             height: '1px',
-            background: 'linear-gradient(to right, transparent, rgba(139, 115, 85, 0.25) 50%, transparent)',
+            background: 'linear-gradient(to right, transparent, rgba(24, 144, 255, 0.25) 50%, transparent)',
           }}
         />
         <button
@@ -76,7 +76,7 @@ const CollapsedSidebar: React.FC<CollapsedSidebarProps> = ({
             justifyContent: 'center',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = 'rgba(139, 115, 85, 0.08)';
+            e.currentTarget.style.background = 'rgba(24, 144, 255, 0.08)';
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.background = 'transparent';
@@ -118,7 +118,7 @@ const CollapsedSidebar: React.FC<CollapsedSidebarProps> = ({
                 padding: '12px',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'rgba(139, 115, 85, 0.05)';
+                e.currentTarget.style.background = 'rgba(24, 144, 255, 0.05)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.background = 'transparent';
@@ -146,7 +146,7 @@ const CollapsedSidebar: React.FC<CollapsedSidebarProps> = ({
               padding: '12px',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(139, 115, 85, 0.05)';
+              e.currentTarget.style.background = 'rgba(24, 144, 255, 0.05)';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.background = 'transparent';
@@ -159,7 +159,7 @@ const CollapsedSidebar: React.FC<CollapsedSidebarProps> = ({
       <div
         style={{
           padding: '20px 12px',
-          borderTop: '1px solid rgba(139, 115, 85, 0.08)',
+          borderTop: '1px solid rgba(24, 144, 255, 0.08)',
           background: 'rgba(255, 255, 255, 0.5)',
           display: 'flex',
           flexDirection: 'column',
@@ -177,7 +177,7 @@ const CollapsedSidebar: React.FC<CollapsedSidebarProps> = ({
             left: '15%',
             right: '15%',
             height: '1px',
-            background: 'linear-gradient(to right, transparent, rgba(139, 115, 85, 0.25) 50%, transparent)',
+            background: 'linear-gradient(to right, transparent, rgba(24, 144, 255, 0.25) 50%, transparent)',
           }}
         />
 
@@ -197,7 +197,7 @@ const CollapsedSidebar: React.FC<CollapsedSidebarProps> = ({
               color: 'rgba(45, 45, 45, 0.65)',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(139, 115, 85, 0.08)';
+              e.currentTarget.style.background = 'rgba(24, 144, 255, 0.08)';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.background = 'transparent';

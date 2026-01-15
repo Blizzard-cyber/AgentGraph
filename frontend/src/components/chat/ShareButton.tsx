@@ -23,8 +23,8 @@ const ShareButton: React.FC<ShareButtonProps> = ({ onClick, loading = false, dis
         loading={loading}
         disabled={disabled}
         style={{
-          color: disabled ? 'rgba(45, 45, 45, 0.45)' : '#8b7355',
-          border: '1px solid rgba(139, 115, 85, 0.2)',
+          color: disabled ? 'rgba(45, 45, 45, 0.45)' : 'rgba(0, 0, 0, 0.65)',
+          border: '1px solid rgba(24, 144, 255, 0.2)',
           borderRadius: '6px',
           background: 'rgba(255, 255, 255, 0.6)',
           padding: '4px 12px',
@@ -34,15 +34,15 @@ const ShareButton: React.FC<ShareButtonProps> = ({ onClick, loading = false, dis
         }}
         onMouseEnter={(e) => {
           if (!disabled && !loading) {
-            e.currentTarget.style.color = '#b85845';
-            e.currentTarget.style.borderColor = 'rgba(184, 88, 69, 0.3)';
-            e.currentTarget.style.background = 'rgba(184, 88, 69, 0.05)';
+            e.currentTarget.style.color = '#1890ff';
+            e.currentTarget.style.borderColor = 'rgba(24, 144, 255, 0.3)';
+            e.currentTarget.style.background = 'rgba(24, 144, 255, 0.05)';
           }
         }}
         onMouseLeave={(e) => {
           if (!disabled && !loading) {
-            e.currentTarget.style.color = '#8b7355';
-            e.currentTarget.style.borderColor = 'rgba(139, 115, 85, 0.2)';
+            e.currentTarget.style.color = 'rgba(0, 0, 0, 0.65)';
+            e.currentTarget.style.borderColor = 'rgba(24, 144, 255, 0.2)';
             e.currentTarget.style.background = 'rgba(255, 255, 255, 0.6)';
           }
         }}

@@ -168,14 +168,14 @@ const GraphEditorView: React.FC<GraphEditorViewProps> = ({
   };
 
   return (
-    <div style={{ background: '#faf8f5', minHeight: '100vh' }}>
+    <div style={{ background: '#ffffff', minHeight: '100vh' }}>
       {/* 顶部工具栏 */}
       <div style={{
-        background: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(245, 243, 240, 0.6))',
+        background: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(230, 244, 255, 0.6))',
         backdropFilter: 'blur(20px)',
         padding: '16px 48px',
-        borderBottom: '1px solid rgba(139, 115, 85, 0.15)',
-        boxShadow: '0 2px 8px rgba(139, 115, 85, 0.08)',
+        borderBottom: '1px solid rgba(24, 144, 255, 0.15)',
+        boxShadow: '0 2px 8px rgba(24, 144, 255, 0.08)',
         position: 'relative'
       }}>
         {/* 装饰性底部渐变线 */}
@@ -185,7 +185,7 @@ const GraphEditorView: React.FC<GraphEditorViewProps> = ({
           left: '20%',
           right: '20%',
           height: '1px',
-          background: 'linear-gradient(to right, transparent, rgba(139, 115, 85, 0.3) 50%, transparent)'
+          background: 'linear-gradient(to right, transparent, rgba(24, 144, 255, 0.3) 50%, transparent)'
         }} />
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -204,7 +204,7 @@ const GraphEditorView: React.FC<GraphEditorViewProps> = ({
               </Button>
             </Tooltip>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <Workflow size={24} color="#b85845" strokeWidth={1.5} />
+              <Workflow size={24} color="#1890ff" strokeWidth={1.5} />
               <div>
                 <Text style={{
                   fontSize: '16px',
@@ -234,7 +234,7 @@ const GraphEditorView: React.FC<GraphEditorViewProps> = ({
                 type="text"
                 icon={<FileText size={16} strokeWidth={1.5} />}
                 onClick={onViewReadme}
-                style={{ color: '#8b7355' }}
+                style={{ color: 'rgba(0, 0, 0, 0.65)' }}
               />
             </Tooltip>
             {viewMode === 'canvas' && (
@@ -244,7 +244,7 @@ const GraphEditorView: React.FC<GraphEditorViewProps> = ({
                     type="text"
                     icon={<LayoutGrid size={16} strokeWidth={1.5} />}
                     onClick={onAutoLayout}
-                    style={{ color: '#8b7355' }}
+                    style={{ color: 'rgba(0, 0, 0, 0.65)' }}
                   />
                 </Tooltip>
                 <Tooltip title={t('pages.graphEditor.addNode')}>
@@ -252,7 +252,7 @@ const GraphEditorView: React.FC<GraphEditorViewProps> = ({
                     type="text"
                     icon={<Plus size={16} strokeWidth={1.5} />}
                     onClick={onAddNode}
-                    style={{ color: '#8b7355' }}
+                    style={{ color: 'rgba(0, 0, 0, 0.65)' }}
                   />
                 </Tooltip>
               </>
@@ -262,7 +262,7 @@ const GraphEditorView: React.FC<GraphEditorViewProps> = ({
                 type="text"
                 icon={<Settings size={16} strokeWidth={1.5} />}
                 onClick={onGraphSettings}
-                style={{ color: '#8b7355' }}
+                style={{ color: 'rgba(0, 0, 0, 0.65)' }}
               />
             </Tooltip>
             <Tooltip title={t('pages.graphEditor.versionManager')}>
@@ -270,7 +270,7 @@ const GraphEditorView: React.FC<GraphEditorViewProps> = ({
                 type="text"
                 icon={<GitBranch size={16} strokeWidth={1.5} />}
                 onClick={onVersionManager}
-                style={{ color: '#8b7355' }}
+                style={{ color: 'rgba(0, 0, 0, 0.65)' }}
               />
             </Tooltip>
             <Tooltip title={viewMode === 'canvas' ? 'JSON View' : 'Canvas View'}>
@@ -278,7 +278,7 @@ const GraphEditorView: React.FC<GraphEditorViewProps> = ({
                 type="text"
                 icon={viewMode === 'canvas' ? <Code2 size={16} strokeWidth={1.5} /> : <Maximize2 size={16} strokeWidth={1.5} />}
                 onClick={handleViewModeToggle}
-                style={{ color: '#8b7355' }}
+                style={{ color: 'rgba(0, 0, 0, 0.65)' }}
               />
             </Tooltip>
             <Tooltip title={hasUnsavedChanges ? t('pages.graphEditor.saveChanges') : t('pages.graphEditor.saved')}>
@@ -292,7 +292,7 @@ const GraphEditorView: React.FC<GraphEditorViewProps> = ({
                   padding: '4px 16px',
                   height: 'auto'
                 } : {
-                  color: '#8b7355'
+                  color: 'rgba(0, 0, 0, 0.65)'
                 }}
               >
                 {t('common.save')}
@@ -310,9 +310,9 @@ const GraphEditorView: React.FC<GraphEditorViewProps> = ({
           style={{
             height: 'calc(100vh - 180px)',
             background: 'rgba(255, 255, 255, 0.85)',
-            border: '1px solid rgba(139, 115, 85, 0.15)',
+            border: '1px solid rgba(24, 144, 255, 0.15)',
             borderRadius: '6px',
-            boxShadow: '0 1px 3px rgba(139, 115, 85, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)'
+            boxShadow: '0 1px 3px rgba(24, 144, 255, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)'
           }}
         >
           {viewMode === 'canvas' ? (
@@ -337,8 +337,8 @@ const GraphEditorView: React.FC<GraphEditorViewProps> = ({
           width={800}
           styles={{
             header: {
-              background: 'linear-gradient(to bottom, rgba(250, 248, 245, 0.95), rgba(255, 255, 255, 0.9))',
-              borderBottom: '1px solid rgba(139, 115, 85, 0.12)',
+              background: 'linear-gradient(to bottom, rgba(230, 244, 255, 0.95), rgba(255, 255, 255, 0.9))',
+              borderBottom: '1px solid rgba(24, 144, 255, 0.12)',
               padding: '18px 28px'
             },
             body: {

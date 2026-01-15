@@ -128,10 +128,10 @@ const MessageItem: React.FC<MessageItemProps> = ({
             width: '8px',
             height: '8px',
             borderRadius: '50%',
-            background: isUser ? '#a0826d' : '#b85845',
+            background: isUser ? '#40a9ff' : '#1890ff',
             boxShadow: isUser
-              ? '0 0 0 0 rgba(160, 130, 109, 0.4)'
-              : '0 0 0 0 rgba(184, 88, 69, 0.4)',
+              ? '0 0 0 0 rgba(64, 169, 255, 0.4)'
+              : '0 0 0 0 rgba(24, 144, 255, 0.4)',
             animation: 'inkDotPulse 2s ease-in-out infinite'
           }} />
           <span style={{
@@ -154,14 +154,14 @@ const MessageItem: React.FC<MessageItemProps> = ({
       {!(renderingMode === 'graph_run' && isUser && nodeInfo?.nodeName !== 'start') && (
         <div style={isUser ? {
           background: 'rgba(212, 196, 176, 0.15)',
-          border: '1px solid rgba(139, 115, 85, 0.2)',
+          border: '1px solid rgba(24, 144, 255, 0.2)',
           borderRadius: '8px',
           padding: '14px 16px',
-          boxShadow: '0 1px 3px rgba(139, 115, 85, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
+          boxShadow: '0 1px 3px rgba(24, 144, 255, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
           maxHeight: '30rem',
           overflow: 'auto',
           scrollbarWidth: 'thin',
-          scrollbarColor: 'rgba(139, 115, 85, 0.3) rgba(139, 115, 85, 0.08)'
+          scrollbarColor: 'rgba(24, 144, 255, 0.3) rgba(24, 144, 255, 0.08)'
         } : {}} className={isUser ? 'user-message-scrollbar' : ''}>
           <div>
             {/* AI思考过程优先显示 */}
@@ -197,7 +197,7 @@ const MessageItem: React.FC<MessageItemProps> = ({
                           return (
                             <div key={index} style={{
                               margin: '16px 0',
-                              border: '1px solid rgba(139, 115, 85, 0.15)',
+                              border: '1px solid rgba(24, 144, 255, 0.15)',
                               borderRadius: '8px',
                               overflow: 'hidden'
                             }}>
@@ -205,8 +205,8 @@ const MessageItem: React.FC<MessageItemProps> = ({
                               <div
                                 style={{
                                   padding: '8px 16px',
-                                  background: 'rgba(139, 115, 85, 0.06)',
-                                  borderBottom: thinkingExpanded ? '1px solid rgba(139, 115, 85, 0.15)' : 'none',
+                                  background: 'rgba(24, 144, 255, 0.06)',
+                                  borderBottom: thinkingExpanded ? '1px solid rgba(24, 144, 255, 0.15)' : 'none',
                                   cursor: 'pointer',
                                   display: 'flex',
                                   alignItems: 'center',
@@ -215,10 +215,10 @@ const MessageItem: React.FC<MessageItemProps> = ({
                                 }}
                                 onClick={() => setThinkingExpanded(!thinkingExpanded)}
                                 onMouseEnter={(e) => {
-                                  e.currentTarget.style.background = 'rgba(139, 115, 85, 0.08)';
+                                  e.currentTarget.style.background = 'rgba(24, 144, 255, 0.08)';
                                 }}
                                 onMouseLeave={(e) => {
-                                  e.currentTarget.style.background = 'rgba(139, 115, 85, 0.06)';
+                                  e.currentTarget.style.background = 'rgba(24, 144, 255, 0.06)';
                                 }}
                               >
                                 <div style={{
@@ -227,14 +227,14 @@ const MessageItem: React.FC<MessageItemProps> = ({
                                   gap: '8px'
                                 }}>
                                   {thinkingExpanded ? (
-                                    <ChevronDown size={14} style={{ color: 'rgba(160, 130, 109, 0.8)' }} />
+                                    <ChevronDown size={14} style={{ color: 'rgba(64, 169, 255, 0.8)' }} />
                                   ) : (
-                                    <ChevronRight size={14} style={{ color: 'rgba(160, 130, 109, 0.8)' }} />
+                                    <ChevronRight size={14} style={{ color: 'rgba(64, 169, 255, 0.8)' }} />
                                   )}
                                   <span style={{
                                     fontSize: '12px',
                                     fontWeight: 600,
-                                    color: 'rgba(160, 130, 109, 0.8)',
+                                    color: 'rgba(64, 169, 255, 0.8)',
                                     textTransform: 'uppercase',
                                     letterSpacing: '0.5px'
                                   }}>
@@ -243,7 +243,7 @@ const MessageItem: React.FC<MessageItemProps> = ({
                                   <span style={{
                                     fontSize: '11px',
                                     color: 'rgba(45, 45, 45, 0.5)',
-                                    background: 'rgba(139, 115, 85, 0.1)',
+                                    background: 'rgba(24, 144, 255, 0.1)',
                                     padding: '2px 6px',
                                     borderRadius: '10px'
                                   }}>
@@ -294,12 +294,12 @@ const MessageItem: React.FC<MessageItemProps> = ({
                                     </GlassCodeBlock>
                                   ) : (
                                     <code style={{
-                                      background: 'rgba(139, 115, 85, 0.08)',
+                                      background: 'rgba(24, 144, 255, 0.08)',
                                       padding: '2px 6px',
                                       borderRadius: '3px',
                                       fontSize: '0.9em',
                                       fontFamily: "'SF Mono', monospace",
-                                      color: '#b85845'
+                                      color: '#1890ff'
                                     }} {...restProps}>
                                       {codeChildren}
                                     </code>

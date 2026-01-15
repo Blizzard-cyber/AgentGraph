@@ -47,17 +47,17 @@ const FileEditor: React.FC<FileEditorProps> = ({
         { token: 'function', foreground: 'b85845' },
       ],
       colors: {
-        'editor.background': '#faf8f5',
+        'editor.background': '#ffffff',
         'editor.foreground': '#2d2d2d',
-        'editor.lineHighlightBackground': '#f5f3f0',
+        'editor.lineHighlightBackground': '#e6f4ff',
         'editor.selectionBackground': '#e8dfd5',
         'editor.inactiveSelectionBackground': '#f0ebe5',
         'editorLineNumber.foreground': '#a89f92',
-        'editorLineNumber.activeForeground': '#8b7355',
-        'editorCursor.foreground': '#b85845',
+        'editorLineNumber.activeForeground': 'rgba(0, 0, 0, 0.65)',
+        'editorCursor.foreground': '#1890ff',
         'editor.selectionHighlightBackground': '#e8dfd588',
         'editorIndentGuide.background': '#e5ddd3',
-        'editorIndentGuide.activeBackground': '#8b7355',
+        'editorIndentGuide.activeBackground': 'rgba(0, 0, 0, 0.65)',
       },
     });
 
@@ -137,7 +137,7 @@ const FileEditor: React.FC<FileEditorProps> = ({
             position: 'absolute',
             top: '8px',
             right: '8px',
-            background: 'linear-gradient(135deg, rgba(212, 164, 116, 0.95) 0%, rgba(184, 88, 69, 0.9) 100%)',
+            background: 'linear-gradient(135deg, rgba(212, 164, 116, 0.95) 0%, rgba(24, 144, 255, 0.9) 100%)',
             color: '#fff',
             padding: '6px 16px',
             borderRadius: '6px',
@@ -145,7 +145,7 @@ const FileEditor: React.FC<FileEditorProps> = ({
             fontSize: '12px',
             fontWeight: 500,
             letterSpacing: '0.5px',
-            boxShadow: '0 2px 8px rgba(184, 88, 69, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+            boxShadow: '0 2px 8px rgba(24, 144, 255, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
             zIndex: 10,
           }}
         >

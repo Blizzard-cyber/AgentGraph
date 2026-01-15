@@ -248,8 +248,8 @@ const InputArea: React.FC<InputAreaProps> = ({
 
   return (
     <div style={{
-      background: 'linear-gradient(to top, #f5f3f0 0%, #faf8f5 100%)',
-      borderTop: '1px solid rgba(139, 115, 85, 0.1)',
+      background: 'linear-gradient(to top, #e6f4ff 0%, #ffffff 100%)',
+      borderTop: '1px solid rgba(24, 144, 255, 0.1)',
       padding: '20px 32px 24px 32px',
       display: 'flex',
       justifyContent: 'center',
@@ -263,7 +263,7 @@ const InputArea: React.FC<InputAreaProps> = ({
         left: '20%',
         right: '20%',
         height: '1px',
-        background: 'linear-gradient(to right, transparent, rgba(139, 115, 85, 0.15) 50%, transparent)'
+        background: 'linear-gradient(to right, transparent, rgba(24, 144, 255, 0.15) 50%, transparent)'
       }} />
 
       <div style={{
@@ -281,15 +281,15 @@ const InputArea: React.FC<InputAreaProps> = ({
         }}>
           <div style={{
             fontSize: '12px',
-            color: 'rgba(139, 115, 85, 0.65)',
+            color: 'rgba(24, 144, 255, 0.65)',
             letterSpacing: '0.3px',
             fontWeight: 500
           }}>
-            {t('pages.chatSystem.currentMode')}: <span style={{ color: '#b85845' }}>{getModeDisplayName()}</span>
+            {t('pages.chatSystem.currentMode')}: <span style={{ color: '#1890ff' }}>{getModeDisplayName()}</span>
           </div>
           <div style={{
             fontSize: '11px',
-            color: 'rgba(139, 115, 85, 0.45)',
+            color: 'rgba(24, 144, 255, 0.45)',
             letterSpacing: '0.2px'
           }}>
             {t('pages.chatSystem.switchModeHint')}
@@ -298,12 +298,12 @@ const InputArea: React.FC<InputAreaProps> = ({
 
         <div style={{
           position: 'relative',
-          background: 'linear-gradient(to bottom, rgba(245, 243, 240, 0.6), rgba(250, 248, 245, 0.4))',
-          border: '1px solid rgba(139, 115, 85, 0.12)',
+          background: 'linear-gradient(to bottom, rgba(230, 244, 255, 0.6), rgba(230, 244, 255, 0.4))',
+          border: '1px solid rgba(24, 144, 255, 0.12)',
           borderRadius: '10px',
           padding: '14px 16px',
           transition: 'all 0.3s cubic-bezier(0.23, 1, 0.32, 1)',
-          boxShadow: 'inset 0 1px 3px rgba(139, 115, 85, 0.08), inset 0 -1px 0 rgba(255, 255, 255, 0.5)'
+          boxShadow: 'inset 0 1px 3px rgba(24, 144, 255, 0.08), inset 0 -1px 0 rgba(255, 255, 255, 0.5)'
         }}>
           <textarea
             ref={textareaRef}
@@ -418,7 +418,7 @@ const InputArea: React.FC<InputAreaProps> = ({
                 minWidth: '32px',
                 borderRadius: '50%',
                 background: canSend()
-                  ? 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)'
+                  ? 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)'
                   : 'rgba(212, 196, 176, 0.4)',
                 border: 'none',
                 color: 'white',
@@ -427,21 +427,21 @@ const InputArea: React.FC<InputAreaProps> = ({
                 justifyContent: 'center',
                 cursor: canSend() ? 'pointer' : 'not-allowed',
                 boxShadow: canSend()
-                  ? '0 2px 6px rgba(184, 88, 69, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.25)'
-                  : 'inset 0 1px 2px rgba(139, 115, 85, 0.1)',
+                  ? '0 2px 6px rgba(24, 144, 255, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.25)'
+                  : 'inset 0 1px 2px rgba(24, 144, 255, 0.1)',
                 padding: 0,
                 transition: 'all 0.2s ease'
               }}
               onMouseEnter={(e) => {
                 if (canSend()) {
                   e.currentTarget.style.transform = 'translateY(-1px)';
-                  e.currentTarget.style.boxShadow = '0 3px 10px rgba(184, 88, 69, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.3)';
+                  e.currentTarget.style.boxShadow = '0 3px 10px rgba(24, 144, 255, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.3)';
                 }
               }}
               onMouseLeave={(e) => {
                 if (canSend()) {
                   e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 2px 6px rgba(184, 88, 69, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.25)';
+                  e.currentTarget.style.boxShadow = '0 2px 6px rgba(24, 144, 255, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.25)';
                 }
               }}
             />

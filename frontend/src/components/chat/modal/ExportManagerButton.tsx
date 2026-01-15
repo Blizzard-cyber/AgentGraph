@@ -32,7 +32,7 @@ const ExportManagerButton: React.FC = () => {
           justifyContent: 'center',
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.background = 'rgba(139, 115, 85, 0.08)';
+          e.currentTarget.style.background = 'rgba(24, 144, 255, 0.08)';
         }}
         onMouseLeave={(e) => {
           e.currentTarget.style.background = 'transparent';

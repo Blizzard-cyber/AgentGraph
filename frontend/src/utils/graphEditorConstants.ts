@@ -11,26 +11,26 @@ export type ViewMode = 'list' | 'editor';
 export const buttonStyles = {
   // 主要按钮样式
   primary: {
-    background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+    background: '#1890ff',
     border: 'none',
-    borderRadius: '6px',
+    borderRadius: '4px',
     color: '#fff',
     fontWeight: 500,
     fontSize: '14px',
     letterSpacing: '0.3px',
-    boxShadow: '0 2px 6px rgba(184, 88, 69, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+    boxShadow: '0 2px 0 rgba(0, 0, 0, 0.016)',
     display: 'flex',
     alignItems: 'center',
     gap: '6px',
-    padding: '0 20px'
+    padding: '0 16px'
   },
 
   // 次要按钮样式
   secondary: {
-    borderRadius: '6px',
-    border: '1px solid rgba(139, 115, 85, 0.2)',
-    background: 'rgba(255, 255, 255, 0.85)',
-    color: '#8b7355',
+    borderRadius: '4px',
+    border: '1px solid #d9d9d9',
+    background: '#ffffff',
+    color: 'rgba(0, 0, 0, 0.65)',
     fontWeight: 500,
     fontSize: '14px',
     letterSpacing: '0.3px',
@@ -42,15 +42,15 @@ export const buttonStyles = {
 
   // 模态框确认按钮
   modalOk: {
-    height: '40px',
-    background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+    height: '32px',
+    background: '#1890ff',
     border: 'none',
-    borderRadius: '6px',
+    borderRadius: '4px',
     color: '#fff',
     fontWeight: 500,
     fontSize: '14px',
     letterSpacing: '0.3px',
-    boxShadow: '0 2px 6px rgba(184, 88, 69, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+    boxShadow: '0 2px 6px rgba(24, 144, 255, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
     padding: '0 24px'
   },
 
@@ -58,9 +58,9 @@ export const buttonStyles = {
   modalCancel: {
     height: '40px',
     borderRadius: '6px',
-    border: '1px solid rgba(139, 115, 85, 0.2)',
+    border: '1px solid rgba(24, 144, 255, 0.2)',
     background: 'rgba(255, 255, 255, 0.85)',
-    color: '#8b7355',
+    color: 'rgba(0, 0, 0, 0.65)',
     fontWeight: 500,
     fontSize: '14px',
     letterSpacing: '0.3px',
@@ -76,22 +76,22 @@ export const inputStyles = {
   standard: {
     height: '40px',
     borderRadius: '6px',
-    border: '1px solid rgba(139, 115, 85, 0.2)',
+    border: '1px solid rgba(24, 144, 255, 0.2)',
     background: 'rgba(255, 255, 255, 0.9)',
     fontSize: '14px',
     color: '#2d2d2d',
-    boxShadow: '0 1px 3px rgba(139, 115, 85, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.6)'
+    boxShadow: '0 1px 3px rgba(24, 144, 255, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.6)'
   },
 
   // 文本域
   textarea: {
     borderRadius: '6px',
-    border: '1px solid rgba(139, 115, 85, 0.2)',
+    border: '1px solid rgba(24, 144, 255, 0.2)',
     background: 'rgba(255, 255, 255, 0.9)',
     fontSize: '14px',
     color: '#2d2d2d',
     lineHeight: '1.6',
-    boxShadow: '0 1px 3px rgba(139, 115, 85, 0.06)'
+    boxShadow: '0 1px 3px rgba(24, 144, 255, 0.06)'
   }
 };
 
@@ -101,13 +101,13 @@ export const inputStyles = {
 export const modalStyles = {
   content: {
     borderRadius: '10px',
-    boxShadow: '0 12px 40px rgba(139, 115, 85, 0.2)',
+    boxShadow: '0 12px 40px rgba(24, 144, 255, 0.2)',
     padding: 0,
     overflow: 'hidden'
   },
   header: {
-    background: 'linear-gradient(to bottom, rgba(250, 248, 245, 0.95), rgba(255, 255, 255, 0.9))',
-    borderBottom: '1px solid rgba(139, 115, 85, 0.12)',
+    background: 'linear-gradient(to bottom, rgba(230, 244, 255, 0.95), rgba(255, 255, 255, 0.9))',
+    borderBottom: '1px solid rgba(24, 144, 255, 0.12)',
     padding: '18px 28px',
     marginBottom: 0
   },
@@ -116,9 +116,9 @@ export const modalStyles = {
     background: '#fff'
   },
   footer: {
-    borderTop: '1px solid rgba(139, 115, 85, 0.12)',
+    borderTop: '1px solid rgba(24, 144, 255, 0.12)',
     padding: '16px 28px',
-    background: 'rgba(250, 248, 245, 0.3)',
+    background: 'rgba(230, 244, 255, 0.3)',
     marginTop: 0
   }
 };

@@ -152,7 +152,7 @@ const SystemToolsManager: React.FC = () => {
     <Layout style={{ height: '100vh', background: COLORS.background, display: 'flex', flexDirection: 'column' }}>
       {/* Header 顶栏 */}
       <Header style={{
-        background: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(245, 243, 240, 0.6))',
+        background: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(230, 244, 255, 0.6))',
         backdropFilter: 'blur(20px)',
         padding: '0 48px',
         borderBottom: 'none',
@@ -166,7 +166,7 @@ const SystemToolsManager: React.FC = () => {
           left: '20%',
           right: '20%',
           height: '1px',
-          background: 'linear-gradient(to right, transparent, rgba(139, 115, 85, 0.3) 50%, transparent)'
+          background: 'linear-gradient(to right, transparent, rgba(24, 144, 255, 0.3) 50%, transparent)'
         }} />
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '100%' }}>
@@ -263,18 +263,18 @@ const SystemToolsManager: React.FC = () => {
         }
 
         .ant-modal-body::-webkit-scrollbar-track {
-          background: rgba(245, 243, 240, 0.3);
+          background: rgba(230, 244, 255, 0.3);
           border-radius: 4px;
         }
 
         .ant-modal-body::-webkit-scrollbar-thumb {
-          background: rgba(139, 115, 85, 0.3);
+          background: rgba(24, 144, 255, 0.3);
           border-radius: 4px;
           transition: background 0.2s ease;
         }
 
         .ant-modal-body::-webkit-scrollbar-thumb:hover {
-          background: rgba(139, 115, 85, 0.5);
+          background: rgba(24, 144, 255, 0.5);
         }
 
         /* Schema 区域滚动条样式 */
@@ -284,29 +284,29 @@ const SystemToolsManager: React.FC = () => {
         }
 
         .custom-scrollbar::-webkit-scrollbar-track {
-          background: rgba(245, 243, 240, 0.5);
+          background: rgba(230, 244, 255, 0.5);
           border-radius: 3px;
         }
 
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(184, 88, 69, 0.3);
+          background: rgba(24, 144, 255, 0.3);
           border-radius: 3px;
           transition: background 0.2s ease;
         }
 
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(184, 88, 69, 0.5);
+          background: rgba(24, 144, 255, 0.5);
         }
 
         /* Firefox 滚动条样式 */
         .ant-modal-body {
           scrollbar-width: thin;
-          scrollbar-color: rgba(139, 115, 85, 0.3) rgba(245, 243, 240, 0.3);
+          scrollbar-color: rgba(24, 144, 255, 0.3) rgba(230, 244, 255, 0.3);
         }
 
         .custom-scrollbar {
           scrollbar-width: thin;
-          scrollbar-color: rgba(184, 88, 69, 0.3) rgba(245, 243, 240, 0.5);
+          scrollbar-color: rgba(24, 144, 255, 0.3) rgba(230, 244, 255, 0.5);
         }
       `}</style>
     </Layout>

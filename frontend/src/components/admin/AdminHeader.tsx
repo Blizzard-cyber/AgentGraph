@@ -85,7 +85,7 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({
               e.currentTarget.style.background = COLORS.whiteAlpha95;
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = 'rgba(139, 115, 85, 0.2)';
+              e.currentTarget.style.borderColor = 'rgba(24, 144, 255, 0.2)';
               e.currentTarget.style.color = COLORS.tertiary;
               e.currentTarget.style.background = COLORS.whiteAlpha85;
             }}

@@ -84,7 +84,7 @@ const GlassCodeBlock: React.FC<GlassCodeBlockProps> = ({
       margin: '12px 0',
       borderRadius: '6px',
       background: 'rgba(255, 255, 255, 1)',
-      border: '1px solid rgba(139, 115, 85, 0.15)',
+      border: '1px solid rgba(24, 144, 255, 0.15)',
       boxShadow: 'none',
       overflow: 'hidden',
       transition: 'all 0.3s cubic-bezier(0.23, 1, 0.32, 1)'
@@ -97,18 +97,18 @@ const GlassCodeBlock: React.FC<GlassCodeBlockProps> = ({
           alignItems: 'center',
           padding: '10px 14px',
           cursor: 'pointer',
-          background: 'rgba(245, 243, 240, 0.6)',
-          borderBottom: expanded ? '1px solid rgba(139, 115, 85, 0.15)' : 'none'
+          background: 'rgba(230, 244, 255, 0.6)',
+          borderBottom: expanded ? '1px solid rgba(24, 144, 255, 0.15)' : 'none'
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           {expanded ? (
-            <ChevronDown size={16} strokeWidth={1.5} style={{ color: '#8b7355' }} />
+            <ChevronDown size={16} strokeWidth={1.5} style={{ color: 'rgba(0, 0, 0, 0.65)' }} />
           ) : (
-            <ChevronRight size={16} strokeWidth={1.5} style={{ color: '#8b7355' }} />
+            <ChevronRight size={16} strokeWidth={1.5} style={{ color: 'rgba(0, 0, 0, 0.65)' }} />
           )}
           <span style={{
-            color: '#8b7355',
+            color: 'rgba(0, 0, 0, 0.65)',
             fontWeight: 500,
             fontSize: '12px',
             textTransform: 'uppercase',
@@ -133,20 +133,20 @@ const GlassCodeBlock: React.FC<GlassCodeBlockProps> = ({
             style={{
               padding: '4px',
               borderRadius: '4px',
-              color: copied ? '#b85845' : '#8b7355',
+              color: copied ? '#1890ff' : 'rgba(0, 0, 0, 0.45)',
               cursor: 'pointer',
               transition: 'all 0.2s ease',
               background: 'transparent'
             }}
             onMouseEnter={(e) => {
               if (!copied) {
-                e.currentTarget.style.color = '#b85845';
-                e.currentTarget.style.background = 'rgba(184, 88, 69, 0.08)';
+                e.currentTarget.style.color = '#1890ff';
+                e.currentTarget.style.background = 'rgba(24, 144, 255, 0.08)';
               }
             }}
             onMouseLeave={(e) => {
               if (!copied) {
-                e.currentTarget.style.color = '#8b7355';
+                e.currentTarget.style.color = 'rgba(0, 0, 0, 0.65)';
                 e.currentTarget.style.background = 'transparent';
               }
             }}
@@ -170,7 +170,7 @@ const GlassCodeBlock: React.FC<GlassCodeBlockProps> = ({
             overflow: 'auto',
             background: 'rgba(255, 255, 255, 0.85)',
             scrollbarWidth: 'thin',
-            scrollbarColor: 'rgba(139, 115, 85, 0.3) rgba(245, 243, 240, 0.6)'
+            scrollbarColor: 'rgba(24, 144, 255, 0.3) rgba(230, 244, 255, 0.6)'
           }}
           className="code-block-scrollbar"
         >

@@ -97,7 +97,7 @@ const AgentList: React.FC<AgentListProps> = ({
           justifyContent: 'center',
           padding: '16px 0',
           marginTop: '12px',
-          borderTop: '1px solid rgba(139, 115, 85, 0.15)'
+          borderTop: '1px solid rgba(24, 144, 255, 0.15)'
         }}>
           <Spin size="small" />
         </div>
@@ -114,7 +114,7 @@ const AgentList: React.FC<AgentListProps> = ({
       <div style={{
         marginTop: '12px',
         paddingTop: '12px',
-        borderTop: '1px solid rgba(139, 115, 85, 0.15)'
+        borderTop: '1px solid rgba(24, 144, 255, 0.15)'
       }}>
         {/* 描述 */}
         {config.card && (
@@ -160,9 +160,9 @@ const AgentList: React.FC<AgentListProps> = ({
               color: 'rgba(45, 45, 45, 0.75)',
               lineHeight: '1.6',
               padding: '8px 12px',
-              background: 'rgba(245, 243, 240, 0.6)',
+              background: 'rgba(230, 244, 255, 0.6)',
               borderRadius: '4px',
-              border: '1px solid rgba(139, 115, 85, 0.1)',
+              border: '1px solid rgba(24, 144, 255, 0.1)',
               letterSpacing: '0.2px'
             }}>
               {config.instruction}
@@ -183,9 +183,9 @@ const AgentList: React.FC<AgentListProps> = ({
               {t('components.agentList.maxIterations')}
             </div>
             <Tag style={{
-              background: 'rgba(212, 165, 116, 0.08)',
-              color: '#d4a574',
-              border: '1px solid rgba(212, 165, 116, 0.25)',
+              background: 'rgba(64, 169, 255, 0.08)',
+              color: '#69b1ff',
+              border: '1px solid rgba(64, 169, 255, 0.25)',
               borderRadius: '6px',
               fontWeight: 500,
               fontSize: '12px',
@@ -222,9 +222,9 @@ const AgentList: React.FC<AgentListProps> = ({
                 <Tag 
                   key={mcp}
                   style={{
-                    background: 'rgba(160, 130, 109, 0.08)',
-                    color: '#a0826d',
-                    border: '1px solid rgba(160, 130, 109, 0.25)',
+                    background: 'rgba(64, 169, 255, 0.08)',
+                    color: '#40a9ff',
+                    border: '1px solid rgba(64, 169, 255, 0.25)',
                     borderRadius: '6px',
                     fontWeight: 500,
                     fontSize: '11px',
@@ -265,9 +265,9 @@ const AgentList: React.FC<AgentListProps> = ({
                 <Tag 
                   key={tool}
                   style={{
-                    background: 'rgba(139, 115, 85, 0.08)',
-                    color: '#8b7355',
-                    border: '1px solid rgba(139, 115, 85, 0.2)',
+                    background: 'rgba(24, 144, 255, 0.08)',
+                    color: 'rgba(0, 0, 0, 0.65)',
+                    border: '1px solid rgba(24, 144, 255, 0.2)',
                     borderRadius: '6px',
                     fontWeight: 500,
                     fontSize: '11px',
@@ -296,7 +296,7 @@ const AgentList: React.FC<AgentListProps> = ({
         padding: '48px 24px',
         color: 'rgba(45, 45, 45, 0.45)'
       }}>
-        <Bot size={48} strokeWidth={1.5} style={{ marginBottom: '16px', color: 'rgba(139, 115, 85, 0.3)' }} />
+        <Bot size={48} strokeWidth={1.5} style={{ marginBottom: '16px', color: 'rgba(24, 144, 255, 0.3)' }} />
         <div style={{ fontSize: '14px', letterSpacing: '0.3px' }}>
           {t('components.agentList.noAgents')}
         </div>
@@ -315,7 +315,7 @@ const AgentList: React.FC<AgentListProps> = ({
             size={18}
             strokeWidth={2}
             style={{
-              color: '#8b7355',
+              color: 'rgba(0, 0, 0, 0.65)',
               transform: isActive ? 'rotate(180deg)' : 'rotate(0deg)',
               transition: 'transform 0.3s ease'
             }}
@@ -345,9 +345,9 @@ const AgentList: React.FC<AgentListProps> = ({
                     {category.category}
                   </span>
                   <Tag style={{
-                    background: 'rgba(139, 115, 85, 0.08)',
-                    color: '#8b7355',
-                    border: '1px solid rgba(139, 115, 85, 0.2)',
+                    background: 'rgba(24, 144, 255, 0.08)',
+                    color: 'rgba(0, 0, 0, 0.65)',
+                    border: '1px solid rgba(24, 144, 255, 0.2)',
                     borderRadius: '6px',
                     fontWeight: 500,
                     fontSize: '12px',
@@ -362,8 +362,8 @@ const AgentList: React.FC<AgentListProps> = ({
               style={{
                 marginBottom: '12px',
                 borderRadius: '8px',
-                border: '1px solid rgba(139, 115, 85, 0.15)',
-                background: 'rgba(250, 248, 245, 0.6)',
+                border: '1px solid rgba(24, 144, 255, 0.15)',
+                background: 'rgba(230, 244, 255, 0.6)',
                 overflow: 'hidden'
               }}
             >
@@ -378,29 +378,29 @@ const AgentList: React.FC<AgentListProps> = ({
                       marginBottom: '8px',
                       borderRadius: '6px',
                       border: selectedAgent === agent.name 
-                        ? '1px solid rgba(184, 88, 69, 0.4)' 
-                        : '1px solid rgba(139, 115, 85, 0.15)',
+                        ? '1px solid rgba(24, 144, 255, 0.4)' 
+                        : '1px solid rgba(24, 144, 255, 0.15)',
                       background: selectedAgent === agent.name
-                        ? 'rgba(184, 88, 69, 0.05)'
+                        ? 'rgba(24, 144, 255, 0.05)'
                         : 'rgba(255, 255, 255, 0.85)',
                       boxShadow: selectedAgent === agent.name
-                        ? '0 2px 8px rgba(184, 88, 69, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.9)'
-                        : '0 1px 3px rgba(139, 115, 85, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
+                        ? '0 2px 8px rgba(24, 144, 255, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.9)'
+                        : '0 1px 3px rgba(24, 144, 255, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
                       cursor: 'pointer',
                       transition: 'all 0.3s cubic-bezier(0.23, 1, 0.32, 1)'
                     }}
                     onMouseEnter={(e) => {
                       if (selectedAgent !== agent.name) {
                         e.currentTarget.style.transform = 'translateY(-2px)';
-                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(184, 88, 69, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9)';
-                        e.currentTarget.style.borderColor = 'rgba(184, 88, 69, 0.3)';
+                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(24, 144, 255, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9)';
+                        e.currentTarget.style.borderColor = 'rgba(24, 144, 255, 0.3)';
                       }
                     }}
                     onMouseLeave={(e) => {
                       if (selectedAgent !== agent.name) {
                         e.currentTarget.style.transform = 'translateY(0)';
-                        e.currentTarget.style.boxShadow = '0 1px 3px rgba(139, 115, 85, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)';
-                        e.currentTarget.style.borderColor = 'rgba(139, 115, 85, 0.15)';
+                        e.currentTarget.style.boxShadow = '0 1px 3px rgba(24, 144, 255, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)';
+                        e.currentTarget.style.borderColor = 'rgba(24, 144, 255, 0.15)';
                       }
                     }}
                   >
@@ -414,14 +414,14 @@ const AgentList: React.FC<AgentListProps> = ({
                         size={18} 
                         strokeWidth={1.5}
                         style={{ 
-                          color: selectedAgent === agent.name ? '#b85845' : '#8b7355',
+                          color: selectedAgent === agent.name ? '#1890ff' : 'rgba(0, 0, 0, 0.65)',
                           transition: 'color 0.3s ease'
                         }} 
                       />
                       <span style={{
                         fontWeight: 500,
                         fontSize: '14px',
-                        color: selectedAgent === agent.name ? '#b85845' : '#2d2d2d',
+                        color: selectedAgent === agent.name ? '#1890ff' : '#2d2d2d',
                         letterSpacing: '0.3px',
                         transition: 'color 0.3s ease',
                         flex: 1
@@ -433,7 +433,7 @@ const AgentList: React.FC<AgentListProps> = ({
                           size={16} 
                           strokeWidth={2}
                           style={{ 
-                            color: '#b85845'
+                            color: '#1890ff'
                           }} 
                         />
                       )}
@@ -450,9 +450,9 @@ const AgentList: React.FC<AgentListProps> = ({
                           <Tag 
                             key={tag}
                             style={{
-                              background: 'rgba(139, 115, 85, 0.08)',
-                              color: '#8b7355',
-                              border: '1px solid rgba(139, 115, 85, 0.2)',
+                              background: 'rgba(24, 144, 255, 0.08)',
+                              color: 'rgba(0, 0, 0, 0.65)',
+                              border: '1px solid rgba(24, 144, 255, 0.2)',
                               borderRadius: '4px',
                               fontWeight: 400,
                               fontSize: '11px',
@@ -495,9 +495,9 @@ const AgentList: React.FC<AgentListProps> = ({
                   {t('components.agentList.uncategorized')}
                 </span>
                 <Tag style={{
-                  background: 'rgba(139, 115, 85, 0.08)',
-                  color: '#8b7355',
-                  border: '1px solid rgba(139, 115, 85, 0.2)',
+                  background: 'rgba(24, 144, 255, 0.08)',
+                  color: 'rgba(0, 0, 0, 0.65)',
+                  border: '1px solid rgba(24, 144, 255, 0.2)',
                   borderRadius: '6px',
                   fontWeight: 500,
                   fontSize: '12px',
@@ -512,8 +512,8 @@ const AgentList: React.FC<AgentListProps> = ({
             style={{
               marginBottom: '12px',
               borderRadius: '8px',
-              border: '1px solid rgba(139, 115, 85, 0.15)',
-              background: 'rgba(250, 248, 245, 0.6)',
+              border: '1px solid rgba(24, 144, 255, 0.15)',
+              background: 'rgba(230, 244, 255, 0.6)',
               overflow: 'hidden'
             }}
           >
@@ -528,29 +528,29 @@ const AgentList: React.FC<AgentListProps> = ({
                     marginBottom: '8px',
                     borderRadius: '6px',
                     border: selectedAgent === agent.name 
-                      ? '1px solid rgba(184, 88, 69, 0.4)' 
-                      : '1px solid rgba(139, 115, 85, 0.15)',
+                      ? '1px solid rgba(24, 144, 255, 0.4)' 
+                      : '1px solid rgba(24, 144, 255, 0.15)',
                     background: selectedAgent === agent.name
-                      ? 'rgba(184, 88, 69, 0.05)'
+                      ? 'rgba(24, 144, 255, 0.05)'
                       : 'rgba(255, 255, 255, 0.85)',
                     boxShadow: selectedAgent === agent.name
-                      ? '0 2px 8px rgba(184, 88, 69, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.9)'
-                      : '0 1px 3px rgba(139, 115, 85, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
+                      ? '0 2px 8px rgba(24, 144, 255, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.9)'
+                      : '0 1px 3px rgba(24, 144, 255, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
                     cursor: 'pointer',
                     transition: 'all 0.3s cubic-bezier(0.23, 1, 0.32, 1)'
                   }}
                   onMouseEnter={(e) => {
                     if (selectedAgent !== agent.name) {
                       e.currentTarget.style.transform = 'translateY(-2px)';
-                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(184, 88, 69, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9)';
-                      e.currentTarget.style.borderColor = 'rgba(184, 88, 69, 0.3)';
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(24, 144, 255, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9)';
+                      e.currentTarget.style.borderColor = 'rgba(24, 144, 255, 0.3)';
                     }
                   }}
                   onMouseLeave={(e) => {
                     if (selectedAgent !== agent.name) {
                       e.currentTarget.style.transform = 'translateY(0)';
-                      e.currentTarget.style.boxShadow = '0 1px 3px rgba(139, 115, 85, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)';
-                      e.currentTarget.style.borderColor = 'rgba(139, 115, 85, 0.15)';
+                      e.currentTarget.style.boxShadow = '0 1px 3px rgba(24, 144, 255, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)';
+                      e.currentTarget.style.borderColor = 'rgba(24, 144, 255, 0.15)';
                     }
                   }}
                 >
@@ -564,14 +564,14 @@ const AgentList: React.FC<AgentListProps> = ({
                       size={18} 
                       strokeWidth={1.5}
                       style={{ 
-                        color: selectedAgent === agent.name ? '#b85845' : '#8b7355',
+                        color: selectedAgent === agent.name ? '#1890ff' : 'rgba(0, 0, 0, 0.65)',
                         transition: 'color 0.3s ease'
                       }} 
                     />
                     <span style={{
                       fontWeight: 500,
                       fontSize: '14px',
-                      color: selectedAgent === agent.name ? '#b85845' : '#2d2d2d',
+                      color: selectedAgent === agent.name ? '#1890ff' : '#2d2d2d',
                       letterSpacing: '0.3px',
                       transition: 'color 0.3s ease',
                       flex: 1
@@ -583,7 +583,7 @@ const AgentList: React.FC<AgentListProps> = ({
                         size={16} 
                         strokeWidth={2}
                         style={{ 
-                          color: '#b85845'
+                          color: '#1890ff'
                         }} 
                       />
                     )}
@@ -600,9 +600,9 @@ const AgentList: React.FC<AgentListProps> = ({
                         <Tag 
                           key={tag}
                           style={{
-                            background: 'rgba(139, 115, 85, 0.08)',
-                            color: '#8b7355',
-                            border: '1px solid rgba(139, 115, 85, 0.2)',
+                            background: 'rgba(24, 144, 255, 0.08)',
+                            color: 'rgba(0, 0, 0, 0.65)',
+                            border: '1px solid rgba(24, 144, 255, 0.2)',
                             borderRadius: '4px',
                             fontWeight: 400,
                             fontSize: '11px',

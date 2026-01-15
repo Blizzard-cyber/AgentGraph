@@ -197,7 +197,7 @@ const MCPManager: React.FC = () => {
             style={{
               marginBottom: '16px',
               borderRadius: '6px',
-              border: '1px solid rgba(184, 88, 69, 0.3)',
+              border: '1px solid rgba(24, 144, 255, 0.3)',
               background: 'rgba(255, 245, 243, 0.9)'
             }}
           />
@@ -217,7 +217,7 @@ const MCPManager: React.FC = () => {
             {serverNames.length === 0 ? (
               <div style={getMCPEmptyStateStyle()}>
                 <Grid3x3 size={48} strokeWidth={1.5} style={{
-                  color: 'rgba(139, 115, 85, 0.3)',
+                  color: 'rgba(24, 144, 255, 0.3)',
                   margin: '0 auto 16px'
                 }} />
                 <div style={{

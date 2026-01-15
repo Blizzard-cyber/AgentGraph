@@ -27,7 +27,7 @@ const PromptCard: React.FC<PromptCardProps> = ({ prompt, onEdit, onDelete }) => 
     } else {
       target.style.transform = 'translateY(0)';
       target.style.boxShadow = CARD_STYLES.base.boxShadow;
-      target.style.borderColor = 'rgba(139, 115, 85, 0.15)';
+      target.style.borderColor = 'rgba(24, 144, 255, 0.15)';
     }
   };
 
@@ -102,25 +102,25 @@ const PromptCard: React.FC<PromptCardProps> = ({ prompt, onEdit, onDelete }) => 
             cancelText={t('pages.promptManager.deleteConfirmCancel')}
             okButtonProps={{
               style: {
-                background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+                background: '#1890ff',
                 border: 'none',
                 borderRadius: '6px',
                 color: '#fff',
                 fontWeight: 500,
-                boxShadow: '0 2px 6px rgba(184, 88, 69, 0.25)'
+                boxShadow: '0 2px 6px rgba(24, 144, 255, 0.25)'
               }
             }}
             cancelButtonProps={{
               style: {
                 borderRadius: '6px',
-                border: '1px solid rgba(139, 115, 85, 0.2)',
-                color: '#8b7355',
+                border: '1px solid rgba(24, 144, 255, 0.2)',
+                color: 'rgba(0, 0, 0, 0.65)',
                 fontWeight: 500
               }
             }}
             overlayStyle={{
               borderRadius: '8px',
-              boxShadow: '0 4px 12px rgba(139, 115, 85, 0.2)'
+              boxShadow: '0 4px 12px rgba(24, 144, 255, 0.2)'
             }}
           >
             <div

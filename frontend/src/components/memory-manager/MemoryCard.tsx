@@ -34,8 +34,8 @@ const MemoryCard: React.FC<MemoryCardProps> = ({ memory, onEdit, onExport, onImp
       hoverable
       style={{
         borderRadius: '6px',
-        border: '1px solid rgba(139, 115, 85, 0.15)',
-        boxShadow: '0 1px 3px rgba(139, 115, 85, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
+        border: '1px solid rgba(24, 144, 255, 0.15)',
+        boxShadow: '0 1px 3px rgba(24, 144, 255, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
         background: 'rgba(255, 255, 255, 0.85)',
         transition: 'all 0.3s cubic-bezier(0.23, 1, 0.32, 1)',
       }}
@@ -45,23 +45,23 @@ const MemoryCard: React.FC<MemoryCardProps> = ({ memory, onEdit, onExport, onImp
       onMouseEnter={(e) => {
         const card = e.currentTarget;
         card.style.transform = 'translateY(-2px)';
-        card.style.boxShadow = '0 4px 12px rgba(184, 88, 69, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9)';
-        card.style.borderColor = 'rgba(184, 88, 69, 0.3)';
+        card.style.boxShadow = '0 4px 12px rgba(24, 144, 255, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9)';
+        card.style.borderColor = 'rgba(24, 144, 255, 0.3)';
       }}
       onMouseLeave={(e) => {
         const card = e.currentTarget;
         card.style.transform = 'translateY(0)';
-        card.style.boxShadow = '0 1px 3px rgba(139, 115, 85, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)';
-        card.style.borderColor = 'rgba(139, 115, 85, 0.15)';
+        card.style.boxShadow = '0 1px 3px rgba(24, 144, 255, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)';
+        card.style.borderColor = 'rgba(24, 144, 255, 0.15)';
       }}
     >
       {/* Card Header - Owner Info */}
       <div style={{ marginBottom: '12px' }}>
         <Space size="small" align="center">
           {memory.owner_type === 'user' ? (
-            <User size={16} strokeWidth={1.5} style={{ color: '#8b7355' }} />
+            <User size={16} strokeWidth={1.5} style={{ color: 'rgba(0, 0, 0, 0.65)' }} />
           ) : (
-            <Bot size={16} strokeWidth={1.5} style={{ color: '#8b7355' }} />
+            <Bot size={16} strokeWidth={1.5} style={{ color: 'rgba(0, 0, 0, 0.65)' }} />
           )}
           <Text
             strong
@@ -75,9 +75,9 @@ const MemoryCard: React.FC<MemoryCardProps> = ({ memory, onEdit, onExport, onImp
           </Text>
           <Tag
             style={{
-              background: 'rgba(139, 115, 85, 0.08)',
-              color: '#8b7355',
-              border: '1px solid rgba(139, 115, 85, 0.2)',
+              background: 'rgba(24, 144, 255, 0.08)',
+              color: 'rgba(0, 0, 0, 0.65)',
+              border: '1px solid rgba(24, 144, 255, 0.2)',
               borderRadius: '6px',
               fontWeight: 500,
               fontSize: '11px',
@@ -106,7 +106,7 @@ const MemoryCard: React.FC<MemoryCardProps> = ({ memory, onEdit, onExport, onImp
               strong
               style={{
                 fontSize: '18px',
-                color: '#b85845',
+                color: '#1890ff',
                 marginLeft: '8px',
                 fontWeight: 600,
               }}
@@ -127,7 +127,7 @@ const MemoryCard: React.FC<MemoryCardProps> = ({ memory, onEdit, onExport, onImp
               strong
               style={{
                 fontSize: '18px',
-                color: '#8b7355',
+                color: 'rgba(0, 0, 0, 0.65)',
                 marginLeft: '8px',
                 fontWeight: 600,
               }}
@@ -145,7 +145,7 @@ const MemoryCard: React.FC<MemoryCardProps> = ({ memory, onEdit, onExport, onImp
           style={{
             padding: '4px',
             borderRadius: '4px',
-            color: '#8b7355',
+            color: 'rgba(0, 0, 0, 0.65)',
             cursor: 'pointer',
             transition: 'all 0.2s ease',
             display: 'flex',
@@ -153,11 +153,11 @@ const MemoryCard: React.FC<MemoryCardProps> = ({ memory, onEdit, onExport, onImp
             justifyContent: 'center',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.color = '#b85845';
-            e.currentTarget.style.background = 'rgba(184, 88, 69, 0.08)';
+            e.currentTarget.style.color = '#1890ff';
+            e.currentTarget.style.background = 'rgba(24, 144, 255, 0.08)';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.color = '#8b7355';
+            e.currentTarget.style.color = 'rgba(0, 0, 0, 0.65)';
             e.currentTarget.style.background = 'transparent';
           }}
           title={t('pages.memoryManager.edit')}
@@ -169,7 +169,7 @@ const MemoryCard: React.FC<MemoryCardProps> = ({ memory, onEdit, onExport, onImp
           style={{
             padding: '4px',
             borderRadius: '4px',
-            color: '#8b7355',
+            color: 'rgba(0, 0, 0, 0.65)',
             cursor: 'pointer',
             transition: 'all 0.2s ease',
             display: 'flex',
@@ -177,11 +177,11 @@ const MemoryCard: React.FC<MemoryCardProps> = ({ memory, onEdit, onExport, onImp
             justifyContent: 'center',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.color = '#b85845';
-            e.currentTarget.style.background = 'rgba(184, 88, 69, 0.08)';
+            e.currentTarget.style.color = '#1890ff';
+            e.currentTarget.style.background = 'rgba(24, 144, 255, 0.08)';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.color = '#8b7355';
+            e.currentTarget.style.color = 'rgba(0, 0, 0, 0.65)';
             e.currentTarget.style.background = 'transparent';
           }}
           title={t('pages.memoryManager.import')}
@@ -193,7 +193,7 @@ const MemoryCard: React.FC<MemoryCardProps> = ({ memory, onEdit, onExport, onImp
           style={{
             padding: '4px',
             borderRadius: '4px',
-            color: '#8b7355',
+            color: 'rgba(0, 0, 0, 0.65)',
             cursor: 'pointer',
             transition: 'all 0.2s ease',
             display: 'flex',
@@ -201,11 +201,11 @@ const MemoryCard: React.FC<MemoryCardProps> = ({ memory, onEdit, onExport, onImp
             justifyContent: 'center',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.color = '#b85845';
-            e.currentTarget.style.background = 'rgba(184, 88, 69, 0.08)';
+            e.currentTarget.style.color = '#1890ff';
+            e.currentTarget.style.background = 'rgba(24, 144, 255, 0.08)';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.color = '#8b7355';
+            e.currentTarget.style.color = 'rgba(0, 0, 0, 0.65)';
             e.currentTarget.style.background = 'transparent';
           }}
           title={t('pages.memoryManager.export')}

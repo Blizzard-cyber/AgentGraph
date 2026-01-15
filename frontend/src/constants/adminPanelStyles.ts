@@ -1,93 +1,93 @@
 // 管理面板样式常量
 export const COLORS = {
-  primary: '#b85845',
-  secondary: '#a0826d',
-  tertiary: '#8b7355',
-  text: '#2d2d2d',
-  textSecondary: 'rgba(45, 45, 45, 0.65)',
-  textLight: 'rgba(45, 45, 45, 0.85)',
-  success: '#52c41a',
-  background: '#faf8f5',
+  primary: '#1890ff',
+  secondary: '#40a9ff',
+  tertiary: '#1890ff',
+  text: 'rgba(0, 0, 0, 0.85)',
+  textSecondary: 'rgba(0, 0, 0, 0.65)',
+  textLight: 'rgba(0, 0, 0, 0.65)',
+  success: '#54cc98',
+  background: '#ffffff',
   white: '#fff',
-  whiteAlpha85: 'rgba(255, 255, 255, 0.85)',
-  whiteAlpha90: 'rgba(255, 255, 255, 0.9)',
-  whiteAlpha95: 'rgba(255, 255, 255, 0.95)',
-  whiteAlpha98: 'rgba(255, 255, 255, 0.98)',
-  backgroundLight: 'rgba(250, 248, 245, 0.5)',
-  backgroundCard: 'rgba(245, 243, 240, 0.6)',
+  whiteAlpha85: '#ffffff',
+  whiteAlpha90: '#ffffff',
+  whiteAlpha95: '#ffffff',
+  whiteAlpha98: '#ffffff',
+  backgroundLight: '#fafafa',
+  backgroundCard: '#ffffff',
 };
 
 export const GRADIENTS = {
-  primary: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
-  header: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(245, 243, 240, 0.6))',
-  decorativeLine: 'linear-gradient(to right, transparent, rgba(139, 115, 85, 0.3) 50%, transparent)',
+  primary: '#1890ff',
+  header: '#ffffff',
+  decorativeLine: 'transparent',
 };
 
 export const SHADOWS = {
-  card: '0 2px 8px rgba(139, 115, 85, 0.08)',
-  button: '0 2px 6px rgba(184, 88, 69, 0.25)',
-  buttonSmall: '0 1px 3px rgba(139, 115, 85, 0.08)',
-  modal: '0 8px 24px rgba(139, 115, 85, 0.15)',
-  input: '0 1px 3px rgba(139, 115, 85, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
-  inputFocus: '0 0 0 3px rgba(184, 88, 69, 0.08), 0 1px 3px rgba(139, 115, 85, 0.08)',
+  card: '0 1px 2px rgba(0, 0, 0, 0.03)',
+  button: '0 2px 0 rgba(0, 0, 0, 0.016)',
+  buttonSmall: 'none',
+  modal: '0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05)',
+  input: 'none',
+  inputFocus: '0 0 0 2px rgba(24, 144, 255, 0.2)',
 };
 
 export const BORDERS = {
-  light: '1px solid rgba(139, 115, 85, 0.1)',
-  normal: '1px solid rgba(139, 115, 85, 0.15)',
-  medium: '1px solid rgba(139, 115, 85, 0.2)',
-  strong: '1px solid rgba(139, 115, 85, 0.25)',
+  light: '1px solid #f0f0f0',
+  normal: '1px solid #d9d9d9',
+  medium: '1px solid #d9d9d9',
+  strong: '1px solid #d9d9d9',
 };
 
 /**
  * 获取标签样式
  */
 export const getTagStyle = (color: string) => ({
-  background: `${color}15`,
+  background: `${color}20`,
   color: color,
   border: `1px solid ${color}40`,
-  borderRadius: '6px',
+  borderRadius: '4px',
   fontWeight: 500,
-  padding: '4px 12px',
+  padding: '2px 8px',
 });
 
 /**
  * 获取状态标签样式
  */
 export const getStatusTagStyle = (isActive: boolean) => ({
-  background: isActive ? 'rgba(82, 196, 26, 0.08)' : 'rgba(139, 115, 85, 0.08)',
-  color: isActive ? COLORS.success : COLORS.tertiary,
-  border: `1px solid ${isActive ? 'rgba(82, 196, 26, 0.25)' : 'rgba(139, 115, 85, 0.25)'}`,
-  borderRadius: '6px',
+  background: isActive ? '#f0fff6' : 'rgba(0, 0, 0, 0.04)',
+  color: isActive ? COLORS.success : 'rgba(0, 0, 0, 0.45)',
+  border: `1px solid ${isActive ? '#b7eb8f' : '#d9d9d9'}`,
+  borderRadius: '4px',
   fontWeight: 500,
-  padding: '4px 12px',
+  padding: '2px 8px',
 });
 
 /**
  * 获取主按钮样式
  */
 export const getPrimaryButtonStyle = (size: 'small' | 'default' = 'default') => ({
-  background: GRADIENTS.primary,
+  background: '#1890ff',
   border: 'none',
   color: COLORS.white,
-  borderRadius: '6px',
+  borderRadius: '4px',
   fontSize: size === 'small' ? '12px' : '14px',
   fontWeight: 500,
   boxShadow: SHADOWS.button,
-  height: size === 'small' ? '28px' : '36px',
-  padding: size === 'small' ? '0 12px' : '0 20px',
+  height: size === 'small' ? '24px' : '32px',
+  padding: size === 'small' ? '0 8px' : '0 16px',
 });
 
 /**
  * 获取次要按钮样式
  */
 export const getSecondaryButtonStyle = (size: 'small' | 'default' = 'default') => ({
-  borderRadius: '6px',
-  height: size === 'small' ? '28px' : '36px',
-  padding: size === 'small' ? '0 12px' : '0 20px',
+  borderRadius: '4px',
+  height: size === 'small' ? '24px' : '32px',
+  padding: size === 'small' ? '0 8px' : '0 16px',
   border: BORDERS.medium,
-  background: COLORS.whiteAlpha85,
-  color: COLORS.tertiary,
+  background: COLORS.white,
+  color: 'rgba(0, 0, 0, 0.65)',
   fontSize: size === 'small' ? '12px' : '14px',
   fontWeight: 500,
   boxShadow: SHADOWS.buttonSmall,
@@ -122,7 +122,7 @@ export const getInputFocusStyle = () => ({
  * 获取输入框失焦样式
  */
 export const getInputBlurStyle = () => ({
-  borderColor: 'rgba(139, 115, 85, 0.2)',
+  borderColor: 'rgba(24, 144, 255, 0.2)',
   boxShadow: SHADOWS.input,
   background: COLORS.whiteAlpha90,
 });
@@ -148,7 +148,7 @@ export const getUserAvatarStyle = () => ({
  * 获取代码块样式
  */
 export const getCodeStyle = () => ({
-  background: 'rgba(139, 115, 85, 0.08)',
+  background: 'rgba(24, 144, 255, 0.08)',
   color: COLORS.primary,
   padding: '6px 12px',
   borderRadius: '6px',
@@ -164,7 +164,7 @@ export const getCodeStyle = () => ({
 export const getModalStyles = () => ({
   mask: {
     backdropFilter: 'blur(8px)',
-    background: 'rgba(139, 115, 85, 0.15)',
+    background: 'rgba(24, 144, 255, 0.15)',
   },
   content: {
     borderRadius: '8px',
@@ -193,6 +193,6 @@ export const getModalStyles = () => ({
 export const getConfirmModalStyles = () => ({
   mask: {
     backdropFilter: 'blur(8px)',
-    background: 'rgba(139, 115, 85, 0.15)',
+    background: 'rgba(24, 144, 255, 0.15)',
   },
 });

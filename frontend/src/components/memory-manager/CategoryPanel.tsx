@@ -45,7 +45,7 @@ const CategoryPanel: React.FC<CategoryPanelProps> = ({
             minHeight: '120px',
             padding: '10px 14px',
             borderRadius: '6px',
-            border: '1px solid rgba(139, 115, 85, 0.2)',
+            border: '1px solid rgba(24, 144, 255, 0.2)',
             background: 'rgba(255, 255, 255, 0.85)',
             fontSize: '14px',
             color: '#2d2d2d',
@@ -57,19 +57,19 @@ const CategoryPanel: React.FC<CategoryPanelProps> = ({
       cancelText: t('common.cancel'),
       okButtonProps: {
         style: {
-          background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+          background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
           border: 'none',
           borderRadius: '6px',
           color: '#fff',
           fontWeight: 500,
-          boxShadow: '0 2px 6px rgba(184, 88, 69, 0.25)'
+          boxShadow: '0 2px 6px rgba(24, 144, 255, 0.25)'
         }
       },
       cancelButtonProps: {
         style: {
           borderRadius: '6px',
-          border: '1px solid rgba(139, 115, 85, 0.2)',
-          color: '#8b7355',
+          border: '1px solid rgba(24, 144, 255, 0.2)',
+          color: 'rgba(0, 0, 0, 0.65)',
           fontWeight: 500
         }
       },
@@ -117,25 +117,25 @@ const CategoryPanel: React.FC<CategoryPanelProps> = ({
         cancelText={t('common.cancel')}
         okButtonProps={{
           style: {
-            background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+            background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
             border: 'none',
             borderRadius: '6px',
             color: '#fff',
             fontWeight: 500,
-            boxShadow: '0 2px 6px rgba(184, 88, 69, 0.25)'
+            boxShadow: '0 2px 6px rgba(24, 144, 255, 0.25)'
           }
         }}
         cancelButtonProps={{
           style: {
             borderRadius: '6px',
-            border: '1px solid rgba(139, 115, 85, 0.2)',
-            color: '#8b7355',
+            border: '1px solid rgba(24, 144, 255, 0.2)',
+            color: 'rgba(0, 0, 0, 0.65)',
             fontWeight: 500
           }
         }}
         overlayStyle={{
           borderRadius: '8px',
-          boxShadow: '0 4px 12px rgba(139, 115, 85, 0.2)'
+          boxShadow: '0 4px 12px rgba(24, 144, 255, 0.2)'
         }}
       >
         <div
@@ -151,7 +151,7 @@ const CategoryPanel: React.FC<CategoryPanelProps> = ({
           style={{
             padding: '4px',
             borderRadius: '4px',
-            color: '#8b7355',
+            color: 'rgba(0, 0, 0, 0.65)',
             cursor: 'pointer',
             transition: 'all 0.2s ease',
             display: 'flex',
@@ -159,11 +159,11 @@ const CategoryPanel: React.FC<CategoryPanelProps> = ({
             justifyContent: 'center',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.color = '#b85845';
-            e.currentTarget.style.background = 'rgba(184, 88, 69, 0.08)';
+            e.currentTarget.style.color = '#1890ff';
+            e.currentTarget.style.background = 'rgba(24, 144, 255, 0.08)';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.color = '#8b7355';
+            e.currentTarget.style.color = 'rgba(0, 0, 0, 0.65)';
             e.currentTarget.style.background = 'transparent';
           }}
         >
@@ -203,7 +203,7 @@ const CategoryPanel: React.FC<CategoryPanelProps> = ({
           size={18}
           strokeWidth={2}
           style={{
-            color: '#8b7355',
+            color: 'rgba(0, 0, 0, 0.65)',
             transform: isActive ? 'rotate(180deg)' : 'rotate(0deg)',
             transition: 'transform 0.3s ease',
           }}
@@ -212,8 +212,8 @@ const CategoryPanel: React.FC<CategoryPanelProps> = ({
       style={{
         marginBottom: '16px',
         borderRadius: '8px',
-        border: '1px solid rgba(139, 115, 85, 0.15)',
-        background: 'rgba(250, 248, 245, 0.6)',
+        border: '1px solid rgba(24, 144, 255, 0.15)',
+        background: 'rgba(230, 244, 255, 0.6)',
         overflow: 'hidden',
       }}
     />

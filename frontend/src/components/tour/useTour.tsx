@@ -1,7 +1,8 @@
 // src/components/tour/useTour.tsx
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { driver, DriveStep, Config } from 'driver.js';
 import 'driver.js/dist/driver.css';
+import './tour.css';
 import { useT } from '../../i18n/hooks';
 
 export interface TourStep {
@@ -30,55 +31,66 @@ export const useTour = ({ steps, onComplete, onSkip }: UseTourOptions) => {
       nextBtnText: t('components.tour.nextBtn') || '下一步',
       prevBtnText: t('components.tour.prevBtn') || '上一步',
       doneBtnText: t('components.tour.doneBtn') || '完成',
-      closeBtnText: '×',
       animate: true,
       overlayOpacity: 0.7,
       smoothScroll: true,
+      disableActiveInteraction: false,
       allowClose: true,
       overlayColor: '#000',
       stagePadding: 8,
       stageRadius: 8,
-      popoverClass: 'tour-popover',
-      onDestroyed: () => {
-        // 引导完成或被关闭时触发
-        if (onComplete) {
-          onComplete();
-        }
-      },
-      onDestroyStarted: () => {
-        // 判断是否是中途跳过
-        if (onSkip && driverRef.current) {
-          const currentIndex = driverRef.current.getActiveIndex();
-          if (currentIndex !== undefined && currentIndex < steps.length - 1) {
-            onSkip();
-          }
-        }
-      },
-      onNextClick: (element, step, options) => {
-        // 检查是否是最后一步
+      onCloseClick: () => {
         if (driverRef.current) {
-          const currentIndex = driverRef.current.getActiveIndex();
-          if (currentIndex !== undefined && currentIndex === steps.length - 1) {
-            // 最后一步，点击下一步/完成按钮时销毁driver
-            driverRef.current.destroy();
-            return;
+          if (onSkip) {
+            const currentIndex = driverRef.current.getActiveIndex();
+            if (currentIndex !== undefined && currentIndex < steps.length - 1) {
+              onSkip();
+            }
           }
+          driverRef.current.destroy();
         }
-        // 不是最后一步，继续下一步
-        driverRef.current?.moveNext();
+      },
+      onNextClick: () => {
+        if (!driverRef.current) return;
+        
+        const currentIndex = driverRef.current.getActiveIndex();
+        if (currentIndex !== undefined && currentIndex === steps.length - 1) {
+          // 最后一步，点击完成
+          driverRef.current.destroy();
+          if (onComplete) {
+            onComplete();
+          }
+        } else {
+          // 继续下一步
+          driverRef.current.moveNext();
+        }
+      },
+      onPrevClick: () => {
+        if (driverRef.current) {
+          driverRef.current.movePrevious();
+        }
+      },
+      onDestroyed: () => {
+        // 引导被销毁时触发
       }
     };
 
     // 转换步骤为driver.js格式
-    const driveSteps: DriveStep[] = steps.map((step) => ({
-      element: step.element,
-      popover: {
-        title: t(step.titleKey),
-        description: t(step.contentKey),
-        side: step.placement || 'bottom',
-        align: 'start'
+    const driveSteps: DriveStep[] = steps.map((step) => {
+      let side: 'top' | 'bottom' | 'left' | 'right' = 'bottom';
+      if (step.placement && ['top', 'bottom', 'left', 'right'].includes(step.placement)) {
+        side = step.placement as 'top' | 'bottom' | 'left' | 'right';
       }
-    }));
+      return {
+        element: step.element,
+        popover: {
+          title: t(step.titleKey),
+          description: t(step.contentKey),
+          side: side,
+          align: 'start'
+        }
+      };
+    });
 
     driverRef.current = driver({
       ...customConfig,
@@ -92,17 +104,17 @@ export const useTour = ({ steps, onComplete, onSkip }: UseTourOptions) => {
     };
   }, [steps, t, onComplete, onSkip]);
 
-  const startTour = () => {
+  const startTour = useCallback(() => {
     if (driverRef.current) {
       driverRef.current.drive();
     }
-  };
+  }, []);
 
-  const stopTour = () => {
+  const stopTour = useCallback(() => {
     if (driverRef.current) {
       driverRef.current.destroy();
     }
-  };
+  }, []);
 
   return { startTour, stopTour };
 };

@@ -94,7 +94,7 @@ const CategoryReadmeModal: React.FC<CategoryReadmeModalProps> = ({ visible, cate
             ),
             code: ({ children }) => (
               <code style={{
-                background: 'rgba(139, 115, 85, 0.08)',
+                background: 'rgba(24, 144, 255, 0.08)',
                 padding: '2px 6px',
                 borderRadius: '3px',
                 fontSize: '13px',

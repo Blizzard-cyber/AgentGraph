@@ -20,25 +20,25 @@ const backgroundConfigs = {
     variant: 'dots' as const,
     gap: 20,
     size: 2,
-    color: 'rgba(139, 115, 85, 0.35)', // 系统主题色的浅色点
+    color: 'rgba(24, 144, 255, 0.35)', // 系统主题色的浅色点
   },
   lines: {
     variant: 'lines' as const,
     gap: 24,
     size: 1,
-    color: 'rgba(139, 115, 85, 0.25)', // 系统主题色的浅色线条
+    color: 'rgba(24, 144, 255, 0.25)', // 系统主题色的浅色线条
   },
   grid: {
     variant: 'lines' as const,
     gap: 16,
     size: 1,
-    color: 'rgba(139, 115, 85, 0.3)', // 系统主题色的浅色网格
+    color: 'rgba(24, 144, 255, 0.3)', // 系统主题色的浅色网格
   },
   cross: {
     variant: 'cross' as const,
     gap: 32,
     size: 2,
-    color: 'rgba(139, 115, 85, 0.4)', // 系统主题色的稍深交叉
+    color: 'rgba(24, 144, 255, 0.4)', // 系统主题色的稍深交叉
   },
 };
 
@@ -92,15 +92,15 @@ const BackgroundControls: React.FC<BackgroundControlsProps> = ({
       backdropFilter: 'blur(20px)',
       borderRadius: '6px',
       padding: '8px',
-      boxShadow: '0 1px 3px rgba(139, 115, 85, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
-      border: '1px solid rgba(139, 115, 85, 0.15)',
+      boxShadow: '0 1px 3px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
+      border: '1px solid rgba(0, 0, 0, 0.15)',
       display: 'flex',
       gap: '4px',
       alignItems: 'center'
     }}>
       <span style={{
         fontSize: '12px',
-        color: '#8b7355',
+        color: 'rgba(0, 0, 0, 0.65)',
         marginRight: '8px',
         fontWeight: '500'
       }}>
@@ -122,14 +122,14 @@ const BackgroundControls: React.FC<BackgroundControlsProps> = ({
               borderRadius: '6px',
               transition: 'all 0.3s cubic-bezier(0.23, 1, 0.32, 1)',
               ...(backgroundType === type ? {
-                background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+                background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
                 borderColor: 'transparent',
                 color: 'white',
-                boxShadow: '0 2px 6px rgba(184, 88, 69, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+                boxShadow: '0 2px 6px rgba(24, 144, 255, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
               } : {
                 background: 'transparent',
                 borderColor: 'transparent',
-                color: '#8b7355'
+                color: 'rgba(0, 0, 0, 0.65)'
               })
             }}
           />

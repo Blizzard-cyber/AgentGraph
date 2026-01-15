@@ -126,16 +126,16 @@ const ModelManager: React.FC = () => {
   };
 
   return (
-    <Layout style={{ height: '100vh', background: '#faf8f5', display: 'flex', flexDirection: 'column' }}>
+    <Layout style={{ height: '100vh', background: '#ffffff', display: 'flex', flexDirection: 'column' }}>
       {error && <ErrorMessage message={error} />}
 
       {/* Header 顶栏 */}
       <Header style={{
-        background: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(245, 243, 240, 0.6))',
+        background: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(230, 244, 255, 0.6))',
         backdropFilter: 'blur(20px)',
         padding: '0 48px',
         borderBottom: 'none',
-        boxShadow: '0 2px 8px rgba(139, 115, 85, 0.08)',
+        boxShadow: '0 2px 8px rgba(24, 144, 255, 0.08)',
         position: 'relative'
       }}>
         {/* 装饰性底部渐变线 */}
@@ -145,13 +145,13 @@ const ModelManager: React.FC = () => {
           left: '20%',
           right: '20%',
           height: '1px',
-          background: 'linear-gradient(to right, transparent, rgba(139, 115, 85, 0.3) 50%, transparent)'
+          background: 'linear-gradient(to right, transparent, rgba(24, 144, 255, 0.3) 50%, transparent)'
         }} />
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '100%' }}>
           {/* 左侧：图标、标题和统计 */}
           <Space size="large">
-            <Server size={28} color="#b85845" strokeWidth={1.5} />
+            <Server size={28} color="#1890ff" strokeWidth={1.5} />
             <Title level={4} style={{
               margin: 0,
               color: '#2d2d2d',
@@ -162,9 +162,9 @@ const ModelManager: React.FC = () => {
               {t('pages.modelManager.title')}
             </Title>
             <AntTag style={{
-              background: 'rgba(184, 88, 69, 0.08)',
-              color: '#b85845',
-              border: '1px solid rgba(184, 88, 69, 0.25)',
+              background: 'rgba(24, 144, 255, 0.08)',
+              color: '#1890ff',
+              border: '1px solid rgba(24, 144, 255, 0.25)',
               borderRadius: '6px',
               fontWeight: 500,
               padding: '4px 12px',
@@ -174,9 +174,9 @@ const ModelManager: React.FC = () => {
             </AntTag>
             {titleGenerationModel && (
               <AntTag style={{
-                background: 'rgba(139, 115, 85, 0.08)',
-                color: '#8b7355',
-                border: '1px solid rgba(139, 115, 85, 0.25)',
+                background: 'rgba(24, 144, 255, 0.08)',
+                color: 'rgba(0, 0, 0, 0.65)',
+                border: '1px solid rgba(24, 144, 255, 0.25)',
                 borderRadius: '6px',
                 fontWeight: 500,
                 padding: '4px 12px',
@@ -185,7 +185,7 @@ const ModelManager: React.FC = () => {
                 alignItems: 'center',
                 gap: '4px'
               }}>
-                <Star size={12} strokeWidth={1.5} fill="#8b7355" />
+                <Star size={12} strokeWidth={1.5} fill="rgba(0, 0, 0, 0.65)" />
                 {t('pages.modelManager.titleModel', { name: titleGenerationModel })}
               </AntTag>
             )}
@@ -196,26 +196,26 @@ const ModelManager: React.FC = () => {
             <Input
               placeholder={t('pages.modelManager.searchPlaceholder')}
               allowClear
-              prefix={<SearchIcon size={16} strokeWidth={1.5} style={{ color: '#8b7355', marginRight: '4px' }} />}
+              prefix={<SearchIcon size={16} strokeWidth={1.5} style={{ color: 'rgba(0, 0, 0, 0.65)', marginRight: '4px' }} />}
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
               style={{
                 width: 280,
                 borderRadius: '8px',
-                border: '1px solid rgba(139, 115, 85, 0.2)',
+                border: '1px solid rgba(24, 144, 255, 0.2)',
                 background: 'rgba(255, 255, 255, 0.85)',
-                boxShadow: '0 1px 3px rgba(139, 115, 85, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
+                boxShadow: '0 1px 3px rgba(24, 144, 255, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
                 fontSize: '14px',
                 color: '#2d2d2d',
                 letterSpacing: '0.3px'
               }}
               onFocus={(e) => {
-                e.target.style.borderColor = '#b85845';
-                e.target.style.boxShadow = '0 0 0 3px rgba(184, 88, 69, 0.08), 0 1px 3px rgba(139, 115, 85, 0.08)';
+                e.target.style.borderColor = '#1890ff';
+                e.target.style.boxShadow = '0 0 0 3px rgba(24, 144, 255, 0.08), 0 1px 3px rgba(24, 144, 255, 0.08)';
               }}
               onBlur={(e) => {
-                e.target.style.borderColor = 'rgba(139, 115, 85, 0.2)';
-                e.target.style.boxShadow = '0 1px 3px rgba(139, 115, 85, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6)';
+                e.target.style.borderColor = 'rgba(24, 144, 255, 0.2)';
+                e.target.style.boxShadow = '0 1px 3px rgba(24, 144, 255, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6)';
               }}
             />
             <Button
@@ -223,9 +223,9 @@ const ModelManager: React.FC = () => {
               onClick={() => setTitleModelModalVisible(true)}
               style={{
                 borderRadius: '6px',
-                border: '1px solid rgba(139, 115, 85, 0.2)',
+                border: '1px solid rgba(24, 144, 255, 0.2)',
                 background: 'rgba(255, 255, 255, 0.85)',
-                color: '#8b7355',
+                color: 'rgba(0, 0, 0, 0.65)',
                 fontWeight: 500,
                 fontSize: '14px',
                 letterSpacing: '0.3px',
@@ -242,14 +242,14 @@ const ModelManager: React.FC = () => {
               icon={<Plus size={16} strokeWidth={1.5} />}
               onClick={showAddModal}
               style={{
-                background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+                background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
                 border: 'none',
                 borderRadius: '6px',
                 color: '#fff',
                 fontWeight: 500,
                 fontSize: '14px',
                 letterSpacing: '0.3px',
-                boxShadow: '0 2px 6px rgba(184, 88, 69, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 2px 6px rgba(24, 144, 255, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '6px',
@@ -287,13 +287,13 @@ const ModelManager: React.FC = () => {
             <Card
               style={{
                 borderRadius: '8px',
-                border: '1px solid rgba(139, 115, 85, 0.15)',
-                background: 'rgba(250, 248, 245, 0.6)',
+                border: '1px solid rgba(24, 144, 255, 0.15)',
+                background: 'rgba(230, 244, 255, 0.6)',
                 textAlign: 'center',
                 padding: '40px 20px'
               }}
             >
-              <Server size={48} strokeWidth={1.5} style={{ color: 'rgba(139, 115, 85, 0.3)', margin: '0 auto 16px' }} />
+              <Server size={48} strokeWidth={1.5} style={{ color: 'rgba(24, 144, 255, 0.3)', margin: '0 auto 16px' }} />
               <Text style={{
                 fontSize: '14px',
                 color: 'rgba(45, 45, 45, 0.65)',
@@ -304,7 +304,7 @@ const ModelManager: React.FC = () => {
               </Text>
               <Button
                 style={{
-                  background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+                  background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
                   border: 'none',
                   borderRadius: '6px',
                   color: '#fff',
@@ -312,7 +312,7 @@ const ModelManager: React.FC = () => {
                   height: 'auto',
                   fontWeight: 500,
                   letterSpacing: '0.3px',
-                  boxShadow: '0 2px 6px rgba(184, 88, 69, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                  boxShadow: '0 2px 6px rgba(24, 144, 255, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '6px'
@@ -320,11 +320,11 @@ const ModelManager: React.FC = () => {
                 onClick={showAddModal}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(184, 88, 69, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.3)';
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(24, 144, 255, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.3)';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 2px 6px rgba(184, 88, 69, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
+                  e.currentTarget.style.boxShadow = '0 2px 6px rgba(24, 144, 255, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
                 }}
               >
                 <Plus size={16} strokeWidth={1.5} />
@@ -340,9 +340,9 @@ const ModelManager: React.FC = () => {
                 hoverable
                 style={{
                   borderRadius: '6px',
-                  border: '1px solid rgba(139, 115, 85, 0.15)',
+                  border: '1px solid rgba(24, 144, 255, 0.15)',
                   background: 'rgba(255, 255, 255, 0.85)',
-                  boxShadow: '0 1px 3px rgba(139, 115, 85, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
+                  boxShadow: '0 1px 3px rgba(24, 144, 255, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
                   transition: 'all 0.3s cubic-bezier(0.23, 1, 0.32, 1)',
                   height: '100%',
                   display: 'flex',
@@ -351,13 +351,13 @@ const ModelManager: React.FC = () => {
                 styles={{ body: { padding: '16px 20px', flex: 1, display: 'flex', flexDirection: 'column' } }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(184, 88, 69, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9)';
-                  e.currentTarget.style.borderColor = 'rgba(184, 88, 69, 0.3)';
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(24, 144, 255, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9)';
+                  e.currentTarget.style.borderColor = 'rgba(24, 144, 255, 0.3)';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 1px 3px rgba(139, 115, 85, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)';
-                  e.currentTarget.style.borderColor = 'rgba(139, 115, 85, 0.15)';
+                  e.currentTarget.style.boxShadow = '0 1px 3px rgba(24, 144, 255, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)';
+                  e.currentTarget.style.borderColor = 'rgba(24, 144, 255, 0.15)';
                 }}
               >
                 {/* 标题区 */}
@@ -367,12 +367,12 @@ const ModelManager: React.FC = () => {
                   gap: '8px',
                   marginBottom: '12px',
                   paddingBottom: '12px',
-                  borderBottom: '1px solid rgba(139, 115, 85, 0.1)'
+                  borderBottom: '1px solid rgba(24, 144, 255, 0.1)'
                 }}>
                   {model.name === titleGenerationModel && (
-                    <Star size={16} strokeWidth={1.5} style={{ color: '#b85845' }} fill="#b85845" />
+                    <Star size={16} strokeWidth={1.5} style={{ color: '#1890ff' }} fill="#1890ff" />
                   )}
-                  <Server size={16} strokeWidth={1.5} style={{ color: '#8b7355' }} />
+                  <Server size={16} strokeWidth={1.5} style={{ color: 'rgba(0, 0, 0, 0.65)' }} />
                   {/* 模型名称 */}
                   <Text
                     style={{
@@ -398,8 +398,8 @@ const ModelManager: React.FC = () => {
                       fontSize: '10px',
                       borderRadius: '4px',
                       fontWeight: 500,
-                      background: 'rgba(139, 115, 85, 0.1)',
-                      color: '#8b7355',
+                      background: 'rgba(24, 144, 255, 0.1)',
+                      color: 'rgba(0, 0, 0, 0.65)',
                       textTransform: 'uppercase',
                       flexShrink: 0
                     }}
@@ -438,9 +438,9 @@ const ModelManager: React.FC = () => {
                         }
                       };
                       const cfg = statusStyles[status] || {
-                        color: '#8b7355',
-                        bg: 'rgba(139, 115, 85, 0.08)',
-                        border: '1px solid rgba(139, 115, 85, 0.2)',
+                        color: 'rgba(0, 0, 0, 0.65)',
+                        bg: 'rgba(24, 144, 255, 0.08)',
+                        border: '1px solid rgba(24, 144, 255, 0.2)',
                         text: status
                       };
                       return (
@@ -474,7 +474,7 @@ const ModelManager: React.FC = () => {
                     gap: '8px',
                     marginBottom: '8px'
                   }}>
-                    <Globe size={14} strokeWidth={1.5} style={{ color: '#8b7355', marginTop: '2px', flexShrink: 0 }} />
+                    <Globe size={14} strokeWidth={1.5} style={{ color: 'rgba(0, 0, 0, 0.65)', marginTop: '2px', flexShrink: 0 }} />
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <Text style={{
                         fontSize: '12px',
@@ -499,7 +499,7 @@ const ModelManager: React.FC = () => {
                     alignItems: 'flex-start',
                     gap: '8px'
                   }}>
-                    <Tag size={14} strokeWidth={1.5} style={{ color: '#8b7355', marginTop: '2px', flexShrink: 0 }} />
+                    <Tag size={14} strokeWidth={1.5} style={{ color: 'rgba(0, 0, 0, 0.65)', marginTop: '2px', flexShrink: 0 }} />
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <Text style={{
                         fontSize: '12px',
@@ -525,14 +525,14 @@ const ModelManager: React.FC = () => {
                   display: 'flex',
                   gap: '6px',
                   paddingTop: '12px',
-                  borderTop: '1px solid rgba(139, 115, 85, 0.1)'
+                  borderTop: '1px solid rgba(24, 144, 255, 0.1)'
                 }}>
                   <div
                     style={{
                       flex: 1,
                       padding: '6px',
                       borderRadius: '4px',
-                      color: '#8b7355',
+                      color: 'rgba(0, 0, 0, 0.65)',
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
@@ -544,11 +544,11 @@ const ModelManager: React.FC = () => {
                     }}
                     onClick={() => showEditModal(model)}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.color = '#b85845';
-                      e.currentTarget.style.background = 'rgba(184, 88, 69, 0.08)';
+                      e.currentTarget.style.color = '#1890ff';
+                      e.currentTarget.style.background = 'rgba(24, 144, 255, 0.08)';
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.color = '#8b7355';
+                      e.currentTarget.style.color = 'rgba(0, 0, 0, 0.65)';
                       e.currentTarget.style.background = 'transparent';
                     }}
                   >
@@ -563,25 +563,25 @@ const ModelManager: React.FC = () => {
                     cancelText={t('common.cancel')}
                     okButtonProps={{
                       style: {
-                        background: 'linear-gradient(135deg, #b85845 0%, #a0826d 100%)',
+                        background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
                         border: 'none',
                         borderRadius: '6px',
                         color: '#fff',
                         fontWeight: 500,
-                        boxShadow: '0 2px 6px rgba(184, 88, 69, 0.25)'
+                        boxShadow: '0 2px 6px rgba(24, 144, 255, 0.25)'
                       }
                     }}
                     cancelButtonProps={{
                       style: {
                         borderRadius: '6px',
-                        border: '1px solid rgba(139, 115, 85, 0.2)',
-                        color: '#8b7355',
+                        border: '1px solid rgba(24, 144, 255, 0.2)',
+                        color: 'rgba(0, 0, 0, 0.65)',
                         fontWeight: 500
                       }
                     }}
                     overlayStyle={{
                       borderRadius: '8px',
-                      boxShadow: '0 4px 12px rgba(139, 115, 85, 0.2)'
+                      boxShadow: '0 4px 12px rgba(24, 144, 255, 0.2)'
                     }}
                   >
                     <Tooltip title={t('common.delete')}>
@@ -590,7 +590,7 @@ const ModelManager: React.FC = () => {
                           flex: 1,
                           padding: '6px',
                           borderRadius: '4px',
-                          color: '#8b7355',
+                          color: 'rgba(0, 0, 0, 0.65)',
                           cursor: 'pointer',
                           display: 'flex',
                           alignItems: 'center',
@@ -601,11 +601,11 @@ const ModelManager: React.FC = () => {
                           background: 'transparent'
                         }}
                         onMouseEnter={(e) => {
-                          e.currentTarget.style.color = '#b85845';
-                          e.currentTarget.style.background = 'rgba(184, 88, 69, 0.08)';
+                          e.currentTarget.style.color = '#1890ff';
+                          e.currentTarget.style.background = 'rgba(24, 144, 255, 0.08)';
                         }}
                         onMouseLeave={(e) => {
-                          e.currentTarget.style.color = '#8b7355';
+                          e.currentTarget.style.color = 'rgba(0, 0, 0, 0.65)';
                           e.currentTarget.style.background = 'transparent';
                         }}
                       >
@@ -642,9 +642,9 @@ const ModelManager: React.FC = () => {
           <Card
             style={{
               borderRadius: '8px',
-              border: '1px solid rgba(139, 115, 85, 0.15)',
+              border: '1px solid rgba(24, 144, 255, 0.15)',
               background: 'rgba(255, 255, 255, 0.95)',
-              boxShadow: '0 8px 24px rgba(139, 115, 85, 0.15)',
+              boxShadow: '0 8px 24px rgba(24, 144, 255, 0.15)',
               minWidth: '480px',
               maxWidth: '600px'
             }}
@@ -653,7 +653,7 @@ const ModelManager: React.FC = () => {
           >
             <div style={{ marginBottom: '20px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                <Star size={18} strokeWidth={1.5} style={{ color: '#b85845' }} />
+                <Star size={18} strokeWidth={1.5} style={{ color: '#1890ff' }} />
                 <Text style={{
                   fontSize: '16px',
                   fontWeight: 500,
@@ -696,9 +696,9 @@ const ModelManager: React.FC = () => {
               <Button
                 style={{
                   borderRadius: '6px',
-                  border: '1px solid rgba(139, 115, 85, 0.2)',
+                  border: '1px solid rgba(24, 144, 255, 0.2)',
                   background: 'rgba(255, 255, 255, 0.85)',
-                  color: '#8b7355',
+                  color: 'rgba(0, 0, 0, 0.65)',
                   padding: '6px 16px',
                   height: 'auto'
                 }}
