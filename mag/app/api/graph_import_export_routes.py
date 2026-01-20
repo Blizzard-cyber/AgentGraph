@@ -17,7 +17,7 @@ from app.services.model.model_service import model_service
 from app.services.graph.graph_service import graph_service
 from app.templates.flow_diagram import FlowDiagram
 from app.models.graph_schema import GraphFilePath
-from app.auth.dependencies import get_current_user
+from app.auth.dependencies import get_current_user_hybrid
 from app.models.auth_schema import CurrentUser
 
 logger = logging.getLogger(__name__)
@@ -26,7 +26,7 @@ router = APIRouter(tags=["graph"])
 
 # ======= 图导入/导出功能 =======
 @router.post("/graphs/import", response_model=Dict[str, Any])
-async def import_graph(data: GraphFilePath, current_user: CurrentUser = Depends(get_current_user)):
+async def import_graph(data: GraphFilePath, current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """从JSON文件导入图配置"""
     try:
         file_path = Path(data.file_path)
@@ -119,7 +119,7 @@ async def import_graph(data: GraphFilePath, current_user: CurrentUser = Depends(
 
 
 @router.post("/graphs/import_package", response_model=Dict[str, Any])
-async def import_graph_package(data: GraphFilePath, current_user: CurrentUser = Depends(get_current_user)):
+async def import_graph_package(data: GraphFilePath, current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """从ZIP包导入图配置及相关组件"""
     try:
         file_path = Path(data.file_path)
@@ -290,7 +290,7 @@ async def import_graph_package(data: GraphFilePath, current_user: CurrentUser = 
         )
 
 @router.post("/graphs/import_from_file", response_model=Dict[str, Any])
-async def import_graph_from_file(file: UploadFile = File(...), current_user: CurrentUser = Depends(get_current_user)):
+async def import_graph_from_file(file: UploadFile = File(...), current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """从上传的JSON文件导入图配置"""
     try:
         # 验证文件类型
@@ -329,7 +329,7 @@ async def import_graph_from_file(file: UploadFile = File(...), current_user: Cur
         )
 
 @router.post("/graphs/import_package_from_file", response_model=Dict[str, Any])
-async def import_graph_package_from_file(file: UploadFile = File(...), current_user: CurrentUser = Depends(get_current_user)):
+async def import_graph_package_from_file(file: UploadFile = File(...), current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """从上传的ZIP包导入图配置及相关组件"""
     try:
         # 验证文件类型
@@ -369,7 +369,7 @@ async def import_graph_package_from_file(file: UploadFile = File(...), current_u
 
 
 @router.get("/graphs/{graph_name}/export")
-async def export_graph(graph_name: str, background_tasks: BackgroundTasks, current_user: CurrentUser = Depends(get_current_user)):
+async def export_graph(graph_name: str, background_tasks: BackgroundTasks, current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """导出图配置为ZIP文件"""
     try:
         graph_doc = await graph_service.get_graph(graph_name, user_id=current_user.user_id)

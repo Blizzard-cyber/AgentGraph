@@ -12,7 +12,7 @@ from fastapi.responses import Response, FileResponse
 from urllib.parse import unquote
 
 from app.models.auth_schema import CurrentUser
-from app.auth.dependencies import get_current_user
+from app.auth.dependencies import get_current_user_hybrid
 from app.models.conversation_file_schema import (
     FileListResponse,
     FileDetailResponse,
@@ -36,7 +36,7 @@ router = APIRouter(
 @router.get("", response_model=FileListResponse)
 async def list_files(
     conversation_id: str = Path(..., description="会话ID"),
-    current_user: CurrentUser = Depends(get_current_user)
+    current_user: CurrentUser = Depends(get_current_user_hybrid)
 ):
     """
     获取会话所有文件列表
@@ -65,7 +65,7 @@ async def list_files(
 async def create_file(
     conversation_id: str = Path(..., description="会话ID"),
     request: CreateFileRequest = ...,
-    current_user: CurrentUser = Depends(get_current_user)
+    current_user: CurrentUser = Depends(get_current_user_hybrid)
 ):
     """
     创建新文件
@@ -99,7 +99,7 @@ async def create_file(
 async def download_all_files(
     conversation_id: str = Path(..., description="会话ID"),
     background_tasks: BackgroundTasks = ...,
-    current_user: CurrentUser = Depends(get_current_user)
+    current_user: CurrentUser = Depends(get_current_user_hybrid)
 ):
     """
     打包下载所有文件
@@ -160,7 +160,7 @@ async def download_all_files(
 async def download_file(
     conversation_id: str = Path(..., description="会话ID"),
     filename: str = Path(..., description="文件名（含路径）"),
-    current_user: CurrentUser = Depends(get_current_user)
+    current_user: CurrentUser = Depends(get_current_user_hybrid)
 ):
     """
     下载单个文件
@@ -203,7 +203,7 @@ async def get_file_version(
     conversation_id: str = Path(..., description="会话ID"),
     filename: str = Path(..., description="文件名（含路径）"),
     version_id: str = Path(..., description="版本ID"),
-    current_user: CurrentUser = Depends(get_current_user)
+    current_user: CurrentUser = Depends(get_current_user_hybrid)
 ):
     """
     获取文件特定版本
@@ -237,7 +237,7 @@ async def get_file_version(
 async def get_file(
     conversation_id: str = Path(..., description="会话ID"),
     filename: str = Path(..., description="文件名（含路径）"),
-    current_user: CurrentUser = Depends(get_current_user)
+    current_user: CurrentUser = Depends(get_current_user_hybrid)
 ):
     """
     获取文件详情
@@ -271,7 +271,7 @@ async def save_file(
     conversation_id: str = Path(..., description="会话ID"),
     filename: str = Path(..., description="文件名（含路径）"),
     request: SaveFileRequest = ...,
-    current_user: CurrentUser = Depends(get_current_user)
+    current_user: CurrentUser = Depends(get_current_user_hybrid)
 ):
     """
     保存文件
@@ -308,7 +308,7 @@ async def save_file(
 async def delete_file(
     conversation_id: str = Path(..., description="会话ID"),
     filename: str = Path(..., description="文件名（含路径）"),
-    current_user: CurrentUser = Depends(get_current_user)
+    current_user: CurrentUser = Depends(get_current_user_hybrid)
 ):
     """
     删除文件

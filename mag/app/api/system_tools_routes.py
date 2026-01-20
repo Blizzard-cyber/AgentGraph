@@ -13,7 +13,7 @@ from app.models.system_tools_schema import (
     SystemToolDetailResponse,
     ToolCategory
 )
-from app.auth.dependencies import get_current_user
+from app.auth.dependencies import get_current_user_hybrid
 from app.models.auth_schema import CurrentUser
 
 logger = logging.getLogger(__name__)
@@ -22,7 +22,7 @@ router = APIRouter(prefix="/system-tools", tags=["system_tools"])
 
 
 @router.get("/list", response_model=SystemToolListResponse)
-async def list_system_tools(current_user: CurrentUser = Depends(get_current_user)):
+async def list_system_tools(current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """列出所有系统工具（按类别分组，根据用户语言返回对应描述）"""
     try:
         # 获取用户语言并设置到上下文
@@ -68,7 +68,7 @@ async def list_system_tools(current_user: CurrentUser = Depends(get_current_user
 @router.get("/{tool_name}", response_model=SystemToolDetailResponse)
 async def get_system_tool_detail(
     tool_name: str,
-    current_user: CurrentUser = Depends(get_current_user)
+    current_user: CurrentUser = Depends(get_current_user_hybrid)
 ):
     """获取系统工具详情（根据用户语言返回对应描述）"""
     try:

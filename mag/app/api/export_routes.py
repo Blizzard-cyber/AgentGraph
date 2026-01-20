@@ -8,7 +8,7 @@ from app.models.export_schema import (
     ExportRequest, ExportResponse, PreviewResponse,
     DeleteResponse, ListResponse
 )
-from app.auth.dependencies import get_current_user
+from app.auth.dependencies import get_current_user_hybrid
 from app.models.auth_schema import CurrentUser
 
 logger = logging.getLogger(__name__)
@@ -17,7 +17,7 @@ router = APIRouter(prefix="/export", tags=["export"])
 
 
 @router.post("/conversations", response_model=ExportResponse)
-async def export_conversations(request: ExportRequest, current_user: CurrentUser = Depends(get_current_user)):
+async def export_conversations(request: ExportRequest, current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """导出对话数据"""
     try:
         result = await export_service.export_conversations(
@@ -48,7 +48,7 @@ async def export_conversations(request: ExportRequest, current_user: CurrentUser
 
 
 @router.get("/download/{dataset_name}")
-async def download_dataset(dataset_name: str, data_format: str, background_tasks: BackgroundTasks, current_user: CurrentUser = Depends(get_current_user)):
+async def download_dataset(dataset_name: str, data_format: str, background_tasks: BackgroundTasks, current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """下载数据集"""
     try:
         zip_path = await export_service.download_dataset(dataset_name, data_format, user_id=current_user.user_id)
@@ -81,7 +81,7 @@ async def download_dataset(dataset_name: str, data_format: str, background_tasks
 
 
 @router.get("/preview/{dataset_name}", response_model=PreviewResponse)
-async def preview_dataset(dataset_name: str, data_format: str = "standard", current_user: CurrentUser = Depends(get_current_user)):
+async def preview_dataset(dataset_name: str, data_format: str = "standard", current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """预览数据集"""
     try:
         result = await export_service.preview_dataset(dataset_name, data_format, user_id=current_user.user_id)
@@ -105,7 +105,7 @@ async def preview_dataset(dataset_name: str, data_format: str = "standard", curr
 
 
 @router.delete("/{dataset_name}", response_model=DeleteResponse)
-async def delete_dataset(dataset_name: str, data_format: str = "standard", current_user: CurrentUser = Depends(get_current_user)):
+async def delete_dataset(dataset_name: str, data_format: str = "standard", current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """删除数据集"""
     try:
         result = await export_service.delete_dataset(dataset_name, data_format, user_id=current_user.user_id)
@@ -129,7 +129,7 @@ async def delete_dataset(dataset_name: str, data_format: str = "standard", curre
 
 
 @router.get("/list", response_model=ListResponse)
-async def list_datasets(current_user: CurrentUser = Depends(get_current_user)):
+async def list_datasets(current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """列出所有数据集"""
     try:
         result = await export_service.list_datasets(user_id=current_user.user_id)

@@ -5,6 +5,7 @@ JWT Token生成和验证模块
 - Access Token: 短期访问令牌（15分钟）
 - Refresh Token: 长期刷新令牌（7天）
 """
+
 from datetime import datetime, timedelta
 from typing import Optional, Dict, Any, Tuple
 from jose import JWTError, jwt
@@ -36,13 +37,17 @@ def create_tokens(user_id: str, role: str) -> Tuple[str, str, str, datetime]:
         "sub": user_id,
         "role": role,
         "type": "access",  # 标记Token类型
+        "iss": "mag-backend",  # 签发者，需要与Higress网关配置的issuer匹配
         "iat": int(now.timestamp()),
-        "exp": int(access_expire.timestamp())
+        "exp": int(access_expire.timestamp()),
     }
+    # JWT Header（包含kid以匹配JWKS配置）
+    access_headers = {"kid": "mag-key-1"}
     access_token = jwt.encode(
         access_payload,
         settings.JWT_SECRET_KEY,
-        algorithm=settings.JWT_ALGORITHM
+        algorithm=settings.JWT_ALGORITHM,
+        headers=access_headers,
     )
 
     # 2. 创建 Refresh Token (7天)
@@ -53,19 +58,25 @@ def create_tokens(user_id: str, role: str) -> Tuple[str, str, str, datetime]:
         "sub": user_id,
         "type": "refresh",  # 标记Token类型
         "jti": refresh_token_id,  # Token唯一ID（用于数据库存储和撤销）
+        "iss": "mag-backend",  # 签发者，需要与Higress网关配置的issuer匹配
         "iat": int(now.timestamp()),
-        "exp": int(refresh_expire.timestamp())
+        "exp": int(refresh_expire.timestamp()),
     }
+    # JWT Header（包含kid）
+    refresh_headers = {"kid": "mag-key-1"}
     refresh_token = jwt.encode(
         refresh_payload,
         settings.JWT_SECRET_KEY,
-        algorithm=settings.JWT_ALGORITHM
+        algorithm=settings.JWT_ALGORITHM,
+        headers=refresh_headers,
     )
 
     return access_token, refresh_token, refresh_token_id, refresh_expire
 
 
-def create_access_token(user_id: str, role: str, expires_delta: Optional[timedelta] = None) -> str:
+def create_access_token(
+    user_id: str, role: str, expires_delta: Optional[timedelta] = None
+) -> str:
     """
     创建JWT访问令牌（兼容旧接口）
 
@@ -90,15 +101,20 @@ def create_access_token(user_id: str, role: str, expires_delta: Optional[timedel
     payload: Dict[str, Any] = {
         "sub": user_id,
         "role": role,
+        "iss": "mag-backend",  # 签发者
         "type": "access",
         "iat": int(now.timestamp()),
-        "exp": int(expire.timestamp())
+        "exp": int(expire.timestamp()),
     }
+
+    # JWT Header（包含kid）
+    headers = {"kid": "mag-key-1"}
 
     encoded_jwt = jwt.encode(
         payload,
         settings.JWT_SECRET_KEY,
-        algorithm=settings.JWT_ALGORITHM
+        algorithm=settings.JWT_ALGORITHM,
+        headers=headers,
     )
 
     return encoded_jwt
@@ -150,9 +166,7 @@ def verify_access_token(token: str) -> Dict[str, Any]:
     try:
         # 解码JWT token
         payload = jwt.decode(
-            token,
-            settings.JWT_SECRET_KEY,
-            algorithms=[settings.JWT_ALGORITHM]
+            token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM]
         )
 
         # 验证Token类型
@@ -209,9 +223,7 @@ def verify_refresh_token(token: str) -> Dict[str, Any]:
     try:
         # 解码JWT token
         payload = jwt.decode(
-            token,
-            settings.JWT_SECRET_KEY,
-            algorithms=[settings.JWT_ALGORITHM]
+            token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM]
         )
 
         # 验证Token类型
@@ -255,8 +267,7 @@ def decode_token_without_verification(token: str) -> Optional[Dict[str, Any]]:
     """
     try:
         payload = jwt.decode(
-            token,
-            options={"verify_signature": False, "verify_exp": False}
+            token, options={"verify_signature": False, "verify_exp": False}
         )
         return payload
     except JWTError:

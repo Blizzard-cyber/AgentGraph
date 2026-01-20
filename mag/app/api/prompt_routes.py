@@ -12,7 +12,7 @@ from app.models.prompt_schema import (
     PromptExportRequest, PromptBatchDeleteRequest, PromptResponse
 )
 from app.services.prompt.prompt_service import prompt_service
-from app.auth.dependencies import get_current_user
+from app.auth.dependencies import get_current_user_hybrid
 from app.models.auth_schema import CurrentUser
 
 logger = logging.getLogger(__name__)
@@ -21,7 +21,7 @@ router = APIRouter(prefix="/prompt", tags=["prompt-registry"])
 
 
 @router.post("/create", response_model=PromptResponse, summary="创建提示词")
-async def create_prompt(prompt_data: PromptCreate, current_user: CurrentUser = Depends(get_current_user)):
+async def create_prompt(prompt_data: PromptCreate, current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """
     创建新的提示词
 
@@ -51,7 +51,7 @@ async def create_prompt(prompt_data: PromptCreate, current_user: CurrentUser = D
 
 
 @router.get("/content/{name}", response_model=PromptResponse, summary="获取提示词内容")
-async def get_prompt_content(name: str, current_user: CurrentUser = Depends(get_current_user)):
+async def get_prompt_content(name: str, current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """
     获取提示词的内容
 
@@ -79,7 +79,7 @@ async def get_prompt_content(name: str, current_user: CurrentUser = Depends(get_
 
 
 @router.put("/update/{name}", response_model=PromptResponse, summary="更新提示词")
-async def update_prompt(name: str, update_data: PromptUpdate, current_user: CurrentUser = Depends(get_current_user)):
+async def update_prompt(name: str, update_data: PromptUpdate, current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """
     更新指定提示词
 
@@ -109,7 +109,7 @@ async def update_prompt(name: str, update_data: PromptUpdate, current_user: Curr
 
 
 @router.delete("/delete/{name}", response_model=PromptResponse, summary="删除提示词")
-async def delete_prompt(name: str, current_user: CurrentUser = Depends(get_current_user)):
+async def delete_prompt(name: str, current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """
     删除指定提示词
 
@@ -137,7 +137,7 @@ async def delete_prompt(name: str, current_user: CurrentUser = Depends(get_curre
 
 
 @router.get("/list", response_model=PromptResponse, summary="获取提示词列表")
-async def list_prompts(current_user: CurrentUser = Depends(get_current_user)):
+async def list_prompts(current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """
     获取提示词列表
     """
@@ -156,7 +156,7 @@ async def list_prompts(current_user: CurrentUser = Depends(get_current_user)):
 
 
 @router.post("/batch-delete", response_model=PromptResponse, summary="批量删除提示词")
-async def batch_delete_prompts(delete_request: PromptBatchDeleteRequest, current_user: CurrentUser = Depends(get_current_user)):
+async def batch_delete_prompts(delete_request: PromptBatchDeleteRequest, current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """
     批量删除提示词
 
@@ -188,7 +188,7 @@ async def import_prompt_by_file(
     file: UploadFile = File(..., description="要上传的 Markdown 文件"),
     name: Optional[str] = Form(None, description="提示词名称（必须）"),
     category: Optional[str] = Form(None, description="提示词分类（必须）"),
-    current_user: CurrentUser = Depends(get_current_user)
+    current_user: CurrentUser = Depends(get_current_user_hybrid)
 ):
     """
     通过文件上传导入提示词
@@ -220,7 +220,7 @@ async def import_prompt_by_file(
 
 
 @router.post("/export", summary="批量导出提示词")
-async def export_prompts(export_request: PromptExportRequest, current_user: CurrentUser = Depends(get_current_user)):
+async def export_prompts(export_request: PromptExportRequest, current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """
     批量导出提示词为 ZIP 压缩包
 
