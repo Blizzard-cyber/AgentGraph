@@ -14,7 +14,7 @@ from app.models.auth_schema import (
     UserProfile,
     MessageResponse
 )
-from app.auth.dependencies import get_current_user
+from app.auth.dependencies import get_current_user_hybrid
 from app.auth.jwt import create_tokens, verify_refresh_token
 from app.services.user.user_service import UserService
 from app.infrastructure.database.mongodb import mongodb_client
@@ -162,7 +162,7 @@ async def login(request: UserLoginRequest):
 
 
 @router.get("/me", response_model=UserProfile)
-async def get_current_user_info(current_user = Depends(get_current_user)):
+async def get_current_user_info(current_user = Depends(get_current_user_hybrid)):
     """
     获取当前用户信息
 
@@ -206,7 +206,7 @@ async def get_current_user_info(current_user = Depends(get_current_user)):
 
 
 @router.post("/logout", response_model=MessageResponse)
-async def logout(current_user = Depends(get_current_user)):
+async def logout(current_user = Depends(get_current_user_hybrid)):
     """
     用户登出
 

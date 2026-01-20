@@ -9,7 +9,7 @@ from app.models.conversation_schema import (
     ConversationCompactRequest, ConversationCompactResponse,
     TokenUsage, UpdateConversationStatusRequest, UpdateInputConfigRequest
 )
-from app.auth.dependencies import get_current_user
+from app.auth.dependencies import get_current_user_hybrid
 from app.models.auth_schema import CurrentUser
 
 logger = logging.getLogger(__name__)
@@ -18,7 +18,7 @@ router = APIRouter(tags=["conversations"])
 
 
 @router.get("/conversations", response_model=ConversationListResponse)
-async def get_conversations_list(current_user: CurrentUser = Depends(get_current_user)):
+async def get_conversations_list(current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """获取对话列表（返回所有类型的对话）"""
     try:
         user_id = current_user.user_id
@@ -84,7 +84,7 @@ async def get_conversations_list(current_user: CurrentUser = Depends(get_current
             response_model_exclude_none=True)
 async def get_conversation_detail(
         conversation_id: str,
-        current_user: CurrentUser = Depends(get_current_user)
+        current_user: CurrentUser = Depends(get_current_user_hybrid)
 ):
     """获取对话完整内容（支持所有类型的对话）"""
     try:
@@ -151,7 +151,7 @@ async def get_conversation_detail(
 async def update_conversation_status(
         conversation_id: str,
         request: UpdateConversationStatusRequest,
-        current_user: CurrentUser = Depends(get_current_user)
+        current_user: CurrentUser = Depends(get_current_user_hybrid)
 ):
     """更新对话状态（统一接口：活跃/软删除/收藏）"""
     try:
@@ -210,7 +210,7 @@ async def update_conversation_status(
 @router.delete("/conversations/{conversation_id}/permanent")
 async def permanently_delete_conversation(
         conversation_id: str,
-        current_user: CurrentUser = Depends(get_current_user)
+        current_user: CurrentUser = Depends(get_current_user_hybrid)
 ):
     """永久删除对话"""
     try:
@@ -258,7 +258,7 @@ async def permanently_delete_conversation(
 async def update_conversation_title(
         conversation_id: str,
         request: UpdateConversationTitleRequest,
-        current_user: CurrentUser = Depends(get_current_user)
+        current_user: CurrentUser = Depends(get_current_user_hybrid)
 ):
     """更新对话标题"""
     try:
@@ -318,7 +318,7 @@ async def update_conversation_title(
 async def update_conversation_tags(
         conversation_id: str,
         request: UpdateConversationTagsRequest,
-        current_user: CurrentUser = Depends(get_current_user)
+        current_user: CurrentUser = Depends(get_current_user_hybrid)
 ):
     """更新对话标签"""
     try:
@@ -371,7 +371,7 @@ async def update_conversation_tags(
 async def update_input_config(
         conversation_id: str,
         request: UpdateInputConfigRequest,
-        current_user: CurrentUser = Depends(get_current_user)
+        current_user: CurrentUser = Depends(get_current_user_hybrid)
 ):
     """更新对话的输入配置"""
     try:
@@ -424,7 +424,7 @@ async def update_input_config(
 async def compact_conversation(
         conversation_id: str,
         request: ConversationCompactRequest,
-        current_user: CurrentUser = Depends(get_current_user)
+        current_user: CurrentUser = Depends(get_current_user_hybrid)
 ):
     """
     压缩对话内容

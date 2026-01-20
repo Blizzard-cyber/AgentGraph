@@ -6,7 +6,7 @@ from app.models.preview_schema import (
     PreviewShareResponse,
     PreviewShareGetResponse
 )
-from app.auth.dependencies import get_current_user
+from app.auth.dependencies import get_current_user_hybrid
 from app.models.auth_schema import CurrentUser
 
 logger = logging.getLogger(__name__)
@@ -15,7 +15,7 @@ router = APIRouter(prefix="/preview", tags=["preview"])
 
 
 @router.post("/share", response_model=PreviewShareResponse)
-async def create_preview_share(request: PreviewShareRequest, current_user: CurrentUser = Depends(get_current_user)):
+async def create_preview_share(request: PreviewShareRequest, current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """创建预览短链并返回短链ID"""
     try:
         if not request.content.strip():

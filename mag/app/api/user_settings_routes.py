@@ -1,7 +1,7 @@
 import logging
 from fastapi import APIRouter, HTTPException, status, Depends
 
-from app.auth.dependencies import get_current_user
+from app.auth.dependencies import get_current_user_hybrid
 from app.models.auth_schema import MessageResponse
 from app.infrastructure.database.mongodb import mongodb_client
 from app.services.model.model_service import model_service
@@ -12,7 +12,7 @@ router = APIRouter(prefix="/user/settings", tags=["User Settings"])
 
 
 @router.get("/title-generation-model")
-async def get_title_generation_model(current_user = Depends(get_current_user)):
+async def get_title_generation_model(current_user = Depends(get_current_user_hybrid)):
     """
     获取用户配置的标题生成模型
     """
@@ -34,7 +34,7 @@ async def get_title_generation_model(current_user = Depends(get_current_user)):
 
 
 @router.post("/title-generation-model", response_model=MessageResponse)
-async def set_title_generation_model(model_name: str, current_user = Depends(get_current_user)):
+async def set_title_generation_model(model_name: str, current_user = Depends(get_current_user_hybrid)):
     """
     设置用户的标题生成模型
 
@@ -76,7 +76,7 @@ async def set_title_generation_model(model_name: str, current_user = Depends(get
 
 
 @router.get("/language")
-async def get_user_language(current_user = Depends(get_current_user)):
+async def get_user_language(current_user = Depends(get_current_user_hybrid)):
     """
     获取用户语言设置
     """
@@ -97,7 +97,7 @@ async def get_user_language(current_user = Depends(get_current_user)):
 
 
 @router.post("/language", response_model=MessageResponse)
-async def set_user_language(language: str, current_user = Depends(get_current_user)):
+async def set_user_language(language: str, current_user = Depends(get_current_user_hybrid)):
     """
     设置用户语言
 

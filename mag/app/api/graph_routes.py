@@ -8,7 +8,7 @@ from app.templates.flow_diagram import FlowDiagram
 from app.utils.sse_helper import SSEHelper
 from app.models.graph_schema import GraphConfig, GraphInput
 from app.infrastructure.database.mongodb import mongodb_client
-from app.auth.dependencies import get_current_user
+from app.auth.dependencies import get_current_user_hybrid
 from app.models.auth_schema import CurrentUser
 logger = logging.getLogger(__name__)
 
@@ -16,7 +16,7 @@ router = APIRouter(tags=["graph"])
 
 # ======= 图管理 =======
 @router.get("/graphs", response_model=List[str])
-async def get_graphs(current_user: CurrentUser = Depends(get_current_user)):
+async def get_graphs(current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """获取所有可用的图"""
     try:
         return await graph_service.list_graphs(user_id=current_user.user_id)
@@ -29,7 +29,7 @@ async def get_graphs(current_user: CurrentUser = Depends(get_current_user)):
 
 
 @router.get("/graphs/{graph_name}", response_model=Dict[str, Any])
-async def get_graph(graph_name: str, current_user: CurrentUser = Depends(get_current_user)):
+async def get_graph(graph_name: str, current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """获取特定图的配置"""
     try:
         graph_doc = await graph_service.get_graph(graph_name, user_id=current_user.user_id)
@@ -60,7 +60,7 @@ async def get_graph(graph_name: str, current_user: CurrentUser = Depends(get_cur
         )
         
 @router.get("/graphs/{graph_name}/readme", response_model=Dict[str, Any])
-async def get_graph_readme(graph_name: str, current_user: CurrentUser = Depends(get_current_user)):
+async def get_graph_readme(graph_name: str, current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """获取图的README文件内容"""
     try:
         graph_doc = await graph_service.get_graph(graph_name, user_id=current_user.user_id)
@@ -100,7 +100,7 @@ async def get_graph_readme(graph_name: str, current_user: CurrentUser = Depends(
 
 
 @router.post("/graphs", response_model=Dict[str, Any])
-async def create_graph(graph: GraphConfig, current_user: CurrentUser = Depends(get_current_user)):
+async def create_graph(graph: GraphConfig, current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """创建新图或更新现有图"""
     try:
         valid, error = await graph_service.validate_graph(graph.dict(), user_id=current_user.user_id)
@@ -158,7 +158,7 @@ async def create_graph(graph: GraphConfig, current_user: CurrentUser = Depends(g
 
 
 @router.delete("/graphs/{graph_name}", response_model=Dict[str, Any])
-async def delete_graph(graph_name: str, current_user: CurrentUser = Depends(get_current_user)):
+async def delete_graph(graph_name: str, current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """删除图"""
     try:
         graph_doc = await graph_service.get_graph(graph_name, user_id=current_user.user_id)
@@ -194,7 +194,7 @@ async def delete_graph(graph_name: str, current_user: CurrentUser = Depends(get_
 
 
 @router.put("/graphs/{old_name}/rename/{new_name}", response_model=Dict[str, Any])
-async def rename_graph(old_name: str, new_name: str, current_user: CurrentUser = Depends(get_current_user)):
+async def rename_graph(old_name: str, new_name: str, current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """重命名图"""
     try:
         graph_doc = await graph_service.get_graph(old_name, user_id=current_user.user_id)
@@ -237,7 +237,7 @@ async def rename_graph(old_name: str, new_name: str, current_user: CurrentUser =
 
 
 @router.get("/graphs/{graph_name}/generate_mcp", response_model=Dict[str, Any])
-async def generate_mcp_script(graph_name: str, current_user: CurrentUser = Depends(get_current_user)):
+async def generate_mcp_script(graph_name: str, current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """生成MCP服务器脚本"""
     try:
         graph_doc = await graph_service.get_graph(graph_name, user_id=current_user.user_id)
@@ -269,7 +269,7 @@ async def generate_mcp_script(graph_name: str, current_user: CurrentUser = Depen
 
 # ======= 图执行 =======
 @router.post("/graphs/execute")
-async def execute_graph(input_data: GraphInput, current_user: CurrentUser = Depends(get_current_user)):
+async def execute_graph(input_data: GraphInput, current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """执行图并返回流式结果或后台执行结果"""
     try:
         # 检查图是否存在
@@ -358,7 +358,7 @@ async def execute_graph(input_data: GraphInput, current_user: CurrentUser = Depe
 async def create_graph_version(
     graph_name: str,
     request: Dict[str, Any],
-    current_user: CurrentUser = Depends(get_current_user)
+    current_user: CurrentUser = Depends(get_current_user_hybrid)
 ):
     """
     为当前图配置创建版本快照
@@ -413,7 +413,7 @@ async def create_graph_version(
 
 
 @router.get("/graphs/{graph_name}/versions")
-async def get_graph_versions(graph_name: str, current_user: CurrentUser = Depends(get_current_user)):
+async def get_graph_versions(graph_name: str, current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """
     获取图的所有版本历史
 
@@ -434,7 +434,7 @@ async def get_graph_versions(graph_name: str, current_user: CurrentUser = Depend
 async def get_graph_version(
     graph_name: str,
     version_id: str,
-    current_user: CurrentUser = Depends(get_current_user)
+    current_user: CurrentUser = Depends(get_current_user_hybrid)
 ):
     """
     获取特定版本的配置
@@ -469,7 +469,7 @@ async def get_graph_version(
 async def delete_graph_version(
     graph_name: str,
     version_id: str,
-    current_user: CurrentUser = Depends(get_current_user)
+    current_user: CurrentUser = Depends(get_current_user_hybrid)
 ):
     """
     删除特定版本

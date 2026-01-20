@@ -10,7 +10,7 @@ from app.models.mcp_schema import (
     MCPToolRegistration, MCPToolTestRequest, MCPToolTestResponse,
     MCPConfigWithVersion, MCPServerAddRequest, MCPServerRemoveRequest
 )
-from app.auth.dependencies import get_current_user
+from app.auth.dependencies import get_current_user_hybrid
 from app.models.auth_schema import CurrentUser
 
 logger = logging.getLogger(__name__)
@@ -20,7 +20,7 @@ router = APIRouter(tags=["mcp"])
 # ======= MCP服务器管理 =======
 
 @router.get("/mcp/config")
-async def get_mcp_config(current_user: CurrentUser = Depends(get_current_user)):
+async def get_mcp_config(current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """获取团队MCP配置"""
     try:
         config_data = await mongodb_client.get_mcp_config()
@@ -40,7 +40,7 @@ async def get_mcp_config(current_user: CurrentUser = Depends(get_current_user)):
 
 
 @router.post("/mcp/config", response_model=Dict[str, Any])
-async def update_mcp_config(request: MCPConfigWithVersion, current_user: CurrentUser = Depends(get_current_user)):
+async def update_mcp_config(request: MCPConfigWithVersion, current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """更新团队MCP配置并重新连接服务器"""
     try:
         config_dict = request.config.dict()
@@ -99,7 +99,7 @@ async def update_mcp_config(request: MCPConfigWithVersion, current_user: Current
         )
 
 @router.get("/mcp/status", response_model=Dict[str, Dict[str, Any]])
-async def get_mcp_status(current_user: CurrentUser = Depends(get_current_user)):
+async def get_mcp_status(current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """获取团队MCP服务器状态"""
     try:
         return await mcp_service.get_server_status()
@@ -112,7 +112,7 @@ async def get_mcp_status(current_user: CurrentUser = Depends(get_current_user)):
 
 
 @router.post("/mcp/add", response_model=Dict[str, Any])
-async def add_mcp_server(request: MCPServerAddRequest, current_user: CurrentUser = Depends(get_current_user)):
+async def add_mcp_server(request: MCPServerAddRequest, current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """添加新的MCP服务器到团队配置"""
     try:
         from datetime import datetime
@@ -245,7 +245,7 @@ async def add_mcp_server(request: MCPServerAddRequest, current_user: CurrentUser
 
 
 @router.post("/mcp/remove", response_model=Dict[str, Any])
-async def remove_mcp_servers(request: MCPServerRemoveRequest, current_user: CurrentUser = Depends(get_current_user)):
+async def remove_mcp_servers(request: MCPServerRemoveRequest, current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """批量删除指定的MCP服务器（支持传统MCP和AI生成的MCP）- 需要权限检查"""
     try:
         server_names = request.server_names
@@ -439,7 +439,7 @@ async def remove_mcp_servers(request: MCPServerRemoveRequest, current_user: Curr
 
 
 @router.post("/mcp/connect/{server_name}", response_model=Dict[str, Any])
-async def connect_server(server_name: str, current_user: CurrentUser = Depends(get_current_user)):
+async def connect_server(server_name: str, current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """连接指定的MCP服务器，或者连接所有服务器（当server_name为'all'时）"""
     try:
         if server_name.lower() == "all":
@@ -465,7 +465,7 @@ async def connect_server(server_name: str, current_user: CurrentUser = Depends(g
         )
 
 @router.post("/mcp/test-tool", response_model=MCPToolTestResponse)
-async def test_mcp_tool(request: MCPToolTestRequest, current_user: CurrentUser = Depends(get_current_user)):
+async def test_mcp_tool(request: MCPToolTestRequest, current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """测试MCP工具调用"""
     try:
         # 记录开始时间
@@ -514,7 +514,7 @@ async def test_mcp_tool(request: MCPToolTestRequest, current_user: CurrentUser =
         )
         
 @router.post("/mcp/disconnect/{server_name}", response_model=Dict[str, Any])
-async def disconnect_server(server_name: str, current_user: CurrentUser = Depends(get_current_user)):
+async def disconnect_server(server_name: str, current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """断开指定的MCP服务器连接"""
     try:
         # 检查服务器状态
@@ -552,7 +552,7 @@ async def disconnect_server(server_name: str, current_user: CurrentUser = Depend
         )
         
 @router.get("/mcp/tools", response_model=Dict[str, List[Dict[str, Any]]])
-async def get_mcp_tools(current_user: CurrentUser = Depends(get_current_user)):
+async def get_mcp_tools(current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """获取所有MCP工具信息"""
     try:
         return await mcp_service.get_all_tools()
@@ -565,7 +565,7 @@ async def get_mcp_tools(current_user: CurrentUser = Depends(get_current_user)):
 
 
 @router.post("/mcp/register-tool", response_model=Dict[str, Any])
-async def register_mcp_tool(request: MCPToolRegistration, current_user: CurrentUser = Depends(get_current_user)):
+async def register_mcp_tool(request: MCPToolRegistration, current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """注册MCP工具到系统"""
     try:
         # 检查工具是否已存在
@@ -614,7 +614,7 @@ async def register_mcp_tool(request: MCPToolRegistration, current_user: CurrentU
         )
 
 @router.get("/mcp/ai-tools", response_model=List[str])
-async def list_ai_mcp_tools(current_user: CurrentUser = Depends(get_current_user)):
+async def list_ai_mcp_tools(current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """列出所有AI生成的MCP工具"""
     try:
         return FileManager.list_mcp_tools()

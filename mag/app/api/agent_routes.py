@@ -50,7 +50,7 @@ from app.models.agent_schema import (
     AgentInCategoryResponse,
     AgentRunRequest,
 )
-from app.auth.dependencies import get_current_user
+from app.auth.dependencies import get_current_user_hybrid
 from app.models.auth_schema import CurrentUser
 
 logger = logging.getLogger(__name__)
@@ -67,7 +67,7 @@ async def list_agents(
     category: str = None,
     limit: int = 100,
     skip: int = 0,
-    current_user: CurrentUser = Depends(get_current_user),
+    current_user: CurrentUser = Depends(get_current_user_hybrid),
 ):
     """列出 Agents（支持分页和分类过滤）"""
     try:
@@ -119,7 +119,7 @@ async def list_agents(
 
 
 @router.get("/categories", response_model=AgentCategoryResponse)
-async def list_categories(current_user: CurrentUser = Depends(get_current_user)):
+async def list_categories(current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """列出所有 Agent 分类"""
     try:
         user_id = current_user.user_id
@@ -153,7 +153,7 @@ async def list_categories(current_user: CurrentUser = Depends(get_current_user))
 
 @router.get("/category/{category}", response_model=AgentInCategoryResponse)
 async def list_agents_in_category(
-    category: str, current_user: CurrentUser = Depends(get_current_user)
+    category: str, current_user: CurrentUser = Depends(get_current_user_hybrid)
 ):
     """列出指定分类下的所有 Agents"""
     try:
@@ -192,7 +192,7 @@ async def list_agents_in_category(
 # ======= Agent CRUD API接口 =======
 @router.post("")
 async def create_agent(
-    request: CreateAgentRequest, current_user: CurrentUser = Depends(get_current_user)
+    request: CreateAgentRequest, current_user: CurrentUser = Depends(get_current_user_hybrid)
 ):
     """创建 Agent"""
     try:
@@ -240,7 +240,7 @@ async def create_agent(
 
 @router.get("/{agent_name}")
 async def get_agent(
-    agent_name: str, current_user: CurrentUser = Depends(get_current_user)
+    agent_name: str, current_user: CurrentUser = Depends(get_current_user_hybrid)
 ):
     """获取 Agent 配置"""
     try:
@@ -276,7 +276,7 @@ async def get_agent(
 async def update_agent(
     agent_name: str,
     request: UpdateAgentRequest,
-    current_user: CurrentUser = Depends(get_current_user),
+    current_user: CurrentUser = Depends(get_current_user_hybrid),
 ):
     """更新 Agent 配置"""
     try:
@@ -336,7 +336,7 @@ async def update_agent(
 
 @router.delete("/{agent_name}")
 async def delete_agent(
-    agent_name: str, current_user: CurrentUser = Depends(get_current_user)
+    agent_name: str, current_user: CurrentUser = Depends(get_current_user_hybrid)
 ):
     """删除 Agent"""
     try:
@@ -387,7 +387,7 @@ async def delete_agent(
 # ======= Agent 运行 API接口 =======
 @router.post("/run")
 async def agent_run(
-    request: AgentRunRequest, current_user: CurrentUser = Depends(get_current_user)
+    request: AgentRunRequest, current_user: CurrentUser = Depends(get_current_user_hybrid)
 ):
     """Agent 运行（流式响应，SSE）- 支持配置覆盖"""
     try:
@@ -750,7 +750,7 @@ async def import_from_repository(
 
 @router.post("/import")
 async def import_agents(
-    file: UploadFile = File(...), current_user: CurrentUser = Depends(get_current_user)
+    file: UploadFile = File(...), current_user: CurrentUser = Depends(get_current_user_hybrid)
 ):
     """
     从本地文件导入Agent配置，返回导入报告
@@ -888,7 +888,7 @@ async def list_import_repositories(
 async def execute_dag(
     request: DAGExecutionRequest,
     background_tasks: BackgroundTasks,
-    current_user: CurrentUser = Depends(get_current_user),
+    current_user: CurrentUser = Depends(get_current_user_hybrid),
 ):
     """
     执行DAG计划
@@ -936,7 +936,7 @@ async def execute_dag(
 
 @router.get("/dag/status/{execution_id}", response_model=DAGStatusResponse)
 async def get_dag_status(
-    execution_id: str, current_user: CurrentUser = Depends(get_current_user)
+    execution_id: str, current_user: CurrentUser = Depends(get_current_user_hybrid)
 ):
     """
     获取DAG执行状态
@@ -956,7 +956,7 @@ async def get_dag_status(
 
 
 @router.get("/dag/executions")
-async def list_dag_executions(current_user: CurrentUser = Depends(get_current_user)):
+async def list_dag_executions(current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """
     列出所有DAG执行
 
@@ -987,7 +987,7 @@ async def list_dag_executions(current_user: CurrentUser = Depends(get_current_us
 
 @router.delete("/dag/execution/{execution_id}")
 async def cancel_dag_execution(
-    execution_id: str, current_user: CurrentUser = Depends(get_current_user)
+    execution_id: str, current_user: CurrentUser = Depends(get_current_user_hybrid)
 ):
     """
     取消DAG执行
@@ -1010,7 +1010,7 @@ async def cancel_dag_execution(
 
 
 @router.get("/dag/template")
-async def get_dag_template(current_user: CurrentUser = Depends(get_current_user)):
+async def get_dag_template(current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """
     获取DAG定义模板
 
@@ -1067,7 +1067,7 @@ async def get_dag_template(current_user: CurrentUser = Depends(get_current_user)
 
 @router.get("/dag/agents")
 async def list_dag_available_agents(
-    current_user: CurrentUser = Depends(get_current_user),
+    current_user: CurrentUser = Depends(get_current_user_hybrid),
 ):
     """
     列出可用于DAG的Agent
@@ -1146,7 +1146,7 @@ class PlanningModeRequest(BaseModel):
 
 @router.post("/planning-mode")
 async def execute_planning_mode(
-    request: PlanningModeRequest, current_user: CurrentUser = Depends(get_current_user)
+    request: PlanningModeRequest, current_user: CurrentUser = Depends(get_current_user_hybrid)
 ):
     """
     任务规划模式

@@ -5,7 +5,7 @@ from urllib.parse import unquote
 
 from app.services.model.model_service import model_service
 from app.models.model_schema import ModelConfig
-from app.auth.dependencies import get_current_user
+from app.auth.dependencies import get_current_user_hybrid
 from app.models.auth_schema import CurrentUser
 
 logger = logging.getLogger(__name__)
@@ -14,7 +14,7 @@ router = APIRouter(tags=["model"])
 
 # ======= 模型管理 =======
 @router.get("/models", response_model=List[Dict[str, Any]])
-async def get_models(current_user: CurrentUser = Depends(get_current_user)):
+async def get_models(current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """获取所有模型配置（不包含API密钥）"""
     try:
         return await model_service.get_all_models(user_id=current_user.user_id)
@@ -26,7 +26,7 @@ async def get_models(current_user: CurrentUser = Depends(get_current_user)):
         )
 
 @router.get("/models/{model_name:path}", response_model=Dict[str, Any])
-async def get_model_for_edit(model_name: str, current_user: CurrentUser = Depends(get_current_user)):
+async def get_model_for_edit(model_name: str, current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """获取特定模型的配置（用于编辑）"""
     try:
         model_name = unquote(model_name)
@@ -50,7 +50,7 @@ async def get_model_for_edit(model_name: str, current_user: CurrentUser = Depend
         )
 
 @router.post("/models", response_model=Dict[str, Any])
-async def add_model(model: ModelConfig, current_user: CurrentUser = Depends(get_current_user)):
+async def add_model(model: ModelConfig, current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """添加新模型配置"""
     try:
         # 检查是否已存在同名模型
@@ -82,7 +82,7 @@ async def add_model(model: ModelConfig, current_user: CurrentUser = Depends(get_
 
 
 @router.put("/models/{model_name:path}", response_model=Dict[str, Any])
-async def update_model(model_name: str, model: ModelConfig, current_user: CurrentUser = Depends(get_current_user)):
+async def update_model(model_name: str, model: ModelConfig, current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """更新模型配置"""
     try:
         model_name = unquote(model_name)
@@ -131,7 +131,7 @@ async def update_model(model_name: str, model: ModelConfig, current_user: Curren
 
 
 @router.delete("/models/{model_name:path}", response_model=Dict[str, Any])
-async def delete_model(model_name: str, current_user: CurrentUser = Depends(get_current_user)):
+async def delete_model(model_name: str, current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """删除模型配置"""
     try:
         model_name = unquote(model_name)

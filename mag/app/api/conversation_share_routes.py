@@ -8,7 +8,7 @@ import os
 from fastapi import APIRouter, HTTPException, Depends, BackgroundTasks
 from fastapi.responses import Response, FileResponse
 
-from app.auth.dependencies import get_current_user
+from app.auth.dependencies import get_current_user_hybrid
 from app.models.auth_schema import CurrentUser
 from app.models.conversation_share_schema import (
     CreateShareResponse,
@@ -28,7 +28,7 @@ router = APIRouter(tags=["conversation-sharing"])
 @router.post("/conversations/{conversation_id}/share", response_model=CreateShareResponse)
 async def create_conversation_share(
     conversation_id: str,
-    current_user: CurrentUser = Depends(get_current_user)
+    current_user: CurrentUser = Depends(get_current_user_hybrid)
 ):
     """
     创建对话分享链接
@@ -243,7 +243,7 @@ async def download_shared_file(share_id: str, filename: str):
 @router.delete("/share/{share_id}", response_model=DeleteShareResponse)
 async def delete_conversation_share(
     share_id: str,
-    current_user: CurrentUser = Depends(get_current_user)
+    current_user: CurrentUser = Depends(get_current_user_hybrid)
 ):
     """
     删除分享链接
@@ -284,7 +284,7 @@ async def delete_conversation_share(
 @router.get("/conversations/{conversation_id}/share/status", response_model=ShareStatusResponse)
 async def get_conversation_share_status(
     conversation_id: str,
-    current_user: CurrentUser = Depends(get_current_user)
+    current_user: CurrentUser = Depends(get_current_user_hybrid)
 ):
     """
     查询对话的分享状态
