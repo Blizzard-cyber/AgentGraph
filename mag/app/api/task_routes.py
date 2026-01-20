@@ -6,7 +6,7 @@ from datetime import datetime
 from app.services.task.task_service import task_service
 from app.services.task.task_scheduler import task_scheduler
 from app.models.task_schema import TaskCreate, TaskStatusUpdate, TaskSummary, Task, TaskStatus
-from app.auth.dependencies import get_current_user
+from app.auth.dependencies import get_current_user_hybrid
 from app.models.auth_schema import CurrentUser
 
 logger = logging.getLogger(__name__)
@@ -16,7 +16,7 @@ router = APIRouter(tags=["tasks"])
 # ======= 任务管理 =======
 
 @router.post("/tasks", response_model=Dict[str, Any])
-async def create_task(task: TaskCreate, current_user: CurrentUser = Depends(get_current_user)):
+async def create_task(task: TaskCreate, current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """创建任务"""
     try:
         # 设置任务的user_id
@@ -101,7 +101,7 @@ async def get_scheduled_jobs():
 
 @router.get("/tasks", response_model=List[TaskSummary])
 async def get_tasks(
-    current_user: CurrentUser = Depends(get_current_user),
+    current_user: CurrentUser = Depends(get_current_user_hybrid),
     task_status: Optional[TaskStatus] = None,
     graph_name: Optional[str] = None,
     limit: int = 20,
@@ -133,7 +133,7 @@ async def get_tasks(
 
 
 @router.get("/tasks/{task_id}", response_model=Task)
-async def get_task(task_id: str, current_user: CurrentUser = Depends(get_current_user)):
+async def get_task(task_id: str, current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """获取任务详情和执行历史"""
     try:
         # 获取任务基本信息（包含执行历史）
@@ -167,7 +167,7 @@ async def get_task(task_id: str, current_user: CurrentUser = Depends(get_current
 async def update_task_status(
     task_id: str,
     status_update: TaskStatusUpdate,
-    current_user: CurrentUser = Depends(get_current_user)
+    current_user: CurrentUser = Depends(get_current_user_hybrid)
 ):
     """更新任务状态"""
     try:
@@ -227,7 +227,7 @@ async def update_task_status(
 
 
 @router.delete("/tasks/{task_id}", response_model=Dict[str, Any])
-async def delete_task(task_id: str, current_user: CurrentUser = Depends(get_current_user)):
+async def delete_task(task_id: str, current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """删除任务（优化后只需删除单个文档）"""
     try:
         # 检查任务是否存在

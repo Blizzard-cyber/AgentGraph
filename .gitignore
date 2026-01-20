@@ -25,3 +25,4 @@ fronted/dist
 spec/
 
 .vscode/
+mag/scripts/higress_jwt/

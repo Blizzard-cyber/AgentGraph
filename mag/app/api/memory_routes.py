@@ -21,7 +21,7 @@ from app.models.memory_schema import (
     BatchDeleteResponse
 )
 from app.services.memory.memory_service import memory_service
-from app.auth.dependencies import get_current_user
+from app.auth.dependencies import get_current_user_hybrid
 from app.models.auth_schema import CurrentUser
 
 logger = logging.getLogger(__name__)
@@ -31,7 +31,7 @@ router = APIRouter(prefix="/memory", tags=["memory"])
 
 @router.get("", response_model=GetMemoriesMetadataResponse, summary="获取所有记忆元数据")
 async def get_memories(
-    current_user: CurrentUser = Depends(get_current_user)
+    current_user: CurrentUser = Depends(get_current_user_hybrid)
 ):
     """
     获取当前用户的所有记忆元数据（仅用于列表展示）
@@ -66,7 +66,7 @@ async def get_memories(
 @router.post("/detail", response_model=GetMemoriesResponse, summary="获取特定 owner 的完整记忆")
 async def get_owner_memories(
     request: GetMemoryDetailRequest,
-    current_user: CurrentUser = Depends(get_current_user)
+    current_user: CurrentUser = Depends(get_current_user_hybrid)
 ):
     """
     获取特定 owner 的完整记忆内容（用于编辑）
@@ -107,7 +107,7 @@ async def get_owner_memories(
 @router.post("/import", response_model=MemoryResponse, summary="导入记忆")
 async def import_memories_route(
     request: ImportMemoryRequest,
-    current_user: CurrentUser = Depends(get_current_user)
+    current_user: CurrentUser = Depends(get_current_user_hybrid)
 ):
     """
     使用 LLM 导入记忆
@@ -157,7 +157,7 @@ async def import_memories_route(
 @router.post("/export", summary="导出记忆")
 async def export_memories_route(
     request: ExportMemoryRequest,
-    current_user: CurrentUser = Depends(get_current_user)
+    current_user: CurrentUser = Depends(get_current_user_hybrid)
 ):
     """
     导出记忆为文件流
@@ -211,7 +211,7 @@ async def export_memories_route(
 @router.post("/add", response_model=MemoryResponse, summary="添加记忆条目")
 async def add_memory_item(
     request: AddMemoryRequest,
-    current_user: CurrentUser = Depends(get_current_user)
+    current_user: CurrentUser = Depends(get_current_user_hybrid)
 ):
     """
     添加单条记忆条目
@@ -259,7 +259,7 @@ async def add_memory_item(
 @router.put("/update", response_model=MemoryResponse, summary="更新记忆条目")
 async def update_memory_item(
     request: UpdateMemoryRequest,
-    current_user: CurrentUser = Depends(get_current_user)
+    current_user: CurrentUser = Depends(get_current_user_hybrid)
 ):
     """
     更新单条记忆条目
@@ -310,7 +310,7 @@ async def update_memory_item(
 @router.delete("/items", response_model=BatchDeleteResponse, summary="批量删除记忆条目")
 async def batch_delete_items(
     request: DeleteItemsRequest,
-    current_user: CurrentUser = Depends(get_current_user)
+    current_user: CurrentUser = Depends(get_current_user_hybrid)
 ):
     """
     批量删除记忆条目
@@ -351,7 +351,7 @@ async def batch_delete_items(
 @router.delete("/categories", response_model=BatchDeleteResponse, summary="批量删除记忆分类")
 async def batch_delete_categories(
     request: DeleteCategoriesRequest,
-    current_user: CurrentUser = Depends(get_current_user)
+    current_user: CurrentUser = Depends(get_current_user_hybrid)
 ):
     """
     批量删除记忆分类及其所有条目
