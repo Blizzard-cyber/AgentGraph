@@ -571,16 +571,195 @@ async def agent_run(
 
 
 # ======= Agent 导入 API接口 =======
+class RepositoryImportRequest(BaseModel):
+    """从云端仓库导入请求"""
+    agent_id: int = Field(..., description="云端Agent ID")
+    agent_name: Optional[str] = Field(None, description="Agent名称（用于日志记录）")
+
+
+@router.post("/import/repository")
+async def import_from_repository(
+    request: RepositoryImportRequest,
+    current_user: CurrentUser = Depends(get_current_user)
+):
+    """
+    从云端导入Agent配置
+
+    通过Agent ID从云端API获取下载链接，下载ZIP包后解压导入Agent配置。
+
+    Returns:
+        FileResponse: Markdown格式的导入报告文件
+    """
+    try:
+        user_id = current_user.user_id
+        import httpx
+        import zipfile
+        from io import BytesIO
+
+        agent_id = request.agent_id
+        agent_name = request.agent_name or f"Agent_{agent_id}"
+        
+        logger.info(f"从云端导入Agent: ID={agent_id}, 名称={agent_name}")
+
+        # 1. 获取下载链接
+        download_api_url = f"http://192.168.1.86:8080/api/v1/models/{agent_id}/download"
+        
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            download_response = await client.get(download_api_url)
+            download_response.raise_for_status()
+            download_url = download_response.text.strip()
+        
+        if not download_url:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"无法获取Agent ID {agent_id} 的下载链接"
+            )
+        
+        logger.info(f"获取到下载链接: {download_url[:100]}...")
+
+        # 2. 下载ZIP文件
+        async with httpx.AsyncClient(timeout=60.0) as client:
+            response = await client.get(download_url)
+            response.raise_for_status()
+            zip_content = response.content
+
+        if not zip_content:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="从云端下载的文件内容为空"
+            )
+
+        # 2. 解压ZIP文件
+        temp_extract_dir = tempfile.mkdtemp()
+        try:
+            with zipfile.ZipFile(BytesIO(zip_content)) as zip_file:
+                zip_file.extractall(temp_extract_dir)
+            
+            logger.info(f"ZIP文件解压到: {temp_extract_dir}")
+            
+            # 3. 查找配置文件（优先级：agent.json > agents.json > *.json > *.jsonl）
+            config_file = None
+            config_extension = None
+            
+            supported_formats = [".json", ".jsonl", ".xlsx", ".xls", ".parquet"]
+            priority_files = ["agent.json", "agents.json", "config.json"]
+            
+            # 先查找优先文件
+            for priority_file in priority_files:
+                potential_path = os.path.join(temp_extract_dir, priority_file)
+                if os.path.exists(potential_path):
+                    config_file = potential_path
+                    config_extension = ".json"
+                    break
+            
+            # 如果没找到，搜索所有支持格式的文件
+            if not config_file:
+                for root, dirs, files in os.walk(temp_extract_dir):
+                    for file in files:
+                        file_ext = os.path.splitext(file)[1].lower()
+                        if file_ext in supported_formats:
+                            config_file = os.path.join(root, file)
+                            config_extension = file_ext
+                            break
+                    if config_file:
+                        break
+            
+            if not config_file:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"ZIP包中未找到支持的配置文件，支持的格式: {', '.join(supported_formats)}"
+               )
+            
+            logger.info(f"找到配置文件: {config_file}")
+            
+            # 4. 读取配置文件内容
+            with open(config_file, 'rb') as f:
+                file_content = f.read()
+            
+            # 4.5. 处理JSON格式 - 如果有agent_config包装则展开
+            if config_extension == ".json":
+                import json
+                try:
+                    data = json.loads(file_content)
+                    # 如果是单个对象且包含agent_config，展开它
+                    if isinstance(data, dict) and "agent_config" in data:
+                        data = data["agent_config"]
+                        file_content = json.dumps(data, ensure_ascii=False).encode('utf-8')
+                        logger.info(f"检测到agent_config包装，已自动展开")
+                    # 如果是数组，检查每个元素是否有agent_config包装
+                    elif isinstance(data, list):
+                        unwrapped = []
+                        for item in data:
+                            if isinstance(item, dict) and "agent_config" in item:
+                                unwrapped.append(item["agent_config"])
+                            else:
+                                unwrapped.append(item)
+                        if unwrapped != data:
+                            file_content = json.dumps(unwrapped, ensure_ascii=False).encode('utf-8')
+                            logger.info(f"检测到agent_config包装，已自动展开数组")
+                except json.JSONDecodeError:
+                    logger.warning("JSON解析失败，使用原始内容")
+                except Exception as e:
+                    logger.warning(f"处理JSON包装时出错: {str(e)}，使用原始内容")
+            
+            # 5. 执行导入
+            import_result = await agent_import_service.import_agents(
+                file_content=file_content,
+                file_extension=config_extension,
+                user_id=user_id
+            )
+            
+            # 6. 返回导入结果
+            return {
+                "success": True,
+                "message": f"成功从云端导入Agent (ID: {agent_id})",
+                "agent_id": agent_id,
+                "agent_name": agent_name,
+                "import_result": import_result
+            }
+        
+        finally:
+            # 清理解压目录
+            import shutil
+            try:
+                shutil.rmtree(temp_extract_dir)
+            except Exception as e:
+                logger.warning(f"清理临时目录失败: {str(e)}")
+
+    except httpx.HTTPError as e:
+        logger.error(f"从云端下载失败: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=f"从云端下载失败: {str(e)}"
+        )
+    except zipfile.BadZipFile as e:
+        logger.error(f"ZIP文件格式错误: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"ZIP文件格式错误: {str(e)}"
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"从云端导入Agent出错: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"从云端导入Agent出错: {str(e)}",
+        )
+
+
 @router.post("/import")
 async def import_agents(
     file: UploadFile = File(...), current_user: CurrentUser = Depends(get_current_user_hybrid)
 ):
     """
-    导入Agent配置文件，返回导入报告
+    从本地文件导入Agent配置，返回导入报告
 
     支持的文件格式：
     - JSON (.json): 单个Agent对象或Agent数组
     - JSONL (.jsonl): 每行一个Agent对象
+    - Excel (.xlsx, .xls): Excel工作簿
+    - Parquet (.parquet): Parquet文件
 
     Returns:
         FileResponse: Markdown格式的导入报告文件
@@ -639,10 +818,68 @@ async def import_agents(
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"导入Agent出错: {str(e)}")
+        logger.error(f"从本地文件导入Agent出错: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"导入Agent出错: {str(e)}",
+            detail=f"从本地文件导入Agent出错: {str(e)}",
+        )
+
+
+@router.get("/import/repositories")
+async def list_import_repositories(
+    current_user: CurrentUser = Depends(get_current_user)
+):
+    """
+    列出可用的云端Agent列表
+    
+    从云端API获取可用的Agent模型列表。
+    """
+    try:
+        import httpx
+        
+        # 云端API地址
+        cloud_api_url = "http://192.168.1.86:8080/api/v1/models/agents"
+        
+        # 请求云端API
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            response = await client.get(cloud_api_url)
+            response.raise_for_status()
+            agents_data = response.json()
+        
+        # 转换为前端需要的格式
+        agents = []
+        for agent in agents_data:
+            agents.append({
+                "id": agent.get("id"),
+                "name": agent.get("modelName"),
+                "version": agent.get("version"),
+                "description": agent.get("description", ""),
+                "url": agent.get("url"),
+                "size": agent.get("size"),
+                "filename": agent.get("filename"),
+                "creator": agent.get("creator"),
+                "created_at": agent.get("createdAt"),
+                "status": agent.get("status"),
+            })
+        
+        return {
+            "success": True,
+            "agents": agents,
+            "total": len(agents),
+            "cloud_api": cloud_api_url
+        }
+    
+    except httpx.HTTPError as e:
+        logger.error(f"获取云端Agent列表失败: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=f"获取云端Agent列表失败: {str(e)}"
+        )
+    except Exception as e:
+        logger.error(f"处理云端Agent列表出错: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"处理云端Agent列表出错: {str(e)}"
         )
 
 

@@ -217,7 +217,7 @@ class GPUStackClient:
             logger.warning(f"获取模型 {model_id} 异常: {e}")
             return None
 
-    async def create_model(self, payload: Dict[str, Any]) -> Optional[int]:
+    async def create_model(self, payload: Dict[str, Any]) -> tuple[Optional[int], bool]:
         """创建模型部署任务
 
         Args:
@@ -232,7 +232,7 @@ class GPUStackClient:
                 等...
 
         Returns:
-            Optional[int]: 创建成功返回模型ID，失败返回None
+            tuple[Optional[int], bool]: (模型ID, 是否已存在)，创建失败返回(None, False)
         """
         try:
             client = await self._ensure_client()
@@ -252,10 +252,22 @@ class GPUStackClient:
                 data = resp.json()
                 model_id = data.get("id")
                 logger.info(f"模型 {model_name} 创建成功，ID: {model_id}")
-                return model_id
+                return model_id, False  # 新创建的模型
             elif resp.status_code == 409:
-                logger.warning(f"模型 {model_name} 已存在")
-                return None
+                logger.info(f"模型 {model_name} 已存在于GPUStack，尝试查询模型ID")
+                # 模型已存在，尝试查询该模型的ID
+                try:
+                    models = await self.list_models()
+                    for model in models:
+                        if model.get("name") == model_name:
+                            existing_id = model.get("id")
+                            logger.info(f"找到已存在的模型 {model_name}，ID: {existing_id}")
+                            return existing_id, True  # 已存在的模型
+                    logger.warning(f"模型 {model_name} 已存在但无法查询到ID")
+                    return None, False
+                except Exception as e:
+                    logger.warning(f"查询已存在模型ID失败: {e}")
+                    return None, False
             else:
                 logger.warning(f"创建模型 {model_name} 失败: HTTP {resp.status_code}")
                 try:
@@ -263,10 +275,10 @@ class GPUStackClient:
                     logger.debug(f"错误详情: {error_detail}")
                 except:
                     logger.debug(f"响应内容: {resp.text}")
-                return None
+                return None, False
         except Exception as e:
             logger.warning(f"创建模型异常: {e}")
-            return None
+            return None, False
 
     async def delete_model(self, model_id: int) -> bool:
         """删除指定模型

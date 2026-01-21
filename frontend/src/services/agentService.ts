@@ -110,7 +110,7 @@ export const importAgents = async (file: File) => {
   const url = window.URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
-  
+
   // 从响应头获取文件名，如果没有则使用默认名称
   const contentDisposition = response.headers['content-disposition'];
   let filename = 'agent_import_report.md';
@@ -120,7 +120,61 @@ export const importAgents = async (file: File) => {
       filename = filenameMatch[1].replace(/['"]/g, '');
     }
   }
-  
+
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  window.URL.revokeObjectURL(url);
+
+  return { success: true };
+};
+
+// 云端Agent接口
+export interface CloudAgent {
+  id: number;
+  name: string;
+  version: string;
+  description: string;
+  url: string;
+  size: number;
+  filename: string;
+  creator: string;
+  created_at: string;
+  status: string;
+}
+
+// 获取云端Agent列表
+export const listCloudAgents = async () => {
+  const response = await api.get('/agent/import/repositories');
+  return response.data;
+};
+
+// 从云端导入Agent
+export const importFromCloud = async (agentId: number, agentName?: string) => {
+  const response = await api.post('/agent/import/repository', {
+    agent_id: agentId,
+    agent_name: agentName
+  }, {
+    responseType: 'blob', // 接收文件
+  });
+
+  // 创建下载链接
+  const blob = new Blob([response.data], { type: 'text/markdown' });
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+
+  // 从响应头获取文件名
+  const contentDisposition = response.headers['content-disposition'];
+  let filename = 'agent_import_report.md';
+  if (contentDisposition) {
+    const filenameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+    if (filenameMatch && filenameMatch[1]) {
+      filename = filenameMatch[1].replace(/['"]/g, '');
+    }
+  }
+
   link.download = filename;
   document.body.appendChild(link);
   link.click();

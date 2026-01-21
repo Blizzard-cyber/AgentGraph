@@ -324,9 +324,158 @@ class AgentService:
 
             # 2. 验证 model 是否存在
             model_name = agent_config.get("model")
+            model_id = agent_config.get("model_id")  # 可能包含云端模型ID
             model_config = await model_service.get_model(model_name, user_id)
+            
             if not model_config:
-                return False, f"模型不存在: {model_name}"
+                # 本地未注册，直接从云端下载并部署
+                logger.info(f"本地未找到模型 {model_name}，尝试从云端下载部署")
+                
+                if model_service.gpustack_client:
+                    if model_id:
+                        # 有model_id，可以从云端获取下载URL
+                        try:
+                            import httpx
+                            
+                            # 获取下载链接
+                            download_api_url = f"http://192.168.1.86:8080/api/v1/models/{model_id}/download"
+                            async with httpx.AsyncClient(timeout=10.0) as client:
+                                download_response = await client.get(download_api_url)
+                                download_response.raise_for_status()
+                                download_url = download_response.text.strip()
+                            
+                            if download_url:
+                                logger.info(f"获取到模型下载链接: {download_url[:100]}...")
+                                
+                                # 构建部署配置
+                                model_payload = {
+                                    "name": model_name,
+                                    "source": "download_url",
+                                    "cluster_id": 1,
+                                    "backend": "vLLM",
+                                    "backend_version": None,
+                                    "replicas": 1,
+                                    "extended_kv_cache": {"enabled": False},
+                                    "speculative_config": {"enabled": False},
+                                    "categories": ["imported"],
+                                    "backend_parameters": ["--gpu-memory-utilization=0.9"],
+                                    "distributed_inference_across_workers": True,
+                                    "restart_on_error": True,
+                                    "generic_proxy": False,
+                                    "download_url_model_name": model_name,
+                                    "download_url": download_url,
+                                    "placement_strategy": "spread",
+                                    "worker_selector": None,
+                                    "gpu_selector": None,
+                                }
+                                
+                                # 创建模型部署任务
+                                created_model_id, is_existing = await model_service.gpustack_client.create_model(model_payload)
+                                
+                                if created_model_id:
+                                    if is_existing:
+                                        logger.info(f"模型 {model_name} 已存在于GPUStack，ID: {created_model_id}")
+                                    else:
+                                        logger.info(f"模型 {model_name} 部署任务已创建，ID: {created_model_id}")
+                                        
+                                        # 新部署的模型，监听初始状态（最多等待30秒）
+                                        try:
+                                            import asyncio
+                                            logger.info(f"开始监听模型 {model_name} 的部署状态...")
+                                            
+                                            event_count = 0
+                                            max_events = 20
+                                            timeout_seconds = 30
+                                            
+                                            async def watch_with_timeout():
+                                                nonlocal event_count
+                                                async for event in model_service.gpustack_client.watch_model_instances(
+                                                    model_id=created_model_id, timeout=timeout_seconds
+                                                ):
+                                                    event_count += 1
+                                                    state = event.get("state", "unknown")
+                                                    download_progress = event.get("download_progress")
+                                                    
+                                                    # 记录关键状态变化
+                                                    if state in ["initializing", "downloading", "analyzing", "error"]:
+                                                        if download_progress:
+                                                            logger.info(f"模型 {model_name} 状态: {state}, 进度: {download_progress:.1f}%")
+                                                        else:
+                                                            logger.info(f"模型 {model_name} 状态: {state}")
+                                                    
+                                                    # 检查错误状态
+                                                    if state == "error":
+                                                        error_msg = event.get("state_message", "未知错误")
+                                                        logger.error(f"模型 {model_name} 部署失败: {error_msg}")
+                                                        return False
+                                                    
+                                                    # 如果已经开始下载，认为部署任务启动成功
+                                                    if state == "downloading":
+                                                        logger.info(f"模型 {model_name} 已开始下载，部署任务启动成功")
+                                                        return True
+                                                    
+                                                    # 防止监听太久
+                                                    if event_count >= max_events:
+                                                        logger.info(f"模型 {model_name} 监听达到最大事件数，停止监听")
+                                                        return True
+                                                
+                                                # 超时或没有事件
+                                                return True
+                                            
+                                            # 等待监听完成或超时
+                                            try:
+                                                deployment_ok = await asyncio.wait_for(
+                                                    watch_with_timeout(),
+                                                    timeout=timeout_seconds + 5
+                                                )
+                                                if not deployment_ok:
+                                                    return False, f"模型 {model_name} 部署过程中出现错误"
+                                            except asyncio.TimeoutError:
+                                                logger.warning(f"模型 {model_name} 状态监听超时，但部署任务已创建")
+                                                # 超时不算失败，部署任务已在后台运行
+                                            
+                                        except Exception as e:
+                                            logger.warning(f"监听模型部署状态时出错: {str(e)}，但部署任务已创建")
+                                            # 监听失败不影响主流程
+                                    
+                                    # 注册模型到用户数据库
+                                    try:
+                                        from app.core.config import settings
+                                        
+                                        model_config_data = {
+                                            "name": model_name,
+                                            "base_url": settings.GPUSTACK_BASE_URL,
+                                            "api_key": settings.GPUSTACK_API_KEY,
+                                            "model": model_name,
+                                            "provider": "openai",
+                                            "model_type": "llm"
+                                        }
+                                        
+                                        result = await mongodb_client.model_repository.create_model(user_id, model_config_data)
+                                        if result.get("success"):
+                                            logger.info(f"模型 {model_name} 已成功注册到用户数据库")
+                                        else:
+                                            # 模型可能已在数据库中，记录日志但不视为错误
+                                            logger.info(f"模型 {model_name} 注册结果: {result.get('message')}")
+                                            
+                                    except Exception as e:
+                                        logger.error(f"注册模型到数据库时出错: {str(e)}")
+                                        # 不阻断主流程，模型部署已成功
+                                    
+                                    # 模型部署/已存在，验证通过
+                                    return True, None
+                                else:
+                                    return False, f"模型 {model_name} 部署失败"
+                            else:
+                                return False, f"无法获取模型 {model_name} 的下载链接"
+                                
+                        except Exception as e:
+                            logger.error(f"从云端部署模型失败: {str(e)}")
+                            return False, f"从云端部署模型 {model_name} 失败: {str(e)}"
+                    else:
+                        return False, f"模型 {model_name} 未找到，且缺少model_id无法自动部署"
+                else:
+                    return False, f"模型不存在: {model_name} (本地未注册，且GPUStack客户端未初始化)"
 
             # 3. 验证 mcp 服务器列表
             mcp_servers = agent_config.get("mcp", [])
@@ -338,10 +487,61 @@ class AgentService:
                 else:
                     configured_servers = {}
 
-                # 验证每个服务器是否已配置
-                for server_name in mcp_servers:
+                # 验证每个服务器是否已配置，如果未配置且有版本信息则自动部署
+                for server_item in mcp_servers:
+                    # 支持两种格式：字符串或字典
+                    if isinstance(server_item, str):
+                        server_name = server_item
+                        server_version = None
+                    elif isinstance(server_item, dict):
+                        server_name = server_item.get("name")
+                        server_version = server_item.get("version")
+                    else:
+                        continue
+                    
                     if server_name not in configured_servers:
-                        return False, f"MCP 服务器未配置: {server_name}"
+                        # 如果有版本信息，尝试自动部署
+                        if server_version:
+                            logger.info(f"MCP服务器 {server_name} 未配置，尝试自动部署...")
+                            try:
+                                import httpx
+                                
+                                deploy_url = "http://192.168.1.86:9950/api/deploy"
+                                deploy_payload = {
+                                    "serverName": server_name,
+                                    "version": server_version
+                                }
+                                
+                                async with httpx.AsyncClient(timeout=30.0) as client:
+                                    deploy_response = await client.post(deploy_url, json=deploy_payload)
+                                    deploy_response.raise_for_status()
+                                    deploy_result = deploy_response.json()
+                                
+                                if deploy_result.get("success"):
+                                    deploy_data = deploy_result.get("data", {})
+                                    logger.info(
+                                        f"MCP服务器 {server_name} 部署成功: "
+                                        f"status={deploy_data.get('status')}, "
+                                        f"port={deploy_data.get('port')}, "
+                                        f"message={deploy_data.get('message')}"
+                                    )
+                                    # 部署成功后等待一小段时间让服务器初始化
+                                    import asyncio
+                                    await asyncio.sleep(2)
+                                else:
+                                    error_msg = deploy_result.get("message", "未知错误")
+                                    logger.error(f"MCP服务器 {server_name} 部署失败: {error_msg}")
+                                    return False, f"MCP服务器 {server_name} 部署失败: {error_msg}"
+                                    
+                            except httpx.HTTPStatusError as e:
+                                logger.error(f"部署MCP服务器 {server_name} 时HTTP错误: {e.response.status_code}")
+                                return False, f"部署MCP服务器 {server_name} 失败: HTTP {e.response.status_code}"
+                            except Exception as e:
+                                logger.error(f"部署MCP服务器 {server_name} 时出错: {str(e)}")
+                                return False, f"部署MCP服务器 {server_name} 失败: {str(e)}"
+                        else:
+                            # 没有版本信息，无法自动部署
+                            return False, f"MCP服务器未配置: {server_name}"
 
             # 4. 验证 system_tools 列表
             system_tool_names = agent_config.get("system_tools", [])
