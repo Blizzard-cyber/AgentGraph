@@ -108,7 +108,7 @@ const CloudImportModal: React.FC<CloudImportModalProps> = ({ visible, onClose, o
             width: 100,
         },
         {
-            title: '操作',
+            title: '一键部署',
             key: 'action',
             width: 100,
             render: (_: any, record: CloudAgent) => (
@@ -119,13 +119,13 @@ const CloudImportModal: React.FC<CloudImportModalProps> = ({ visible, onClose, o
                     loading={importing === record.id}
                     onClick={() => handleImport(record)}
                     style={{
-                        background: 'linear-gradient(135deg, #b85845 0%, #a64a38 100%)',
+                        background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
                         border: 'none',
                         borderRadius: '6px',
-                        boxShadow: '0 2px 8px rgba(184, 88, 69, 0.2)',
+                        boxShadow: '0 2px 8px rgba(24, 144, 255, 0.2)',
                     }}
                 >
-                    导入
+                    部署
                 </Button>
             ),
         },
@@ -135,7 +135,7 @@ const CloudImportModal: React.FC<CloudImportModalProps> = ({ visible, onClose, o
         <Modal
             title={
                 <Space>
-                    <Cloud size={20} color="#b85845" />
+                    <Cloud size={20} color="#1890ff" />
                     <span>云端Agent仓库</span>
                 </Space>
             }
@@ -158,8 +158,8 @@ const CloudImportModal: React.FC<CloudImportModalProps> = ({ visible, onClose, o
                         loading={loading}
                         style={{
                             borderRadius: '6px',
-                            border: '1.5px solid rgba(184, 88, 69, 0.2)',
-                            color: '#b85845',
+                            border: '1.5px solid rgba(24, 144, 255, 0.2)',
+                            color: '#1890ff',
                         }}
                     >
                         刷新列表

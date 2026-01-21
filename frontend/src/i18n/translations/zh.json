@@ -69,7 +69,7 @@
       "registerFailedDefault": "注册失败，请稍后重试"
     },
     "workspace": {
-      "title": "工作台",
+      "title": "边缘节点工作台",
       "agentManager": "智能体管理",
       "graphEditor": "工作流管理",
       "modelManager": "模型管理",

@@ -225,12 +225,7 @@ const AgentManager: React.FC = () => {
             <Button
               icon={<Cloud size={16} strokeWidth={1.5} />}
               onClick={showCloudImportModal}
-              style={{
-                ...BUTTON_STYLES.secondary,
-                background: 'linear-gradient(135deg, rgba(184, 88, 69, 0.08) 0%, rgba(184, 88, 69, 0.12) 100%)',
-                color: '#b85845',
-                border: '1.5px solid rgba(184, 88, 69, 0.2)',
-              }}
+              style={BUTTON_STYLES.secondary}
             >
               云端导入
             </Button>
