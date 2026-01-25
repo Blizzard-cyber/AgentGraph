@@ -42,8 +42,6 @@ class MCPServerConfig(BaseModel):
         transport_type = values.get('transportType', 'stdio')
         if transport_type in ['sse', 'streamable_http'] and not values.get('url'):
             raise ValueError(f'{transport_type}传输类型必须提供url字段')
-        if transport_type == 'stdio' and not values.get('command'):
-            raise ValueError('stdio传输类型必须提供command字段')
 
         return values
 

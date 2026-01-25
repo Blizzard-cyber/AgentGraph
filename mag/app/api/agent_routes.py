@@ -580,7 +580,7 @@ class RepositoryImportRequest(BaseModel):
 @router.post("/import/repository")
 async def import_from_repository(
     request: RepositoryImportRequest,
-    current_user: CurrentUser = Depends(get_current_user)
+    current_user: CurrentUser = Depends(get_current_user_hybrid)
 ):
     """
     从云端导入Agent配置
@@ -827,7 +827,7 @@ async def import_agents(
 
 @router.get("/import/repositories")
 async def list_import_repositories(
-    current_user: CurrentUser = Depends(get_current_user)
+    current_user: CurrentUser = Depends(get_current_user_hybrid)
 ):
     """
     列出可用的云端Agent列表

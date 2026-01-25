@@ -277,6 +277,15 @@ async def lifespan(app: FastAPI):
         global memory_client
         memory_client = MemoryClient()
 
+        # 10. 初始化 MCP2（加载 user_servers + 启动 idle cleanup loop）
+        try:
+            from app.services.mcp2.mcp2_init import init_mcp2_state
+            await init_mcp2_state()
+            logger.info("MCP2 初始化完成")
+        except Exception as e:
+                logger.warning(f"MCP2 初始化失败（不阻断启动）: {e}")
+
+
         # 测试记忆服务连接
         try:
             health_result = await memory_client.health_check()
@@ -323,6 +332,14 @@ async def lifespan(app: FastAPI):
             logger.info("MongoDB连接已断开")
         except Exception as e:
             logger.error(f"断开MongoDB连接时出错: {str(e)}")
+        # Stop MCP2 cleanup loop
+        try:
+            from app.services.mcp2.mcp2_manager import mcp2_manager
+            await mcp2_manager.stop_cleanup_loop()
+            logger.info("MCP2 cleanup loop 已停止")
+        except Exception as e:
+            logger.error(f"停止 MCP2 cleanup loop 失败: {e}")
+
 
 
 # 创建应用（使用lifespan）
