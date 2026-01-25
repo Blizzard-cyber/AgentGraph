@@ -17,6 +17,7 @@ import {
 } from 'antd';
 import { Play, Bug } from 'lucide-react';
 import { useMCPStore } from '../../store/mcpStore';
+import { mcp2ToolCall } from '../../services/mcp2AsyncService';
 import { useT } from '../../i18n/hooks';
 
 const { Text } = Typography;
@@ -26,11 +27,12 @@ interface MCPToolsViewerProps {
   visible: boolean;
   onClose: () => void;
   serverName: string;
+  tools?: any[];
 }
 
 // 根据JSON Schema生成表单项
 const generateFormItem = (name: string, schema: any, t: (key: string, params?: any) => string) => {
-  const { type, description, format, minimum, maximum, items } = schema;
+  const { type, description, format, minimum, maximum } = schema;
 
   switch (type) {
     case 'string':
@@ -50,7 +52,7 @@ const generateFormItem = (name: string, schema: any, t: (key: string, params?: a
         <Form.Item 
           name={name} 
           label={name}
-          tooltip={description}
+            tooltip={description}
         >
           <Input placeholder={description || t('pages.mcpManager.toolsViewer.inputPlaceholder', { name })} />
         </Form.Item>
@@ -62,7 +64,7 @@ const generateFormItem = (name: string, schema: any, t: (key: string, params?: a
         <Form.Item 
           name={name} 
           label={name}
-          tooltip={description}
+            tooltip={description}
         >
           <InputNumber 
             style={{ width: '100%' }}
@@ -78,7 +80,7 @@ const generateFormItem = (name: string, schema: any, t: (key: string, params?: a
         <Form.Item 
           name={name} 
           label={name}
-          tooltip={description}
+            tooltip={description}
           valuePropName="checked"
         >
           <Switch />
@@ -90,7 +92,7 @@ const generateFormItem = (name: string, schema: any, t: (key: string, params?: a
         <Form.Item 
           name={name} 
           label={name}
-          tooltip={description}
+            tooltip={description}
         >
           <TextArea 
             rows={3}
@@ -104,7 +106,7 @@ const generateFormItem = (name: string, schema: any, t: (key: string, params?: a
         <Form.Item 
           name={name} 
           label={name}
-          tooltip={description}
+            tooltip={description}
         >
           <TextArea 
             rows={4}
@@ -118,7 +120,7 @@ const generateFormItem = (name: string, schema: any, t: (key: string, params?: a
         <Form.Item 
           name={name} 
           label={name}
-          tooltip={description}
+            tooltip={description}
         >
           <Input placeholder={description || t('pages.mcpManager.toolsViewer.inputPlaceholder', { name })} />
         </Form.Item>
@@ -130,6 +132,7 @@ const MCPToolsViewer: React.FC<MCPToolsViewerProps> = ({
   visible,
   onClose,
   serverName,
+  tools: toolsFromProps,
 }) => {
   const t = useT();
   const { tools, fetchTools, testTool } = useMCPStore();
@@ -139,13 +142,16 @@ const MCPToolsViewer: React.FC<MCPToolsViewerProps> = ({
   const [forms] = useState(() => new Map());
 
   useEffect(() => {
-    if (visible) {
-      setLoading(true);
-      fetchTools().finally(() => setLoading(false));
-    }
-  }, [visible, fetchTools]);
+    if (!visible) return;
 
-  const serverTools = tools[serverName] || [];
+    // If tools are provided by parent, don't auto-fetch legacy endpoint.
+    if (toolsFromProps) return;
+
+    setLoading(true);
+    fetchTools().finally(() => setLoading(false));
+  }, [visible, fetchTools, toolsFromProps]);
+
+  const serverTools = toolsFromProps ?? (tools[serverName] || []);
 
   const handleTest = async (toolName: string) => {
     const form = forms.get(toolName);
@@ -154,32 +160,47 @@ const MCPToolsViewer: React.FC<MCPToolsViewerProps> = ({
     try {
       setTestLoading(true);
       const values = await form.validateFields();
-      
-      // 处理特殊类型的参数
+
       const processedParams: Record<string, any> = {};
-      
       Object.entries(values).forEach(([key, value]) => {
         if (value === undefined || value === null || value === '') return;
-        
-        // 处理数组类型
         if (typeof value === 'string' && value.includes('\n')) {
           processedParams[key] = value.split('\n').filter(line => line.trim());
-        }
-        // 处理JSON对象
-        else if (typeof value === 'string' && (value.startsWith('{') || value.startsWith('['))) {
+        } else if (typeof value === 'string' && (value.startsWith('{') || value.startsWith('['))) {
           try {
             processedParams[key] = JSON.parse(value);
           } catch {
             processedParams[key] = value;
           }
-        }
-        else {
+        } else {
           processedParams[key] = value;
         }
       });
 
-      const result = await testTool(serverName, toolName, processedParams);
-      
+      // MCP2 mode: serverName is "name:version"
+      let result: any;
+      if (toolsFromProps) {
+        const [name, version] = serverName.split(':');
+        if (!name || !version) throw new Error('Invalid server key, expected name:version');
+        const res = await mcp2ToolCall({
+          server_name: name,
+          version,
+          tool_name: toolName,
+          params: processedParams,
+        });
+        result = {
+          status: res.status === 'success' ? 'success' : 'error',
+          server_name: serverName,
+          tool_name: toolName,
+          params: processedParams,
+          result: res.content,
+          error: res.error,
+          execution_time: res.execution_time,
+        };
+      } else {
+        result = await testTool(serverName, toolName, processedParams);
+      }
+
       setTestResults(prev => ({
         ...prev,
         [toolName]: result

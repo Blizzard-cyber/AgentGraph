@@ -118,7 +118,18 @@ export const useMCPStore = create<MCPState>((set, get) => ({
   connectServer: async (serverName) => {
     try {
       set({ loading: true, error: undefined });
-      await mcpService.connectServer(serverName);
+      const result = await mcpService.connectServer(serverName);
+
+      // connect 接口现在会返回该 endpoint 的 tools 元数据（name/description/input_schema）
+      if (result?.tools) {
+        set((state) => ({
+          tools: {
+            ...state.tools,
+            [serverName]: result.tools
+          }
+        }));
+      }
+
       // Update status after connect
       await get().fetchStatus();
     } catch (error) {
@@ -134,6 +145,14 @@ export const useMCPStore = create<MCPState>((set, get) => ({
     try {
       set({ loading: true, error: undefined });
       await mcpService.disconnectServer(serverName);
+
+      // 断开后清理缓存的 tools（避免 UI 误显示旧 tools）
+      set((state) => {
+        const nextTools = { ...state.tools };
+        delete nextTools[serverName];
+        return { tools: nextTools };
+      });
+
       await get().fetchStatus();
     } catch (error) {
       set({
@@ -199,7 +218,7 @@ export const useMCPStore = create<MCPState>((set, get) => ({
   addServer: async (serverName, serverConfig) => {
     try {
       const currentVersion = get().version;
-      const result = await mcpService.addMCPServer(serverName, serverConfig, currentVersion);
+      await mcpService.addMCPServer(serverName, serverConfig, currentVersion);
 
       await get().fetchConfig();
       return;
@@ -238,7 +257,7 @@ export const useMCPStore = create<MCPState>((set, get) => ({
   deleteServer: async (serverName) => {
     try {
       const currentVersion = get().version;
-      const result = await mcpService.removeMCPServers([serverName], currentVersion);
+      await mcpService.removeMCPServers([serverName], currentVersion);
 
       await get().fetchConfig();
       return;

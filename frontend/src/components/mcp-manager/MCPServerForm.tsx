@@ -1,6 +1,6 @@
 // src/components/mcp-manager/MCPServerForm.tsx
 import React, { useEffect } from 'react';
-import { Form, Input, InputNumber, Switch, Select, Modal, Button, Typography, ConfigProvider } from 'antd';
+import { Form, Input, InputNumber, Switch, Modal, Button, Typography, ConfigProvider } from 'antd';
 import { MCPServerConfig } from '../../types/mcp';
 import { useT } from '../../i18n/hooks';
 
@@ -26,18 +26,22 @@ const MCPServerForm: React.FC<MCPServerFormProps> = ({
 }) => {
   const t = useT();
   const [form] = Form.useForm();
-  const transportType = Form.useWatch('transportType', form);
 
   useEffect(() => {
     if (visible) {
       if (initialValues) {
-        const formValues = { ...initialValues };
-        if (formValues.env && Object.keys(formValues.env).length > 0) {
-          const envText = Object.entries(formValues.env)
+        const formValues: Record<string, unknown> = { ...(initialValues as unknown as Record<string, unknown>) };
+
+        // 强制固定为 stdio（即使旧数据里是 sse/http）
+        formValues.transportType = 'stdio';
+
+        const env = (formValues as { env?: Record<string, string> }).env;
+        if (env && Object.keys(env).length > 0) {
+          formValues.envText = Object.entries(env)
             .map(([key, value]) => `${key}=${value}`)
             .join('\n');
-          formValues.envText = envText;
         }
+
         form.setFieldsValue(formValues);
       } else {
         form.resetFields();
@@ -58,15 +62,24 @@ const MCPServerForm: React.FC<MCPServerFormProps> = ({
       const values = await form.validateFields();
       const { serverName, envText, ...serverConfig } = values;
 
+      // 强制固定为 stdio
+      serverConfig.transportType = 'stdio';
+
       // Convert string arrays
       if (typeof serverConfig.args === 'string') {
-        serverConfig.args = serverConfig.args.split(',').map((arg: string) => arg.trim()).filter((arg: string) => arg);
+        serverConfig.args = serverConfig.args
+          .split(',')
+          .map((arg: string) => arg.trim())
+          .filter((arg: string) => arg);
       } else if (!Array.isArray(serverConfig.args)) {
         serverConfig.args = [];
       }
 
       if (typeof serverConfig.autoApprove === 'string') {
-        serverConfig.autoApprove = serverConfig.autoApprove.split(',').map((tool: string) => tool.trim()).filter((tool: string) => tool);
+        serverConfig.autoApprove = serverConfig.autoApprove
+          .split(',')
+          .map((tool: string) => tool.trim())
+          .filter((tool: string) => tool);
       } else if (!Array.isArray(serverConfig.autoApprove)) {
         serverConfig.autoApprove = [];
       }
@@ -89,19 +102,14 @@ const MCPServerForm: React.FC<MCPServerFormProps> = ({
         }
       }
 
-      if (serverConfig.transportType === 'sse') {
-        delete serverConfig.command;
-        delete serverConfig.args;
-        delete serverConfig.base_url;
-      } else if (serverConfig.transportType === 'stdio') {
-        delete serverConfig.url;
-        delete serverConfig.base_url;
-      }
+      // 固定 stdio：清理掉 url/base_url（如果有遗留字段），不要删 command/args
+      delete serverConfig.url;
+      delete serverConfig.base_url;
 
       // 等待异步 onSubmit 完成，如果抛出错误会被外层 catch 捕获
       await onSubmit(serverName, serverConfig as MCPServerConfig);
       form.resetFields();
-    } catch (error) {
+    } catch {
       // 表单验证错误或 onSubmit 抛出的错误（包括版本冲突）
       // 错误已在父组件处理（MCPManager），这里不重复处理
       // 不重置表单，保留用户输入
@@ -143,149 +151,107 @@ const MCPServerForm: React.FC<MCPServerFormProps> = ({
         title={title}
         open={visible}
         onCancel={onClose}
-      footer={[
-        <Button
-          key="cancel"
-          onClick={onClose}
-          style={{
-            height: '36px',
-            borderRadius: '6px',
-            border: '1px solid rgba(24, 144, 255, 0.2)',
-            background: 'rgba(255, 255, 255, 0.85)',
-            color: 'rgba(0, 0, 0, 0.65)',
-            fontSize: '14px',
-            fontWeight: 500,
-            letterSpacing: '0.3px',
-            boxShadow: '0 1px 3px rgba(24, 144, 255, 0.08)',
-            transition: 'all 0.3s ease'
-          }}
-        >
-          {t('common.cancel')}
-        </Button>,
-        <Button
-          key="submit"
-          onClick={handleSubmit}
-          style={{
-            height: '36px',
-            background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
-            border: 'none',
-            borderRadius: '6px',
-            color: '#fff',
-            fontSize: '14px',
-            fontWeight: 500,
-            letterSpacing: '0.3px',
-            boxShadow: '0 2px 6px rgba(24, 144, 255, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
-            transition: 'all 0.3s cubic-bezier(0.23, 1, 0.32, 1)'
-          }}
-        >
-          {t('common.submit')}
-        </Button>,
-      ]}
-      width={800}
-    >
-      <Form
-        form={form}
-        layout="vertical"
-        name="mcpServerForm"
+        footer={[
+          <Button
+            key="cancel"
+            onClick={onClose}
+            style={{
+              height: '36px',
+              borderRadius: '6px',
+              border: '1px solid rgba(24, 144, 255, 0.2)',
+              background: 'rgba(255, 255, 255, 0.85)',
+              color: 'rgba(0, 0, 0, 0.65)',
+              fontSize: '14px',
+              fontWeight: 500,
+              letterSpacing: '0.3px',
+              boxShadow: '0 1px 3px rgba(24, 144, 255, 0.08)',
+              transition: 'all 0.3s ease',
+            }}
+          >
+            {t('common.cancel')}
+          </Button>,
+          <Button
+            key="submit"
+            onClick={handleSubmit}
+            style={{
+              height: '36px',
+              background: 'linear-gradient(135deg, #1890ff 0%, #40a9ff 100%)',
+              border: 'none',
+              borderRadius: '6px',
+              color: '#fff',
+              fontSize: '14px',
+              fontWeight: 500,
+              letterSpacing: '0.3px',
+              boxShadow: '0 2px 6px rgba(24, 144, 255, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+              transition: 'all 0.3s cubic-bezier(0.23, 1, 0.32, 1)',
+            }}
+          >
+            {t('common.submit')}
+          </Button>,
+        ]}
+        width={800}
       >
-        <Form.Item
-          name="serverName"
-          label={t('pages.mcpManager.form.serverName')}
-          initialValue={initialName}
-          rules={[{ required: true, message: t('pages.mcpManager.form.serverNameRequired') }]}
-        >
-          <Input disabled={!!initialName} />
-        </Form.Item>
+        <Form form={form} layout="vertical" name="mcpServerForm">
+          <Form.Item
+            name="serverName"
+            label={t('pages.mcpManager.form.serverName')}
+            initialValue={initialName}
+            rules={[{ required: true, message: t('pages.mcpManager.form.serverNameRequired') }]}
+          >
+            <Input disabled={!!initialName} />
+          </Form.Item>
 
-        <Form.Item
-          name="disabled"
-          label={t('pages.mcpManager.form.disabled')}
-          valuePropName="checked"
-        >
-          <Switch />
-        </Form.Item>
+          <Form.Item name="disabled" label={t('pages.mcpManager.form.disabled')} valuePropName="checked">
+            <Switch />
+          </Form.Item>
 
-        <Form.Item
-          name="timeout"
-          label={t('pages.mcpManager.form.timeout')}
-          rules={[{ required: true, message: t('pages.mcpManager.form.timeoutRequired') }]}
-        >
-          <InputNumber min={1} max={300} style={{ width: '100%' }} />
-        </Form.Item>
+          <Form.Item
+            name="timeout"
+            label={t('pages.mcpManager.form.timeout')}
+            rules={[{ required: true, message: t('pages.mcpManager.form.timeoutRequired') }]}
+          >
+            <InputNumber min={1} max={300} style={{ width: '100%' }} />
+          </Form.Item>
 
-        <Form.Item
-          name="transportType"
-          label={t('pages.mcpManager.form.transportType')}
-          rules={[{ required: true, message: t('pages.mcpManager.form.transportTypeRequired') }]}
-        >
-          <Select>
-            <Select.Option value="stdio">{t('pages.mcpManager.form.transportStdio')}</Select.Option>
-            <Select.Option value="sse">{t('pages.mcpManager.form.transportSse')}</Select.Option>
-            <Select.Option value="streamable_http">{t('pages.mcpManager.form.transportHttp')}</Select.Option>
-          </Select>
-        </Form.Item>
+          {/* transportType 固定为 stdio：隐藏选择器，但保持字段值在表单里 */}
+          <Form.Item name="transportType" initialValue="stdio" hidden>
+            <Input />
+          </Form.Item>
 
-        {/* STDIO specific fields */}
-        {transportType === 'stdio' && (
+          {/* STDIO specific fields (固定显示) */}
           <>
             <Form.Item
               name="command"
               label={t('pages.mcpManager.form.command')}
-              rules={[{ required: true, message: t('pages.mcpManager.form.commandRequired') }]}
             >
               <Input placeholder={t('pages.mcpManager.form.commandPlaceholder')} />
             </Form.Item>
 
-            <Form.Item
-              name="args"
-              label={t('pages.mcpManager.form.args')}
-            >
+            <Form.Item name="args" label={t('pages.mcpManager.form.args')}>
               <Input placeholder={t('pages.mcpManager.form.argsPlaceholder')} />
             </Form.Item>
           </>
-        )}
 
-        {/* SSE specific fields */}
-        {(transportType === 'sse' || transportType === 'streamable_http') && (
-          <Form.Item
-            name="url"
-            label={transportType === 'sse' ? t('pages.mcpManager.form.sseUrl') : t('pages.mcpManager.form.httpUrl')}
-            rules={[{ required: true, message: t('pages.mcpManager.form.urlRequired') }]}
-          >
-            <Input placeholder={
-              transportType === 'sse' 
-                ? t('pages.mcpManager.form.sseUrlPlaceholder')
-                : t('pages.mcpManager.form.httpUrlPlaceholder')
-            } />
+          <Form.Item name="autoApprove" label={t('pages.mcpManager.form.autoApprove')}>
+            <Input placeholder={t('pages.mcpManager.form.autoApprovePlaceholder')} />
           </Form.Item>
-        )}
 
-        <Form.Item
-          name="autoApprove"
-          label={t('pages.mcpManager.form.autoApprove')}
-        >
-          <Input placeholder={t('pages.mcpManager.form.autoApprovePlaceholder')} />
-        </Form.Item>
-
-        <Form.Item
-          name="envText"
-          label={
-            <div>
-              <Text>{t('pages.mcpManager.form.envVars')}</Text>
-              <br />
-              <Text type="secondary" style={{ fontSize: '12px' }}>
-                {t('pages.mcpManager.form.envVarsHelp')}
-              </Text>
-            </div>
-          }
-        >
-          <TextArea
-            rows={4}
-            placeholder={t('pages.mcpManager.form.envVarsPlaceholder')}
-          />
-        </Form.Item>
-      </Form>
-    </Modal>
+          <Form.Item
+            name="envText"
+            label={
+              <div>
+                <Text>{t('pages.mcpManager.form.envVars')}</Text>
+                <br />
+                <Text type="secondary" style={{ fontSize: '12px' }}>
+                  {t('pages.mcpManager.form.envVarsHelp')}
+                </Text>
+              </div>
+            }
+          >
+            <TextArea rows={4} placeholder={t('pages.mcpManager.form.envVarsPlaceholder')} />
+          </Form.Item>
+        </Form>
+      </Modal>
     </ConfigProvider>
   );
 };

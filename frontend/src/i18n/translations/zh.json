@@ -401,6 +401,7 @@
         "connected": "已连接",
         "connectionFailed": "连接失败",
         "notConnected": "未连接",
+        "connecting": "连接中",
         "disconnect": "断开",
         "connect": "连接",
         "viewTools": "查看工具",
@@ -420,6 +421,7 @@
         "envVarsConfigured": "已配置 {{count}} 个变量",
         "autoApprove": "自动批准",
         "availableTools": "可用工具",
+        "toolsInfo": "工具信息",
         "error": "错误"
       },
       "toolRegistration": {

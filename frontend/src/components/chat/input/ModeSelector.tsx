@@ -1,11 +1,11 @@
 // src/components/chat/input/ModeSelector.tsx
 import React from 'react';
 import { Button, Tag } from 'antd';
-import { ArrowUp, Bot, GitBranch, Network, X } from 'lucide-react';
+import { ArrowUp, Bot, GitBranch, Network } from 'lucide-react';
 import { useConversationStore } from '../../../store/conversationStore';
 import { useModelStore } from '../../../store/modelStore';
 import { useGraphEditorStore } from '../../../store/graphEditorStore';
-import { useMCPStore } from '../../../store/mcpStore';
+import { mcp2ListServers } from '../../../services/mcp2AsyncService';
 import { ConversationMode } from '../../../types/conversation';
 import SystemPromptToggle from '../controls/SystemPromptToggle';
 import AgentPicker from '../controls/AgentPicker';
@@ -36,7 +36,8 @@ const ModeSelector: React.FC<ModeSelectorProps> = ({
   const { currentMode, setCurrentMode } = useConversationStore();
   const { models: availableModels, fetchModels } = useModelStore();
   const { graphs: availableGraphs, fetchGraphs } = useGraphEditorStore();
-  const { config: mcpConfig, status: mcpStatus, fetchConfig: fetchMCPConfig, fetchStatus: fetchMCPStatus } = useMCPStore();
+  const [availableMCPServers, setAvailableMCPServers] = React.useState<string[]>([]);
+  const [mcp2ConnectedMap, setMcp2ConnectedMap] = React.useState<Record<string, boolean>>({});
 
   const [inputValue, setInputValue] = React.useState('');
   const [systemPrompt, setSystemPrompt] = React.useState('');
@@ -51,24 +52,32 @@ const ModeSelector: React.FC<ModeSelectorProps> = ({
   const [planAgentName, setPlanAgentName] = React.useState<string>('plan_agent');
   const [includeAgents, setIncludeAgents] = React.useState<string[]>([]);
 
-  const availableMCPServers = React.useMemo(() => {
-    return Object.keys(mcpConfig.mcpServers || {}).filter(serverName => {
-      const server = mcpConfig.mcpServers[serverName];
-      return !server.disabled;
-    });
-  }, [mcpConfig]);
+  React.useEffect(() => {
+    const loadMcp2Servers = async () => {
+      try {
+        const list = await mcp2ListServers();
+        const keys = list.map(s => `${s.server_name}:${s.version}`);
+        setAvailableMCPServers(keys);
+        const connected: Record<string, boolean> = {};
+        list.forEach(s => {
+          connected[`${s.server_name}:${s.version}`] = Boolean(s.connected);
+        });
+        setMcp2ConnectedMap(connected);
+      } catch {
+        // ignore
+      }
+    };
+    loadMcp2Servers();
+  }, []);
 
   const getServerConnectionStatus = React.useCallback((serverName: string) => {
-    const status = mcpStatus[serverName];
-    return status?.connected || false;
-  }, [mcpStatus]);
+    return mcp2ConnectedMap[serverName] || false;
+  }, [mcp2ConnectedMap]);
 
   React.useEffect(() => {
     fetchModels();
     fetchGraphs();
-    fetchMCPConfig();
-    fetchMCPStatus();
-  }, [fetchModels, fetchGraphs, fetchMCPConfig, fetchMCPStatus]);
+  }, [fetchModels, fetchGraphs]);
 
   React.useEffect(() => {
     const initialStates: Record<string, boolean> = {};
@@ -438,7 +447,6 @@ const ModeSelector: React.FC<ModeSelectorProps> = ({
                         selectedAgent={planAgentName}
                         onAgentChange={(agent) => setPlanAgentName(agent || 'plan_agent')}
                         size="small"
-                        placeholder="规划 Agent"
                       />
                       <AgentPicker
                         selectedAgent={null}
@@ -448,8 +456,6 @@ const ModeSelector: React.FC<ModeSelectorProps> = ({
                           }
                         }}
                         size="small"
-                        placeholder="添加可用 Agent"
-                        allowClear={false}
                       />
                       {includeAgents.length > 0 && (
                         <div style={{

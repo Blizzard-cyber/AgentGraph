@@ -401,6 +401,7 @@
         "connected": "Connected",
         "connectionFailed": "Connection Failed",
         "notConnected": "Not Connected",
+        "connecting": "Connecting",
         "disconnect": "Disconnect",
         "connect": "Connect",
         "viewTools": "View Tools",
@@ -420,6 +421,7 @@
         "envVarsConfigured": "{{count}} variables configured",
         "autoApprove": "Auto-approve",
         "availableTools": "Available Tools",
+        "toolsInfo": "Tools Info",
         "error": "Error"
       },
       "toolRegistration": {
