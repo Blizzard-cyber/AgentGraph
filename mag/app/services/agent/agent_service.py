@@ -21,6 +21,37 @@ class AgentService:
         """初始化 Agent 服务"""
         self.agent_stream_executor = AgentStreamExecutor()
 
+    def _normalize_mcp_servers(self, mcp_config: List[Any]) -> List[Dict[str, Optional[str]]]:
+        """
+        标准化MCP服务器配置为统一格式（向后兼容）
+        
+        支持两种输入格式：
+        1. 旧格式（字符串）: ["server1", "server2"]
+        2. 新格式（对象）: [{"name": "server1", "version": "1.0.0"}]
+        
+        统一输出格式：[{"name": "server1", "version": "1.0.0"}]
+        
+        Args:
+            mcp_config: MCP服务器配置列表
+            
+        Returns:
+            标准化后的配置列表
+        """
+        normalized = []
+        for item in mcp_config:
+            if isinstance(item, str):
+                # 旧格式：字符串 -> 转换为对象格式（version为None）
+                normalized.append({"name": item, "version": None})
+            elif isinstance(item, dict):
+                # 新格式：对象 -> 提取name和version
+                normalized.append({
+                    "name": item.get("name"),
+                    "version": item.get("version")
+                })
+            else:
+                logger.warning(f"无效的MCP服务器配置项: {item} (类型: {type(item)})")
+        return normalized
+
     async def create_agent(self, agent_config: Dict[str, Any], user_id: str) -> Dict[str, Any]:
         """
         创建 Agent
@@ -325,6 +356,43 @@ class AgentService:
             # 2. 验证 model 是否存在
             model_name = agent_config.get("model")
             model_id = agent_config.get("model_id")  # 可能包含云端模型ID
+            
+            # 如果没有model_id，尝试从云端API获取
+            if not model_id:
+                try:
+                    import httpx
+                    from app.core.config import settings
+                    
+                    logger.info(f"agent_config中没有model_id，尝试从云端API查询模型 {model_name}")
+                    
+                    # 获取云端模型列表
+                    models_api_url = f"{settings.CLOUD_MODEL_API_BASE_URL}/api/v1/models"
+                    async with httpx.AsyncClient(timeout=10.0) as client:
+                        models_response = await client.get(models_api_url)
+                        models_response.raise_for_status()
+                        models_data = models_response.json()
+                    
+                    # 在模型列表中查找匹配的模型
+                    if isinstance(models_data, dict) and "models" in models_data:
+                        models_list = models_data["models"]
+                    elif isinstance(models_data, list):
+                        models_list = models_data
+                    else:
+                        logger.warning(f"云端模型API返回格式异常: {type(models_data)}")
+                        models_list = []
+                    
+                    for model_item in models_list:
+                        if model_item.get("name") == model_name:
+                            model_id = model_item.get("id")
+                            logger.info(f"从云端API找到模型 {model_name}，ID: {model_id}")
+                            break
+                    
+                    if not model_id:
+                        logger.warning(f"云端API中未找到模型 {model_name}")
+                        
+                except Exception as e:
+                    logger.warning(f"查询云端模型API失败: {str(e)}")
+            
             model_config = await model_service.get_model(model_name, user_id)
             
             if not model_config:
@@ -336,9 +404,10 @@ class AgentService:
                         # 有model_id，可以从云端获取下载URL
                         try:
                             import httpx
+                            from app.core.config import settings
                             
                             # 获取下载链接
-                            download_api_url = f"http://192.168.1.86:8080/api/v1/models/{model_id}/download"
+                            download_api_url = f"{settings.CLOUD_MODEL_API_BASE_URL}/api/v1/models/{model_id}/download"
                             async with httpx.AsyncClient(timeout=10.0) as client:
                                 download_response = await client.get(download_api_url)
                                 download_response.raise_for_status()
@@ -358,7 +427,7 @@ class AgentService:
                                     "extended_kv_cache": {"enabled": False},
                                     "speculative_config": {"enabled": False},
                                     "categories": ["imported"],
-                                    "backend_parameters": ["--gpu-memory-utilization=0.9"],
+                                    "backend_parameters": ["--gpu-memory-utilization=0.4"],
                                     "distributed_inference_across_workers": True,
                                     "restart_on_error": True,
                                     "generic_proxy": False,
@@ -451,12 +520,12 @@ class AgentService:
                                             "model_type": "llm"
                                         }
                                         
-                                        result = await mongodb_client.model_repository.create_model(user_id, model_config_data)
-                                        if result.get("success"):
+                                        success = await model_service.add_model(user_id, model_config_data)
+                                        if success:
                                             logger.info(f"模型 {model_name} 已成功注册到用户数据库")
                                         else:
                                             # 模型可能已在数据库中，记录日志但不视为错误
-                                            logger.info(f"模型 {model_name} 注册结果: {result.get('message')}")
+                                            logger.info(f"模型 {model_name} 注册失败，可能已存在")
                                             
                                     except Exception as e:
                                         logger.error(f"注册模型到数据库时出错: {str(e)}")
@@ -480,33 +549,36 @@ class AgentService:
             # 3. 验证 mcp 服务器列表
             mcp_servers = agent_config.get("mcp", [])
             if mcp_servers:
+                # 标准化MCP服务器配置（支持新旧两种格式）
+                normalized_servers = self._normalize_mcp_servers(mcp_servers)
+                
                 # 获取当前配置的所有 MCP 服务器
+                logger.info(f"当前用户 MCP 配置: {user_id}")
                 mcp_config_data = await mongodb_client.get_mcp_config()
+                
                 if mcp_config_data:
                     configured_servers = mcp_config_data.get("config", {}).get("mcpServers", {})
                 else:
                     configured_servers = {}
 
                 # 验证每个服务器是否已配置，如果未配置且有版本信息则自动部署
-                for server_item in mcp_servers:
-                    # 支持两种格式：字符串或字典
-                    if isinstance(server_item, str):
-                        server_name = server_item
-                        server_version = None
-                    elif isinstance(server_item, dict):
-                        server_name = server_item.get("name")
-                        server_version = server_item.get("version")
-                    else:
+                for server_info in normalized_servers:
+                    server_name = server_info.get("name")
+                    server_version = server_info.get("version")
+                    
+                    if not server_name:
+                        logger.warning(f"MCP服务器配置缺少name字段: {server_info}")
                         continue
                     
                     if server_name not in configured_servers:
                         # 如果有版本信息，尝试自动部署
                         if server_version:
-                            logger.info(f"MCP服务器 {server_name} 未配置，尝试自动部署...")
+                            logger.info(f"MCP服务器 {server_name} (v{server_version}) 未配置，尝试自动部署...")
                             try:
                                 import httpx
+                                from app.core.config import settings
                                 
-                                deploy_url = "http://192.168.1.86:9950/api/deploy"
+                                deploy_url = f"{settings.MCP_DEPLOY_SERVICE_URL}/api/deploy"
                                 deploy_payload = {
                                     "serverName": server_name,
                                     "version": server_version
@@ -541,6 +613,7 @@ class AgentService:
                                 return False, f"部署MCP服务器 {server_name} 失败: {str(e)}"
                         else:
                             # 没有版本信息，无法自动部署
+                            logger.warning(f"MCP服务器 {server_name} 未配置且缺少版本信息")
                             return False, f"MCP服务器未配置: {server_name}"
 
             # 4. 验证 system_tools 列表

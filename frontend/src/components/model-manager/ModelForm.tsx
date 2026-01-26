@@ -235,7 +235,7 @@ const ModelForm: React.FC<ModelFormProps> = ({
             <Select.Option value="google">{t('pages.modelManager.form.providerGoogle')}</Select.Option>
             <Select.Option value="anthropic">{t('pages.modelManager.form.providerAnthropic')}</Select.Option>
             <Select.Option value="azure">{t('pages.modelManager.form.providerAzure')}</Select.Option>
-            <Select.Option value="custom">{t('pages.modelManager.form.providerCustom')}</Select.Option>
+            <Select.Option value="local">{t('pages.modelManager.form.providerLocal')}</Select.Option>
           </Select>
         </Form.Item>
 
@@ -301,209 +301,209 @@ const ModelForm: React.FC<ModelFormProps> = ({
           </div>
           {advancedExpanded && (
             <div style={{ padding: '16px', paddingTop: '8px' }}>
-            <div style={{ paddingBottom: '24px' }}>
-              <Form.Item
-                name="temperature"
-                label={t('pages.modelManager.form.temperature')}
-                help={t('pages.modelManager.form.temperatureHelp')}
-                style={{ marginBottom: '24px' }}
-              >
-                <InputNumber
-                  min={0}
-                  max={2}
-                  step={0.1}
-                  placeholder={t('pages.modelManager.form.temperaturePlaceholder')}
-                  style={{ width: '100%' }}
-                  precision={2}
-                />
-              </Form.Item>
-            </div>
+              <div style={{ paddingBottom: '24px' }}>
+                <Form.Item
+                  name="temperature"
+                  label={t('pages.modelManager.form.temperature')}
+                  help={t('pages.modelManager.form.temperatureHelp')}
+                  style={{ marginBottom: '24px' }}
+                >
+                  <InputNumber
+                    min={0}
+                    max={2}
+                    step={0.1}
+                    placeholder={t('pages.modelManager.form.temperaturePlaceholder')}
+                    style={{ width: '100%' }}
+                    precision={2}
+                  />
+                </Form.Item>
+              </div>
 
-            <div style={{ paddingBottom: '24px' }}>
-              <Form.Item
-                name="max_tokens"
-                label={t('pages.modelManager.form.maxTokens')}
-                help={t('pages.modelManager.form.maxTokensHelp')}
-                style={{ marginBottom: '24px' }}
-              >
-                <InputNumber
-                  min={1}
-                  placeholder={t('pages.modelManager.form.maxTokensPlaceholder')}
-                  style={{ width: '100%' }}
-                />
-              </Form.Item>
-            </div>
+              <div style={{ paddingBottom: '24px' }}>
+                <Form.Item
+                  name="max_tokens"
+                  label={t('pages.modelManager.form.maxTokens')}
+                  help={t('pages.modelManager.form.maxTokensHelp')}
+                  style={{ marginBottom: '24px' }}
+                >
+                  <InputNumber
+                    min={1}
+                    placeholder={t('pages.modelManager.form.maxTokensPlaceholder')}
+                    style={{ width: '100%' }}
+                  />
+                </Form.Item>
+              </div>
 
-            <div style={{ paddingBottom: '24px' }}>
-              <Form.Item
-                name="max_completion_tokens"
-                label={t('pages.modelManager.form.maxCompletionTokens')}
-                help={t('pages.modelManager.form.maxCompletionTokensHelp')}
-                style={{ marginBottom: '24px' }}
-              >
-                <InputNumber
-                  min={1}
-                  placeholder={t('pages.modelManager.form.maxCompletionTokensPlaceholder')}
-                  style={{ width: '100%' }}
-                />
-              </Form.Item>
-            </div>
+              <div style={{ paddingBottom: '24px' }}>
+                <Form.Item
+                  name="max_completion_tokens"
+                  label={t('pages.modelManager.form.maxCompletionTokens')}
+                  help={t('pages.modelManager.form.maxCompletionTokensHelp')}
+                  style={{ marginBottom: '24px' }}
+                >
+                  <InputNumber
+                    min={1}
+                    placeholder={t('pages.modelManager.form.maxCompletionTokensPlaceholder')}
+                    style={{ width: '100%' }}
+                  />
+                </Form.Item>
+              </div>
 
-            <div style={{ paddingBottom: '24px' }}>
-              <Form.Item
-                name="top_p"
-                label={t('pages.modelManager.form.topP')}
-                help={t('pages.modelManager.form.topPHelp')}
-                style={{ marginBottom: '24px' }}
-              >
-                <InputNumber
-                  min={0}
-                  max={1}
-                  step={0.1}
-                  placeholder={t('pages.modelManager.form.topPPlaceholder')}
-                  style={{ width: '100%' }}
-                  precision={2}
-                />
-              </Form.Item>
-            </div>
+              <div style={{ paddingBottom: '24px' }}>
+                <Form.Item
+                  name="top_p"
+                  label={t('pages.modelManager.form.topP')}
+                  help={t('pages.modelManager.form.topPHelp')}
+                  style={{ marginBottom: '24px' }}
+                >
+                  <InputNumber
+                    min={0}
+                    max={1}
+                    step={0.1}
+                    placeholder={t('pages.modelManager.form.topPPlaceholder')}
+                    style={{ width: '100%' }}
+                    precision={2}
+                  />
+                </Form.Item>
+              </div>
 
-            <div style={{ paddingBottom: '24px' }}>
-              <Form.Item
-                name="frequency_penalty"
-                label={t('pages.modelManager.form.frequencyPenalty')}
-                help={t('pages.modelManager.form.frequencyPenaltyHelp')}
-                style={{ marginBottom: '24px' }}
-              >
-                <InputNumber
-                  min={-2}
-                  max={2}
-                  step={0.1}
-                  placeholder={t('pages.modelManager.form.frequencyPenaltyPlaceholder')}
-                  style={{ width: '100%' }}
-                  precision={2}
-                />
-              </Form.Item>
-            </div>
+              <div style={{ paddingBottom: '24px' }}>
+                <Form.Item
+                  name="frequency_penalty"
+                  label={t('pages.modelManager.form.frequencyPenalty')}
+                  help={t('pages.modelManager.form.frequencyPenaltyHelp')}
+                  style={{ marginBottom: '24px' }}
+                >
+                  <InputNumber
+                    min={-2}
+                    max={2}
+                    step={0.1}
+                    placeholder={t('pages.modelManager.form.frequencyPenaltyPlaceholder')}
+                    style={{ width: '100%' }}
+                    precision={2}
+                  />
+                </Form.Item>
+              </div>
 
-            <div style={{ paddingBottom: '24px' }}>
-              <Form.Item
-                name="presence_penalty"
-                label={t('pages.modelManager.form.presencePenalty')}
-                help={t('pages.modelManager.form.presencePenaltyHelp')}
-                style={{ marginBottom: '24px' }}
-              >
-                <InputNumber
-                  min={-2}
-                  max={2}
-                  step={0.1}
-                  placeholder={t('pages.modelManager.form.presencePenaltyPlaceholder')}
-                  style={{ width: '100%' }}
-                  precision={2}
-                />
-              </Form.Item>
-            </div>
+              <div style={{ paddingBottom: '24px' }}>
+                <Form.Item
+                  name="presence_penalty"
+                  label={t('pages.modelManager.form.presencePenalty')}
+                  help={t('pages.modelManager.form.presencePenaltyHelp')}
+                  style={{ marginBottom: '24px' }}
+                >
+                  <InputNumber
+                    min={-2}
+                    max={2}
+                    step={0.1}
+                    placeholder={t('pages.modelManager.form.presencePenaltyPlaceholder')}
+                    style={{ width: '100%' }}
+                    precision={2}
+                  />
+                </Form.Item>
+              </div>
 
-            <div style={{ paddingBottom: '24px' }}>
-              <Form.Item
-                name="n"
-                label={t('pages.modelManager.form.responseCount')}
-                help={t('pages.modelManager.form.responseCountHelp')}
-                style={{ marginBottom: '24px' }}
-              >
-                <InputNumber
-                  min={1}
-                  max={10}
-                  placeholder={t('pages.modelManager.form.responseCountPlaceholder')}
-                  style={{ width: '100%' }}
-                />
-              </Form.Item>
-            </div>
+              <div style={{ paddingBottom: '24px' }}>
+                <Form.Item
+                  name="n"
+                  label={t('pages.modelManager.form.responseCount')}
+                  help={t('pages.modelManager.form.responseCountHelp')}
+                  style={{ marginBottom: '24px' }}
+                >
+                  <InputNumber
+                    min={1}
+                    max={10}
+                    placeholder={t('pages.modelManager.form.responseCountPlaceholder')}
+                    style={{ width: '100%' }}
+                  />
+                </Form.Item>
+              </div>
 
-            <div style={{ paddingBottom: '24px' }}>
-              <Form.Item
-                name="stop"
-                label={t('pages.modelManager.form.stopSequence')}
-                help={t('pages.modelManager.form.stopSequenceHelp')}
-                style={{ marginBottom: '24px' }}
-              >
-                <Input placeholder={t('pages.modelManager.form.stopSequencePlaceholder')} />
-              </Form.Item>
-            </div>
+              <div style={{ paddingBottom: '24px' }}>
+                <Form.Item
+                  name="stop"
+                  label={t('pages.modelManager.form.stopSequence')}
+                  help={t('pages.modelManager.form.stopSequenceHelp')}
+                  style={{ marginBottom: '24px' }}
+                >
+                  <Input placeholder={t('pages.modelManager.form.stopSequencePlaceholder')} />
+                </Form.Item>
+              </div>
 
-            <div style={{ paddingBottom: '24px' }}>
-              <Form.Item
-                name="seed"
-                label={t('pages.modelManager.form.seed')}
-                help={t('pages.modelManager.form.seedHelp')}
-                style={{ marginBottom: '24px' }}
-              >
-                <InputNumber
-                  placeholder={t('pages.modelManager.form.seedPlaceholder')}
-                  style={{ width: '100%' }}
-                />
-              </Form.Item>
-            </div>
+              <div style={{ paddingBottom: '24px' }}>
+                <Form.Item
+                  name="seed"
+                  label={t('pages.modelManager.form.seed')}
+                  help={t('pages.modelManager.form.seedHelp')}
+                  style={{ marginBottom: '24px' }}
+                >
+                  <InputNumber
+                    placeholder={t('pages.modelManager.form.seedPlaceholder')}
+                    style={{ width: '100%' }}
+                  />
+                </Form.Item>
+              </div>
 
-            <div style={{ paddingBottom: '24px' }}>
-              <Form.Item
-                name="logprobs"
-                label={t('pages.modelManager.form.logprobs')}
-                valuePropName="checked"
-                style={{ marginBottom: '24px' }}
-              >
-                <Switch
-                  style={{
-                    backgroundColor: 'rgba(24, 144, 255, 0.2)'
-                  }}
-                  className="custom-switch"
-                />
-              </Form.Item>
-            </div>
+              <div style={{ paddingBottom: '24px' }}>
+                <Form.Item
+                  name="logprobs"
+                  label={t('pages.modelManager.form.logprobs')}
+                  valuePropName="checked"
+                  style={{ marginBottom: '24px' }}
+                >
+                  <Switch
+                    style={{
+                      backgroundColor: 'rgba(24, 144, 255, 0.2)'
+                    }}
+                    className="custom-switch"
+                  />
+                </Form.Item>
+              </div>
 
-            <div style={{ paddingBottom: '24px' }}>
-              <Form.Item
-                name="top_logprobs"
-                label={t('pages.modelManager.form.topLogprobs')}
-                help={t('pages.modelManager.form.topLogprobsHelp')}
-                style={{ marginBottom: '24px' }}
-              >
-                <InputNumber
-                  min={0}
-                  max={20}
-                  placeholder={t('pages.modelManager.form.topLogprobsPlaceholder')}
-                  style={{ width: '100%' }}
-                />
-              </Form.Item>
-            </div>
+              <div style={{ paddingBottom: '24px' }}>
+                <Form.Item
+                  name="top_logprobs"
+                  label={t('pages.modelManager.form.topLogprobs')}
+                  help={t('pages.modelManager.form.topLogprobsHelp')}
+                  style={{ marginBottom: '24px' }}
+                >
+                  <InputNumber
+                    min={0}
+                    max={20}
+                    placeholder={t('pages.modelManager.form.topLogprobsPlaceholder')}
+                    style={{ width: '100%' }}
+                  />
+                </Form.Item>
+              </div>
 
-            <div style={{ paddingBottom: '24px' }}>
-              <Form.Item
-                name="timeout"
-                label={t('pages.modelManager.form.timeout')}
-                help={t('pages.modelManager.form.timeoutHelp')}
-                style={{ marginBottom: '24px' }}
-              >
-                <InputNumber
-                  min={1}
-                  placeholder={t('pages.modelManager.form.timeoutPlaceholder')}
-                  style={{ width: '100%' }}
-                />
-              </Form.Item>
-            </div>
+              <div style={{ paddingBottom: '24px' }}>
+                <Form.Item
+                  name="timeout"
+                  label={t('pages.modelManager.form.timeout')}
+                  help={t('pages.modelManager.form.timeoutHelp')}
+                  style={{ marginBottom: '24px' }}
+                >
+                  <InputNumber
+                    min={1}
+                    placeholder={t('pages.modelManager.form.timeoutPlaceholder')}
+                    style={{ width: '100%' }}
+                  />
+                </Form.Item>
+              </div>
 
-            <div style={{ paddingBottom: '12px' }}>
-              <Form.Item
-                name="extra_body_json"
-                label={t('pages.modelManager.form.extraBody')}
-                help={t('pages.modelManager.form.extraBodyHelp')}
-                style={{ marginBottom: '12px' }}
-              >
-                <TextArea
-                  rows={4}
-                  placeholder={t('pages.modelManager.form.extraBodyPlaceholder')}
-                />
-              </Form.Item>
-            </div>
+              <div style={{ paddingBottom: '12px' }}>
+                <Form.Item
+                  name="extra_body_json"
+                  label={t('pages.modelManager.form.extraBody')}
+                  help={t('pages.modelManager.form.extraBodyHelp')}
+                  style={{ marginBottom: '12px' }}
+                >
+                  <TextArea
+                    rows={4}
+                    placeholder={t('pages.modelManager.form.extraBodyPlaceholder')}
+                  />
+                </Form.Item>
+              </div>
             </div>
           )}
         </div>

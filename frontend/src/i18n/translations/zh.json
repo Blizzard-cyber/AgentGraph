@@ -276,7 +276,7 @@
         "providerGoogle": "Google",
         "providerAnthropic": "Anthropic",
         "providerAzure": "Azure OpenAI",
-        "providerCustom": "自定义",
+        "providerLocal": "本地部署",
         "modelType": "模型类型",
         "modelTypeRequired": "请选择模型类型!",
         "modelTypePlaceholder": "选择模型类型 (LLM, VLM, 图像, 音频...)",
