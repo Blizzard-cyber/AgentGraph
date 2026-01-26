@@ -6,7 +6,7 @@ import {
   GitBranch, Bot, Wrench, AlertTriangle,
   RefreshCw, Zap
 } from 'lucide-react';
-import { useMCPStore } from '../../store/mcpStore';
+import { mcp2ListServers } from '../../services/mcp2AsyncService';
 import { useT } from '../../i18n/hooks';
 
 const { Text } = Typography;
@@ -49,13 +49,29 @@ const AgentNodeComponent: React.FC<AgentNodeProps> = ({ data }) => {
     onClick
   } = data;
 
-  const { status } = useMCPStore();
+  const [mcp2ConnectedMap, setMcp2ConnectedMap] = React.useState<Record<string, boolean>>({});
 
-
+  React.useEffect(() => {
+    const load = async () => {
+      try {
+        const list = await mcp2ListServers();
+        const map: Record<string, boolean> = {};
+        (list || []).forEach((s: any) => {
+          map[`${s.server_name}:${s.version}`] = Boolean(s.connected);
+        });
+        setMcp2ConnectedMap(map);
+      } catch {
+        // ignore
+      }
+    };
+    load();
+  }, []);
 
   // Check server connection status
   const hasDisconnectedServers = mcp_servers?.some(server => {
-    return status[server] && !status[server].connected;
+    // In MCP2 UI, server is keyed by "name:version"
+    const connected = mcp2ConnectedMap[server];
+    return connected === false;
   });
 
   // Check if has handoffs feature
@@ -414,3 +430,4 @@ const AgentNodeComponent: React.FC<AgentNodeProps> = ({ data }) => {
 };
 
 export default AgentNodeComponent;
+

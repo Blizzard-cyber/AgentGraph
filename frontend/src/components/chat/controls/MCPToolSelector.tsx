@@ -36,9 +36,8 @@ const MCPToolSelector: React.FC<MCPToolSelectorProps> = ({
   selectedMCPServers,
   onToggleMCPServer,
   getServerConnectionStatus,
-  size = 'small',
-  className = ''
-}) => {
+  size = 'small'
+                                                         }) => {
   const t = useT();
   const [showPanel, setShowPanel] = React.useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
