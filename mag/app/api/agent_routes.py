@@ -193,7 +193,8 @@ async def list_agents_in_category(
 # ======= Agent CRUD API接口 =======
 @router.post("")
 async def create_agent(
-    request: CreateAgentRequest, current_user: CurrentUser = Depends(get_current_user_hybrid)
+    request: CreateAgentRequest,
+    current_user: CurrentUser = Depends(get_current_user_hybrid),
 ):
     """创建 Agent"""
     try:
@@ -388,7 +389,8 @@ async def delete_agent(
 # ======= Agent 运行 API接口 =======
 @router.post("/run")
 async def agent_run(
-    request: AgentRunRequest, current_user: CurrentUser = Depends(get_current_user_hybrid)
+    request: AgentRunRequest,
+    current_user: CurrentUser = Depends(get_current_user_hybrid),
 ):
     """Agent 运行（流式响应，SSE）- 支持配置覆盖"""
     try:
@@ -530,7 +532,9 @@ async def agent_run(
 
             except Exception as e:
                 logger.error(f"Agent 流式响应生成出错: {str(e)}")
-                error_chunk = {"error": {"message": f"执行失败: {str(e)}", "type": "api_error"}}
+                error_chunk = {
+                    "error": {"message": f"执行失败: {str(e)}", "type": "api_error"}
+                }
                 yield f"data: {json.dumps(error_chunk, ensure_ascii=False)}\n\n"
                 yield "data: [DONE]\n\n"
                 # 重新抛出异常，让上层知道失败
@@ -574,6 +578,7 @@ async def agent_run(
 # ======= Agent 导入 API接口 =======
 class RepositoryImportRequest(BaseModel):
     """从云端仓库导入请求"""
+
     agent_id: int = Field(..., description="云端Agent ID")
     agent_name: Optional[str] = Field(None, description="Agent名称（用于日志记录）")
 
@@ -599,7 +604,7 @@ async def import_from_repository(
 
         agent_id = request.agent_id
         agent_name = request.agent_name or f"Agent_{agent_id}"
-        
+
         logger.info(f"从云端导入Agent: ID={agent_id}, 名称={agent_name}")
 
         # 1. 获取下载链接
@@ -609,13 +614,13 @@ async def import_from_repository(
             download_response = await client.get(download_api_url)
             download_response.raise_for_status()
             download_url = download_response.text.strip()
-        
+
         if not download_url:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"无法获取Agent ID {agent_id} 的下载链接"
+                detail=f"无法获取Agent ID {agent_id} 的下载链接",
             )
-        
+
         logger.info(f"获取到下载链接: {download_url[:100]}...")
 
         # 2. 下载ZIP文件
@@ -627,7 +632,7 @@ async def import_from_repository(
         if not zip_content:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="从云端下载的文件内容为空"
+                detail="从云端下载的文件内容为空",
             )
 
         # 2. 解压ZIP文件
@@ -635,16 +640,16 @@ async def import_from_repository(
         try:
             with zipfile.ZipFile(BytesIO(zip_content)) as zip_file:
                 zip_file.extractall(temp_extract_dir)
-            
+
             logger.info(f"ZIP文件解压到: {temp_extract_dir}")
-            
+
             # 3. 查找配置文件（优先级：agent.json > agents.json > *.json > *.jsonl）
             config_file = None
             config_extension = None
-            
+
             supported_formats = [".json", ".jsonl", ".xlsx", ".xls", ".parquet"]
             priority_files = ["agent.json", "agents.json", "config.json"]
-            
+
             # 先查找优先文件
             for priority_file in priority_files:
                 potential_path = os.path.join(temp_extract_dir, priority_file)
@@ -652,7 +657,7 @@ async def import_from_repository(
                     config_file = potential_path
                     config_extension = ".json"
                     break
-            
+
             # 如果没找到，搜索所有支持格式的文件
             if not config_file:
                 for root, dirs, files in os.walk(temp_extract_dir):
@@ -664,28 +669,31 @@ async def import_from_repository(
                             break
                     if config_file:
                         break
-            
+
             if not config_file:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
-                    detail=f"ZIP包中未找到支持的配置文件，支持的格式: {', '.join(supported_formats)}"
-               )
-            
+                    detail=f"ZIP包中未找到支持的配置文件，支持的格式: {', '.join(supported_formats)}",
+                )
+
             logger.info(f"找到配置文件: {config_file}")
-            
+
             # 4. 读取配置文件内容
-            with open(config_file, 'rb') as f:
+            with open(config_file, "rb") as f:
                 file_content = f.read()
-            
+
             # 4.5. 处理JSON格式 - 如果有agent_config包装则展开
             if config_extension == ".json":
                 import json
+
                 try:
                     data = json.loads(file_content)
                     # 如果是单个对象且包含agent_config，展开它
                     if isinstance(data, dict) and "agent_config" in data:
                         data = data["agent_config"]
-                        file_content = json.dumps(data, ensure_ascii=False).encode('utf-8')
+                        file_content = json.dumps(data, ensure_ascii=False).encode(
+                            "utf-8"
+                        )
                         logger.info(f"检测到agent_config包装，已自动展开")
                     # 如果是数组，检查每个元素是否有agent_config包装
                     elif isinstance(data, list):
@@ -696,32 +704,35 @@ async def import_from_repository(
                             else:
                                 unwrapped.append(item)
                         if unwrapped != data:
-                            file_content = json.dumps(unwrapped, ensure_ascii=False).encode('utf-8')
+                            file_content = json.dumps(
+                                unwrapped, ensure_ascii=False
+                            ).encode("utf-8")
                             logger.info(f"检测到agent_config包装，已自动展开数组")
                 except json.JSONDecodeError:
                     logger.warning("JSON解析失败，使用原始内容")
                 except Exception as e:
                     logger.warning(f"处理JSON包装时出错: {str(e)}，使用原始内容")
-            
+
             # 5. 执行导入
             import_result = await agent_import_service.import_agents(
                 file_content=file_content,
                 file_extension=config_extension,
-                user_id=user_id
+                user_id=user_id,
             )
-            
+
             # 6. 返回导入结果
             return {
                 "success": True,
                 "message": f"成功从云端导入Agent (ID: {agent_id})",
                 "agent_id": agent_id,
                 "agent_name": agent_name,
-                "import_result": import_result
+                "import_result": import_result,
             }
-        
+
         finally:
             # 清理解压目录
             import shutil
+
             try:
                 shutil.rmtree(temp_extract_dir)
             except Exception as e:
@@ -730,14 +741,12 @@ async def import_from_repository(
     except httpx.HTTPError as e:
         logger.error(f"从云端下载失败: {str(e)}")
         raise HTTPException(
-            status_code=status.HTTP_502_BAD_GATEWAY,
-            detail=f"从云端下载失败: {str(e)}"
+            status_code=status.HTTP_502_BAD_GATEWAY, detail=f"从云端下载失败: {str(e)}"
         )
     except zipfile.BadZipFile as e:
         logger.error(f"ZIP文件格式错误: {str(e)}")
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"ZIP文件格式错误: {str(e)}"
+            status_code=status.HTTP_400_BAD_REQUEST, detail=f"ZIP文件格式错误: {str(e)}"
         )
     except HTTPException:
         raise
@@ -751,7 +760,8 @@ async def import_from_repository(
 
 @router.post("/import")
 async def import_agents(
-    file: UploadFile = File(...), current_user: CurrentUser = Depends(get_current_user_hybrid)
+    file: UploadFile = File(...),
+    current_user: CurrentUser = Depends(get_current_user_hybrid),
 ):
     """
     从本地文件导入Agent配置，返回导入报告
@@ -832,12 +842,12 @@ async def list_import_repositories(
 ):
     """
     列出可用的云端Agent列表
-    
+
     从云端API获取可用的Agent模型列表。
     """
     try:
         import httpx
-        
+
         # 云端API地址
         cloud_api_url = f"{settings.CLOUD_MODEL_API_BASE_URL}/api/v1/models/agents"
         
@@ -846,41 +856,43 @@ async def list_import_repositories(
             response = await client.get(cloud_api_url)
             response.raise_for_status()
             agents_data = response.json()
-        
+
         # 转换为前端需要的格式
         agents = []
         for agent in agents_data:
-            agents.append({
-                "id": agent.get("id"),
-                "name": agent.get("modelName"),
-                "version": agent.get("version"),
-                "description": agent.get("description", ""),
-                "url": agent.get("url"),
-                "size": agent.get("size"),
-                "filename": agent.get("filename"),
-                "creator": agent.get("creator"),
-                "created_at": agent.get("createdAt"),
-                "status": agent.get("status"),
-            })
-        
+            agents.append(
+                {
+                    "id": agent.get("id"),
+                    "name": agent.get("modelName"),
+                    "version": agent.get("version"),
+                    "description": agent.get("description", ""),
+                    "url": agent.get("url"),
+                    "size": agent.get("size"),
+                    "filename": agent.get("filename"),
+                    "creator": agent.get("creator"),
+                    "created_at": agent.get("createdAt"),
+                    "status": agent.get("status"),
+                }
+            )
+
         return {
             "success": True,
             "agents": agents,
             "total": len(agents),
-            "cloud_api": cloud_api_url
+            "cloud_api": cloud_api_url,
         }
-    
+
     except httpx.HTTPError as e:
         logger.error(f"获取云端Agent列表失败: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
-            detail=f"获取云端Agent列表失败: {str(e)}"
+            detail=f"获取云端Agent列表失败: {str(e)}",
         )
     except Exception as e:
         logger.error(f"处理云端Agent列表出错: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"处理云端Agent列表出错: {str(e)}"
+            detail=f"处理云端Agent列表出错: {str(e)}",
         )
 
 
@@ -957,7 +969,9 @@ async def get_dag_status(
 
 
 @router.get("/dag/executions")
-async def list_dag_executions(current_user: CurrentUser = Depends(get_current_user_hybrid)):
+async def list_dag_executions(
+    current_user: CurrentUser = Depends(get_current_user_hybrid),
+):
     """
     列出所有DAG执行
 
@@ -1011,7 +1025,9 @@ async def cancel_dag_execution(
 
 
 @router.get("/dag/template")
-async def get_dag_template(current_user: CurrentUser = Depends(get_current_user_hybrid)):
+async def get_dag_template(
+    current_user: CurrentUser = Depends(get_current_user_hybrid),
+):
     """
     获取DAG定义模板
 
@@ -1094,7 +1110,9 @@ async def list_dag_available_agents(
                 agents_info.append(
                     {
                         "name": agent_config.get("name", ""),
-                        "description": agent_config.get("description", f"{category['category']} Agent"),
+                        "description": agent_config.get(
+                            "description", f"{category['category']} Agent"
+                        ),
                         "category": category["category"],
                         "actions": ["execute", "analyze", "process"],  # 通用动作
                         "tags": agent_config.get("tags", []),
@@ -1147,7 +1165,8 @@ class PlanningModeRequest(BaseModel):
 
 @router.post("/planning-mode")
 async def execute_planning_mode(
-    request: PlanningModeRequest, current_user: CurrentUser = Depends(get_current_user_hybrid)
+    request: PlanningModeRequest,
+    current_user: CurrentUser = Depends(get_current_user_hybrid),
 ):
     """
     任务规划模式
@@ -1194,8 +1213,8 @@ async def execute_planning_mode(
         else:
             # 获取所有可用的agent
             try:
-                categories = (
-                    await mongodb_client.agent_repository.list_categories(user_id)
+                categories = await mongodb_client.agent_repository.list_categories(
+                    user_id
                 )
 
                 for category_item in categories:
@@ -1210,21 +1229,28 @@ async def execute_planning_mode(
                         agent_name = agent.get("name", "")
                         if agent_name:  # 只添加有名称的 agent
                             # 使用 get_agent_details 获取完整的 agent 详情
-                            agent_details = await mongodb_client.agent_repository.get_agent_details(
-                                agent_name=agent_name,
-                                user_id=user_id
+                            agent_details = (
+                                await mongodb_client.agent_repository.get_agent_details(
+                                    agent_name=agent_name, user_id=user_id
+                                )
                             )
-                            
+
                             if agent_details:
                                 agent_config = agent.get("agent_config", {})
                                 available_agents.append(
                                     {
                                         "name": agent_config.get("name", agent_name),
-                                        "description": agent_config.get("card", agent_details.get("description", "")),
-                                        "category": agent_config.get("category", category_name),
+                                        "description": agent_config.get(
+                                            "card", agent_details.get("description", "")
+                                        ),
+                                        "category": agent_config.get(
+                                            "category", category_name
+                                        ),
                                         "tags": agent_config.get("tags", []),
                                         "model": agent_config.get("model"),
-                                        "max_actions": agent_config.get("max_actions", 50)
+                                        "max_actions": agent_config.get(
+                                            "max_actions", 50
+                                        ),
                                     }
                                 )
                 logger.info(f"可用agent列表: {available_agents}")
