@@ -1,4 +1,3 @@
-from app.services.mcp2.mcp2_manager import mcp2_manager
 """
 MCP 工具执行器
 
@@ -7,12 +6,12 @@ MCP 工具执行器
 import json
 import logging
 from typing import Dict, Any, Optional, List
-from app.services.tool_execution.base_executor import BaseToolExecutor
-
-logger = logging.getLogger(__name__)
 
 from app.services.mcp2.mcp2_manager import mcp2_manager
+from app.services.tool_execution.base_executor import BaseToolExecutor
+from app.services.tool_execution.mcp_content_serializer import normalize_to_json_safe, extract_text
 
+logger = logging.getLogger(__name__)
 
 
 class MCPToolExecutor(BaseToolExecutor):
@@ -75,10 +74,14 @@ class MCPToolExecutor(BaseToolExecutor):
                 content = f"工具 {tool_name} 执行失败：{result['error']}"
             else:
                 result_content = result.get("content", "")
-                if isinstance(result_content, (dict, list)):
-                    content = f"工具 {tool_name} 执行成功：{json.dumps(result_content, ensure_ascii=False)}"
+                # MCP2 可能返回 TextContent 等对象，先做 JSON-safe 规范化
+                normalized = normalize_to_json_safe(result_content)
+                text = extract_text(result_content)
+
+                if text:
+                    content = f"工具 {tool_name} 执行成功：{text}"
                 else:
-                    content = f"工具 {tool_name} 执行成功：{str(result_content)}"
+                    content = f"工具 {tool_name} 执行成功：{json.dumps(normalized, ensure_ascii=False)}"
 
             return self._format_result(tool_call_id, content)
 

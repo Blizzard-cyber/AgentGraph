@@ -87,11 +87,7 @@ class Settings:
     CLOUD_MODEL_API_BASE_URL: str = os.getenv(
         "CLOUD_MODEL_API_BASE_URL", "http://192.168.1.86:8080"
     )
-    
-    # MCP部署服务配置
-    MCP_DEPLOY_SERVICE_URL: str = os.getenv(
-        "MCP_DEPLOY_SERVICE_URL", "http://192.168.1.86:9950"
-    )
+
 
     # 根据操作系统确定配置目录
     @property
