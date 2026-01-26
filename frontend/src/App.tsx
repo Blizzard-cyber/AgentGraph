@@ -14,7 +14,7 @@ import Workspace from './pages/Workspace';
 import ChatSystem from './pages/ChatSystem';
 import GraphEditor from './pages/GraphEditor';
 import ModelManager from './pages/ModelManager';
-import MCPManager from './pages/MCPManager';
+import MCP2Manager from './pages/MCP2Manager';
 import PromptManager from './pages/PromptManager';
 import AgentManager from './pages/AgentManager';
 import SystemToolsManager from './pages/SystemToolsManager';
@@ -230,7 +230,7 @@ const AppContent: React.FC = () => {
           element={
             <PrivateRoute>
               <WorkspaceLayout>
-                <MCPManager />
+                <MCP2Manager />
               </WorkspaceLayout>
             </PrivateRoute>
           }

@@ -20,6 +20,9 @@ from .user_settings_routes import router as user_settings_router
 from .memory_routes import router as memory_router
 from .conversation_share_routes import router as conversation_share_router
 
+# --- MCP2 (new implementation) ---
+from .mcp2_routes import router as mcp2_router
+
 # 创建主路由器
 router = APIRouter()
 
@@ -45,3 +48,6 @@ router.include_router(conversation_file_router)
 router.include_router(user_settings_router)
 router.include_router(memory_router)
 router.include_router(conversation_share_router)
+
+# MCP2 routes (new)
+router.include_router(mcp2_router)

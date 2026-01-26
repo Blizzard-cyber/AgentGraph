@@ -9,8 +9,8 @@ import {
 } from 'lucide-react';
 import { useGraphEditorStore } from '../../store/graphEditorStore';
 import { useModelStore } from '../../store/modelStore';
-import { useMCPStore } from '../../store/mcpStore';
 import { useAgentStore } from '../../store/agentStore';
+import { useMCP2ServersOptions } from '../../hooks/useMCP2ServersOptions';
 import { listSystemTools, ToolCategory } from '../../services/systemToolsService';
 import { promptService } from '../../services/promptService';
 import { useT } from '../../i18n/hooks';
@@ -25,10 +25,10 @@ const NodePropertiesPanel: React.FC = () => {
   const [form] = Form.useForm();
   const { currentGraph, selectedNode, updateNode, removeNode, graphs, selectNode } = useGraphEditorStore();
   const { models, fetchModels } = useModelStore();
-  const { config, fetchConfig } = useMCPStore();
-  const { agents, fetchAgents } = useAgentStore();
-  
-  const [systemToolCategories, setSystemToolCategories] = useState<ToolCategory[]>([]);
+    const { mcpServers } = useMCP2ServersOptions();
+    const { agents, fetchAgents } = useAgentStore();
+
+    const [systemToolCategories, setSystemToolCategories] = useState<ToolCategory[]>([]);
   const [loadingTools, setLoadingTools] = useState(false);
   const [registeredPrompts, setRegisteredPrompts] = useState<string[]>([]);
   const [loadingPrompts, setLoadingPrompts] = useState(false);
@@ -36,8 +36,7 @@ const NodePropertiesPanel: React.FC = () => {
   // Get selected node
   const node = currentGraph?.nodes.find(n => n.id === selectedNode);
 
-  // Get all MCP servers
-  const mcpServers = Object.keys(config.mcpServers || {});
+    // mcpServers now comes from MCP2: ["server:version", ...]
 
   // Get available subgraphs (exclude current graph to avoid circular references)
   const availableSubgraphs = graphs.filter(
@@ -80,14 +79,13 @@ const NodePropertiesPanel: React.FC = () => {
     }
   };
 
-  // Get models, MCP server list, agents, and system tools
+  // Get models, agents, and system tools
   useEffect(() => {
     fetchModels();
-    fetchConfig();
     fetchAgents();
     loadSystemTools();
     loadPrompts();
-  }, [fetchModels, fetchConfig, fetchAgents]);
+  }, [fetchModels, fetchAgents]);
 
   // Update form when selected node changes
   useEffect(() => {

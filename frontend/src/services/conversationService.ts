@@ -8,8 +8,7 @@ import {
   CreateShareResponse,
   ShareStatusResponse,
   DeleteShareResponse,
-  SharedConversationResponse,
-  SharedFileInfo
+  SharedConversationResponse
 } from '../types/conversation';
 
 const CONVERSATION_API_BASE = '/conversations';

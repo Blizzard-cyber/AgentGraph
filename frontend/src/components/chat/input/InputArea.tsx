@@ -5,7 +5,7 @@ import './InputArea.css';
 import { ArrowUp } from 'lucide-react';
 import { useGraphEditorStore } from '../../../store/graphEditorStore';
 import { useModelStore } from '../../../store/modelStore';
-import { useMCPStore } from '../../../store/mcpStore';
+import { mcp2ListServers } from '../../../services/mcp2AsyncService';
 import { ConversationMode } from '../../../types/conversation';
 import SystemPromptToggle from '../controls/SystemPromptToggle';
 import AgentPicker from '../controls/AgentPicker';
@@ -61,14 +61,28 @@ const InputArea: React.FC<InputAreaProps> = ({
 
   const { models: availableModels } = useModelStore();
   const { graphs: availableGraphs } = useGraphEditorStore();
-  const { config: mcpConfig, status: mcpStatus } = useMCPStore();
 
-  const availableMCPServers = React.useMemo(() => {
-    return Object.keys(mcpConfig.mcpServers || {}).filter(serverName => {
-      const server = mcpConfig.mcpServers[serverName];
-      return !server.disabled;
-    });
-  }, [mcpConfig]);
+  const [availableMCPServers, setAvailableMCPServers] = React.useState<string[]>([]);
+  const [mcp2ConnectedMap, setMcp2ConnectedMap] = React.useState<Record<string, boolean>>({});
+
+  React.useEffect(() => {
+    const load = async () => {
+      try {
+        const list = await mcp2ListServers();
+        const keys = (list || []).map((s: any) => `${s.server_name}:${s.version}`);
+        keys.sort((a, b) => a.localeCompare(b));
+        setAvailableMCPServers(keys);
+        const map: Record<string, boolean> = {};
+        (list || []).forEach((s: any) => {
+          map[`${s.server_name}:${s.version}`] = Boolean(s.connected);
+        });
+        setMcp2ConnectedMap(map);
+      } catch {
+        setAvailableMCPServers([]);
+      }
+    };
+    load();
+  }, []);
 
   // 获取模式显示名称
   const getModeDisplayName = () => {
@@ -81,9 +95,8 @@ const InputArea: React.FC<InputAreaProps> = ({
   };
 
   const getServerConnectionStatus = React.useCallback((serverName: string) => {
-    const status = mcpStatus[serverName];
-    return status?.connected || false;
-  }, [mcpStatus]);
+    return mcp2ConnectedMap[serverName] || false;
+  }, [mcp2ConnectedMap]);
 
   // 初始化继承的配置（只在第一次或配置变化时执行）
   useEffect(() => {

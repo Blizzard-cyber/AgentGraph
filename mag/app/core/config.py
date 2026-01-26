@@ -61,6 +61,12 @@ class Settings:
     MEMORY_SERVICE_HOST: str = os.getenv("MEMORY_SERVICE_HOST", "127.0.0.1")
     MEMORY_SERVICE_PORT: int = int(os.getenv("MEMORY_SERVICE_PORT", "8851"))
 
+    # FILE_SYSTEM (MCP models) service
+    FILE_SYSTEM_HOST: str = (os.getenv("FILE_SYSTEM_HOST", "") or "").strip() or "127.0.0.1"
+    FILE_SYSTEM_PORT: int = int((os.getenv("FILE_SYSTEM_PORT", "8080") or "8080").strip())
+    FILE_SYSTEM_API_PREFIX: str = (os.getenv("FILE_SYSTEM_API_PREFIX", "/api/v1") or "/api/v1").strip() or "/api/v1"
+    FILE_SYSTEM_BASE_URL: str = os.getenv("FILE_SYSTEM_BASE_URL") or f"http://{FILE_SYSTEM_HOST}:{FILE_SYSTEM_PORT}{FILE_SYSTEM_API_PREFIX}"
+
     # GPUStack 平台配置（通过 Cookie 认证拉取 /v2/models）
     # 支持从主机/端口构建 base_url，兼容 .env 中 GPUSTACK_SERVICE_HOST/PORT
     GPUSTACK_SERVICE_HOST: str = (
@@ -81,11 +87,7 @@ class Settings:
     CLOUD_MODEL_API_BASE_URL: str = os.getenv(
         "CLOUD_MODEL_API_BASE_URL", "http://192.168.1.86:8080"
     )
-    
-    # MCP部署服务配置
-    MCP_DEPLOY_SERVICE_URL: str = os.getenv(
-        "MCP_DEPLOY_SERVICE_URL", "http://192.168.1.86:9950"
-    )
+
 
     # 根据操作系统确定配置目录
     @property

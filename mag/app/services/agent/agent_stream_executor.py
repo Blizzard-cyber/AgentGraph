@@ -687,13 +687,71 @@ class AgentStreamExecutor:
         """
         tools = []
 
-        # 加载 MCP 工具
+        # 加载 MCP 工具（MCP2：fastmcp）
         if mcp_servers:
-            from app.services.mcp.mcp_service import mcp_service
-
             try:
-                mcp_tools = await mcp_service.prepare_chat_tools(mcp_servers)
-                tools.extend(mcp_tools)
+                from app.services.mcp2.mcp2_manager import mcp2_manager
+
+                for server_key in mcp_servers:
+                    if not isinstance(server_key, str) or ":" not in server_key:
+                        logger.warning(f"MCP2 server key 格式错误（应为 server:version）: {server_key}")
+                        continue
+
+                    server_name, version = server_key.split(":", 1)
+
+                    # Ensure connected so tool_index/tools exist. This is safe if already connected.
+                    try:
+                        await mcp2_manager.start_connect_task(
+                            user_id=user_id,
+                            server_name=server_name,
+                            version=version,
+                            conversation_id=conversation_id,
+                        )
+                    except Exception as e:
+                        logger.warning(f"启动 MCP2 connect 任务失败: {server_key}, err={e}")
+
+                    # Poll a short time to get tools (do not block too long).
+                    tools_payload = None
+                    try:
+                        for _ in range(20):
+                            t = await mcp2_manager.get_task_status(user_id=user_id, server_name=server_name, version=version)
+                            if t and t.task_type == "connect":
+                                if t.status == "complete" and t.result and t.result.get("tools"):
+                                    tools_payload = t.result.get("tools")
+                                    break
+                                if t.status == "error":
+                                    logger.warning(f"MCP2 connect 失败: {server_key}, msg={t.message}")
+                                    break
+                            await asyncio.sleep(0.2)
+                    except Exception as e:
+                        logger.warning(f"轮询 MCP2 connect 状态失败: {server_key}, err={e}")
+
+                    if not tools_payload:
+                        # If we couldn't fetch tools, skip adding schema for this server.
+                        continue
+
+                    # Convert MCP2 tools to OpenAI tool schema
+                    for tdef in tools_payload:
+                        try:
+                            name = tdef.get("name")
+                            desc = tdef.get("description") or ""
+                            input_schema = tdef.get("input_schema") or {"type": "object", "properties": {}}
+
+                            if not name:
+                                continue
+
+                            tools.append(
+                                {
+                                    "type": "function",
+                                    "function": {
+                                        "name": name,
+                                        "description": desc,
+                                        "parameters": input_schema,
+                                    },
+                                }
+                            )
+                        except Exception:
+                            continue
             except Exception as e:
                 logger.error(f"加载 MCP 工具失败: {str(e)}")
 

@@ -432,8 +432,39 @@ class ModelService:
                 base_params, model_config
             )
 
-            # 调用模型获取流
-            stream = await client.chat.completions.create(**params, **extra_kwargs)
+            # 调用模型获取流（兼容：部分后端不支持 tool_choice="auto"）
+            try:
+                stream = await client.chat.completions.create(**params, **extra_kwargs)
+            except Exception as e:
+                msg = str(e)
+                # vLLM 需要 enable-auto-tool-choice/tool-call-parser，否则拒绝 tool_choice=auto
+                if '"auto" tool choice requires' in msg or 'tool choice requires' in msg:
+                    logger.warning(
+                        f"模型后端不支持 tool_choice=auto，尝试降级重试 (model={model_name}, user={user_id})"
+                    )
+                    # 1) 移除 tool_choice 再试（如果存在）
+                    retry_params = dict(params)
+                    if "tool_choice" in retry_params:
+                        retry_params.pop("tool_choice", None)
+                    # tool_choice 也可能在 extra_body 里
+                    retry_extra = dict(extra_kwargs)
+                    extra_body = retry_extra.get("extra_body")
+                    if isinstance(extra_body, dict) and "tool_choice" in extra_body:
+                        extra_body = dict(extra_body)
+                        extra_body.pop("tool_choice", None)
+                        retry_extra["extra_body"] = extra_body
+
+                    try:
+                        stream = await client.chat.completions.create(**retry_params, **retry_extra)
+                    except Exception as e2:
+                        # 2) 如果后端完全不支持 tools（或仍因工具相关参数报错），最后降级为无工具调用
+                        logger.warning(
+                            f"降级重试仍失败，尝试移除 tools (model={model_name}, user={user_id}): {e2}"
+                        )
+                        retry_params.pop("tools", None)
+                        stream = await client.chat.completions.create(**retry_params, **retry_extra)
+                else:
+                    raise
 
             # 使用流处理器处理流式响应
             async for item in StreamHandler.stream_and_accumulate(stream, yield_chunks):

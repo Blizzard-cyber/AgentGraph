@@ -13,7 +13,7 @@ import {
 } from '../services/agentService';
 import { getModels } from '../services/modelService';
 import { listSystemTools, ToolCategory } from '../services/systemToolsService';
-import { getMCPConfig } from '../services/mcpService';
+import { mcp2ListServers } from '../services/mcp2AsyncService';
 import { useT } from '../i18n/hooks';
 import { ModelConfig } from '../types/model';
 
@@ -88,10 +88,10 @@ export const useAgentManager = () => {
    */
   const loadOptions = useCallback(async () => {
     try {
-      const [modelResponse, toolsResponse, mcpResponse, categoriesResponse] = await Promise.all([
+      const [modelResponse, toolsResponse, mcp2Servers, categoriesResponse] = await Promise.all([
         getModels(),
         listSystemTools(),
-        getMCPConfig(),
+        mcp2ListServers(),
         listCategories()
       ]);
 
@@ -99,7 +99,7 @@ export const useAgentManager = () => {
       const allTools = toolsResponse.categories.flatMap((cat: any) => cat.tools.map((t: any) => t.name));
       setSystemTools(allTools);
       setSystemToolCategories(toolsResponse.categories || []);
-      setMcpServers(Object.keys(mcpResponse.mcpServers || {}));
+      setMcpServers((mcp2Servers || []).map((s: any) => `${s.server_name}:${s.version}`));
       setCategories(categoriesResponse.categories || []);
     } catch (error: any) {
       console.error('加载选项失败:', error);

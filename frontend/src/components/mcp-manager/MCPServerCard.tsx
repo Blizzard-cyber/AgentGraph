@@ -27,6 +27,7 @@ interface MCPServerCardProps {
   config: MCPServerConfig;
   status?: {
     connected: boolean;
+    connecting?: boolean;
     init_attempted: boolean;
     tools: string[];
     error?: string;
@@ -59,6 +60,7 @@ const MCPServerCard: React.FC<MCPServerCardProps> = ({
   
   // Determine status information
   const connected = status?.connected || false;
+  const connecting = status?.connecting || false;
   const initAttempted = status?.init_attempted || false;
   const tools = status?.tools || [];
   const error = status?.error || '';
@@ -230,6 +232,23 @@ const MCPServerCard: React.FC<MCPServerCardProps> = ({
               <CheckCircle size={12} strokeWidth={2} />
               {t('pages.mcpManager.card.connected')}
             </Tag>
+          ) : connecting ? (
+            <Tag
+              style={{
+                background: 'rgba(0, 0, 0, 0.04)',
+                color: 'rgba(0, 0, 0, 0.55)',
+                border: '1px solid rgba(0, 0, 0, 0.15)',
+                borderRadius: '6px',
+                fontSize: '12px',
+                padding: '2px 10px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px'
+              }}
+            >
+              <AlertCircle size={12} strokeWidth={2} />
+              {t('pages.mcpManager.card.connecting')}
+            </Tag>
           ) : initAttempted ? (
             <Tag
               style={{
@@ -338,6 +357,7 @@ const MCPServerCard: React.FC<MCPServerCardProps> = ({
               cursor: !connected ? 'not-allowed' : 'pointer',
               transition: 'all 0.2s ease'
             }}
+            title={t('pages.mcpManager.card.toolsInfo')}
             onMouseEnter={(e) => {
               if (connected) {
                 e.currentTarget.style.color = '#1890ff';

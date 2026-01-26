@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { Modal, Form, Input, Select, Radio, InputNumber, Button, Row, Col} from 'antd';
 import { Plus } from 'lucide-react';
 import { useModelStore } from '../../store/modelStore';
-import { useMCPStore } from '../../store/mcpStore';
 import { useGraphEditorStore } from '../../store/graphEditorStore';
 import { useAgentStore } from '../../store/agentStore';
 import { listSystemTools, ToolCategory } from '../../services/systemToolsService';
@@ -11,6 +10,7 @@ import { promptService } from '../../services/promptService';
 import { useT } from '../../i18n/hooks';
 import SystemToolTreeSelector from '../common/SystemToolTreeSelector';
 import MCPSelector from '../common/MCPSelector';
+import { useMCP2ServersOptions } from '../../hooks/useMCP2ServersOptions';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -25,7 +25,7 @@ const AddNodeModal: React.FC<AddNodeModalProps> = ({ visible, onClose, onAdd }) 
   const t = useT();
   const [form] = Form.useForm();
   const { models } = useModelStore();
-  const { config } = useMCPStore();
+  const { mcpServers } = useMCP2ServersOptions();
   const { graphs, currentGraph } = useGraphEditorStore();
   const { agents, fetchAgents } = useAgentStore();
   
@@ -34,7 +34,7 @@ const AddNodeModal: React.FC<AddNodeModalProps> = ({ visible, onClose, onAdd }) 
   const [registeredPrompts, setRegisteredPrompts] = useState<string[]>([]);
   const [loadingPrompts, setLoadingPrompts] = useState(false);
 
-  const mcpServers = Object.keys(config.mcpServers || {});
+  // mcpServers now comes from MCP2: ["server:version", ...]
 
   const availableSubgraphs = graphs.filter(
     graphName => !currentGraph || graphName !== currentGraph.name
