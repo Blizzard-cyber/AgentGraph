@@ -158,17 +158,24 @@ class ModelService:
             # 遍历本地模型，根据模型名称匹配 GPUStack 状态
             result = []
             for model in models:
-                # 使用 model 字段作为在 GPUStack 中的模型名称
-                model_name_in_gpustack = model.get("model", model["name"])
+                provider = model.get("provider", "openai")
+                
+                # 只检查 provider 为 local 的模型状态，其他默认为 ready
+                if provider == "local":
+                    # 使用 model 字段作为在 GPUStack 中的模型名称
+                    model_name_in_gpustack = model.get("model", model["name"])
 
-                # 根据名称匹配状态
-                if gpustack_models_status:
-                    status = self.determine_model_status(
-                        model_name_in_gpustack, gpustack_models_status
-                    )
+                    # 根据名称匹配状态
+                    if gpustack_models_status:
+                        status = self.determine_model_status(
+                            model_name_in_gpustack, gpustack_models_status
+                        )
+                    else:
+                        # 如果无法获取 GPUStack 状态，标记为 error
+                        status = "error"
                 else:
-                    # 如果无法获取 GPUStack 状态，标记为 error
-                    status = "error"
+                    # 非本地模型（云端API模型），默认状态为 ready
+                    status = "ready"
 
                 result.append(
                     {
@@ -176,7 +183,7 @@ class ModelService:
                         "base_url": model["base_url"],
                         "model": model.get("model", ""),
                         "model_type": model.get("model_type", "llm"),
-                        "provider": model.get("provider", "openai"),
+                        "provider": provider,
                         "status": status,
                     }
                 )

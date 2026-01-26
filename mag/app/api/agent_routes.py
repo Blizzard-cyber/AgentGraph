@@ -26,6 +26,7 @@ from app.infrastructure.database.mongodb.client import mongodb_client
 from app.services.agent.agent_stream_executor import AgentStreamExecutor
 from app.services.agent.agent_import_service import agent_import_service
 from app.services.agent.agent_service import agent_service
+from app.core.config import settings
 from app.services.agent.dag_executor import DAGExecutor, DAGPlan
 from app.services.agent.dag_service import (
     RealAgentInterface,
@@ -585,7 +586,7 @@ class RepositoryImportRequest(BaseModel):
 @router.post("/import/repository")
 async def import_from_repository(
     request: RepositoryImportRequest,
-    current_user: CurrentUser = Depends(get_current_user_hybrid),
+    current_user: CurrentUser = Depends(get_current_user_hybrid)
 ):
     """
     从云端导入Agent配置
@@ -607,8 +608,8 @@ async def import_from_repository(
         logger.info(f"从云端导入Agent: ID={agent_id}, 名称={agent_name}")
 
         # 1. 获取下载链接
-        download_api_url = f"http://192.168.1.86:8080/api/v1/models/{agent_id}/download"
-
+        download_api_url = f"{settings.CLOUD_MODEL_API_BASE_URL}/api/v1/models/{agent_id}/download"
+        
         async with httpx.AsyncClient(timeout=10.0) as client:
             download_response = await client.get(download_api_url)
             download_response.raise_for_status()
@@ -837,7 +838,7 @@ async def import_agents(
 
 @router.get("/import/repositories")
 async def list_import_repositories(
-    current_user: CurrentUser = Depends(get_current_user_hybrid),
+    current_user: CurrentUser = Depends(get_current_user_hybrid)
 ):
     """
     列出可用的云端Agent列表
@@ -848,8 +849,8 @@ async def list_import_repositories(
         import httpx
 
         # 云端API地址
-        cloud_api_url = "http://192.168.1.86:8080/api/v1/models/agents"
-
+        cloud_api_url = f"{settings.CLOUD_MODEL_API_BASE_URL}/api/v1/models/agents"
+        
         # 请求云端API
         async with httpx.AsyncClient(timeout=10.0) as client:
             response = await client.get(cloud_api_url)

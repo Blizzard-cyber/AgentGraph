@@ -276,7 +276,7 @@
         "providerGoogle": "Google",
         "providerAnthropic": "Anthropic",
         "providerAzure": "Azure OpenAI",
-        "providerCustom": "Custom",
+        "providerLocal": "Local",
         "modelType": "Model Type",
         "modelTypeRequired": "Please select a model type!",
         "modelTypePlaceholder": "Select model type (LLM, VLM, Image, Audio...)",
