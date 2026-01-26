@@ -1,6 +1,5 @@
 // src/hooks/useSSEConnection.ts
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { flushSync } from 'react-dom';
 import {
   ConversationService,
   generateMongoId
@@ -324,7 +323,7 @@ export function useSSEConnection() {
           // 处理带 task_id 的普通消息（Sub Agent 的思考和工具调用）
           if (message.task_id && message.choices && message.choices[0]) {
             const delta = message.choices[0].delta;
-            
+
             // 处理 Sub Agent 的 reasoning_content
             if (delta?.reasoning_content) {
               const currentReasoningBlockIndex = blocks.findIndex(block =>
@@ -684,12 +683,11 @@ export function useSSEConnection() {
           buffer = lines.pop() || ''; // 保留最后一个不完整的行
 
           // 处理每一行
-          // 使用 flushSync 确保每次更新都立即渲染，避免 React 18 的自动批处理
+          // 移除 flushSync，让 React 自动批处理更新以提升性能
+          // 在工具多轮调用场景下，flushSync 会导致页面卡顿
           for (const line of lines) {
             if (line.trim()) {
-              flushSync(() => {
-                processSSEData(line, options);
-              });
+              processSSEData(line, options);
             }
           }
         }

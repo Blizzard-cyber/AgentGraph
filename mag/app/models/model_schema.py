@@ -40,19 +40,19 @@ class ModelConfig(BaseModel):
     extra_headers: Optional[Dict[str, str]] = Field(default=None, description="额外的请求头")
     timeout: Optional[float] = Field(default=None, description="请求超时时间（秒）")
 
-    @validator('provider')
+    @validator('provider', pre=True, always=True)
     def validate_provider(cls, v):
-        """确保provider转换为小写"""
-        if v is not None:
-            return v.lower()
-        return "openai"
+        """确保provider转换为小写，None或空字符串时使用默认值"""
+        if v is None or v == "":
+            return "openai"
+        return str(v).lower()
     
-    @validator('model_type')
+    @validator('model_type', pre=True, always=True)
     def validate_model_type(cls, v):
-        """确保model_type转换为小写"""
-        if v is not None:
-            return v.lower()
-        return "llm"
+        """确保model_type转换为小写，None或空字符串时使用默认值"""
+        if v is None or v == "":
+            return "llm"
+        return str(v).lower()
 
     @validator('temperature')
     def validate_temperature(cls, v):

@@ -86,7 +86,7 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
           silentUpdateConversations();
           lastUpdateTime = Date.now();
         }
-        
+
         // 重新启动定时器
         if (!interval) {
           interval = setInterval(() => {
@@ -224,7 +224,7 @@ const ConversationSidebar: React.FC<ConversationSidebarProps> = ({
     <div
       style={{
         width: '280px',
-        minHeight: '100vh',
+        height: '100vh',
         background: 'linear-gradient(to bottom, #ffffff 0%, #e6f4ff 100%)',
         borderRight: '1px solid rgba(24, 144, 255, 0.12)',
         boxShadow: '2px 0 8px rgba(24, 144, 255, 0.06)',

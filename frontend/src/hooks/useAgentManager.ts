@@ -15,6 +15,7 @@ import { getModels } from '../services/modelService';
 import { listSystemTools, ToolCategory } from '../services/systemToolsService';
 import { mcp2ListServers } from '../services/mcp2AsyncService';
 import { useT } from '../i18n/hooks';
+import { ModelConfig } from '../types/model';
 
 interface CategoryGroup {
   category: string;
@@ -35,7 +36,7 @@ export const useAgentManager = () => {
   const [searchText, setSearchText] = useState('');
 
   // 可选项数据
-  const [models, setModels] = useState<string[]>([]);
+  const [models, setModels] = useState<ModelConfig[]>([]);
   const [systemTools, setSystemTools] = useState<string[]>([]);
   const [systemToolCategories, setSystemToolCategories] = useState<ToolCategory[]>([]);
   const [mcpServers, setMcpServers] = useState<string[]>([]);
@@ -94,7 +95,7 @@ export const useAgentManager = () => {
         listCategories()
       ]);
 
-      setModels(modelResponse.map((m: any) => m.name));
+      setModels(modelResponse);
       const allTools = toolsResponse.categories.flatMap((cat: any) => cat.tools.map((t: any) => t.name));
       setSystemTools(allTools);
       setSystemToolCategories(toolsResponse.categories || []);
