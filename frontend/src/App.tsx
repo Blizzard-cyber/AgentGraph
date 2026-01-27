@@ -27,6 +27,7 @@ import RegisterPage from './pages/RegisterPage';
 import AdminPanel from './pages/AdminPanel';
 import FileManager from './pages/FileManager';
 import MemoryManager from './pages/MemoryManager';
+import DeviceManagementPage from './pages/DeviceManagementPage';
 import SharedConversation from './pages/SharedConversation';
 
 // AppContent component that uses i18n context
@@ -265,11 +266,23 @@ const AppContent: React.FC = () => {
             </PrivateRoute>
           }
         />
+        <Route
+          path="/workspace/device-management"
+          element={
+            <PrivateRoute>
+              <WorkspaceLayout>
+                <DeviceManagementPage />
+              </WorkspaceLayout>
+            </PrivateRoute>
+          }
+        />
 
-        {/* 受保护的路由 - 管理员页面 */}
-        <Route path="/admin" element={
+        {/* 用户管理页面 - 在工作台布局中 */}
+        <Route path="/workspace/user-management" element={
           <PrivateRoute>
-            <AdminPanel />
+            <WorkspaceLayout>
+              <AdminPanel />
+            </WorkspaceLayout>
           </PrivateRoute>
         } />
 

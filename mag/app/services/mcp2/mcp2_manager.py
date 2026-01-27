@@ -116,14 +116,20 @@ class MCP2Manager:
      Notes /补充:
      - We keep registry and client_table keyed by (server_name, version) to match your `serverName:version` requirement.
      - Concurrency: per-client lock avoids concurrent tool calls and concurrent connect/close.
-     """
+    """
 
     def __init__(self) -> None:
         self.server_registry: Dict[Tuple[str, str], RegisteredServer] = {}
         self.client_table: Dict[Tuple[str, str], ClientEntry] = {}
-        self.user_servers: Dict[str, Dict[Tuple[str, str], UserServerEntry]] = {}  # user_id -> {(server,version): entry}
-        self.task_table: Dict[Tuple[str, str, str], TaskEntry] = {}  # (user_id, server_name, version)
-        self.tool_index: Dict[str, Tuple[str, str]] = {}  # tool_name -> (server_name, version)
+        self.user_servers: Dict[str, Dict[Tuple[str, str], UserServerEntry]] = (
+            {}
+        )  # user_id -> {(server,version): entry}
+        self.task_table: Dict[Tuple[str, str, str], TaskEntry] = (
+            {}
+        )  # (user_id, server_name, version)
+        self.tool_index: Dict[str, Tuple[str, str]] = (
+            {}
+        )  # tool_name -> (server_name, version)
         self._task_lock = asyncio.Lock()
         self._user_servers_lock = asyncio.Lock()
         self._registry_lock = asyncio.Lock()
@@ -154,7 +160,15 @@ class MCP2Manager:
         t = self._cleanup_task
         if t and not t.done():
             try:
-                await t
+                # 添加 5 秒超时，防止卡死
+                await asyncio.wait_for(t, timeout=5.0)
+            except asyncio.TimeoutError:
+                logger.warning("MCP2 cleanup loop 未能在规定时间内停止，强制取消")
+                t.cancel()
+                try:
+                    await t
+                except (asyncio.CancelledError, Exception):
+                    pass
             except Exception:
                 pass
 
@@ -199,21 +213,36 @@ class MCP2Manager:
                 try:
                     await entry.client.close()
                 except Exception:
-                    logger.exception(f"Failed to close idle client {entry.server_name}:{entry.version}")
+                    logger.exception(
+                        f"Failed to close idle client {entry.server_name}:{entry.version}"
+                    )
                 finally:
                     async with self._registry_lock:
                         self.client_table.pop(key, None)
 
-    def _task_key(self, user_id: str, server_name: str, version: str) -> Tuple[str, str, str]:
+    def _task_key(
+        self, user_id: str, server_name: str, version: str
+    ) -> Tuple[str, str, str]:
         return (user_id, server_name, version)
 
-    async def get_task_status(self, *, user_id: str, server_name: str, version: str) -> Optional[TaskEntry]:
+    async def get_task_status(
+        self, *, user_id: str, server_name: str, version: str
+    ) -> Optional[TaskEntry]:
         async with self._task_lock:
             return self.task_table.get(self._task_key(user_id, server_name, version))
 
-    async def _set_task(self, *, user_id: str, server_name: str, version: str, task_type: str, status: str,
-                        message: str | None = None, result: Dict[str, Any] | None = None,
-                        runner: asyncio.Task | None = None) -> TaskEntry:
+    async def _set_task(
+        self,
+        *,
+        user_id: str,
+        server_name: str,
+        version: str,
+        task_type: str,
+        status: str,
+        message: str | None = None,
+        result: Dict[str, Any] | None = None,
+        runner: asyncio.Task | None = None,
+    ) -> TaskEntry:
         async with self._task_lock:
             k = self._task_key(user_id, server_name, version)
             entry = self.task_table.get(k)
@@ -297,7 +326,9 @@ class MCP2Manager:
                     for e in per.values()
                 ]
         try:
-            _MCP_USER_SERVERS_FILE.write_text(json.dumps(raw, ensure_ascii=False, indent=2), encoding="utf-8")
+            _MCP_USER_SERVERS_FILE.write_text(
+                json.dumps(raw, ensure_ascii=False, indent=2), encoding="utf-8"
+            )
         except Exception:
             logger.exception("Failed to save user_servers.json")
 
@@ -307,7 +338,14 @@ class MCP2Manager:
         if not loaded:
             await self._load_user_servers_from_disk()
 
-    async def add_user_server(self, *, user_id: str, server_name: str, version: str, download_url: Optional[str] = None) -> None:
+    async def add_user_server(
+        self,
+        *,
+        user_id: str,
+        server_name: str,
+        version: str,
+        download_url: Optional[str] = None,
+    ) -> None:
         await self._ensure_user_servers_loaded()
         async with self._user_servers_lock:
             per = self.user_servers.setdefault(user_id, {})
@@ -319,7 +357,9 @@ class MCP2Manager:
             )
         await self._save_user_servers_to_disk()
 
-    async def remove_user_server(self, *, user_id: str, server_name: str, version: str) -> None:
+    async def remove_user_server(
+        self, *, user_id: str, server_name: str, version: str
+    ) -> None:
         await self._ensure_user_servers_loaded()
         async with self._user_servers_lock:
             per = self.user_servers.get(user_id)
@@ -368,14 +408,14 @@ class MCP2Manager:
         now = _utcnow()
         async with self._registry_lock:
             for server_dir in _MCP_SERVERS_DIR.iterdir():
-                if not server_dir.is_dir() or server_dir.name.startswith('.'):
+                if not server_dir.is_dir() or server_dir.name.startswith("."):
                     continue
                 server_name = server_dir.name
                 for version_dir in server_dir.iterdir():
-                    if not version_dir.is_dir() or version_dir.name.startswith('.'):
+                    if not version_dir.is_dir() or version_dir.name.startswith("."):
                         continue
                     version = version_dir.name
-                    script_path = version_dir / 'server.py'
+                    script_path = version_dir / "server.py"
                     if not script_path.exists():
                         continue
                     key = (server_name, version)
@@ -394,7 +434,9 @@ class MCP2Manager:
                         existing.script_path = script_path
                         existing.updated_at = now
 
-    async def _ensure_server_registered(self, *, server_name: str, version: str) -> Optional[RegisteredServer]:
+    async def _ensure_server_registered(
+        self, *, server_name: str, version: str
+    ) -> Optional[RegisteredServer]:
         """Ensure (server_name, version) exists in server_registry, rebuilding from disk if needed."""
         key = (server_name, version)
         async with self._registry_lock:
@@ -412,7 +454,9 @@ class MCP2Manager:
         async with self._task_lock:
             self.task_table.pop((user_id, server_name, version), None)
 
-    def _touch_connection(self, entry: ClientEntry, *, user_id: str, conversation_id: str) -> None:
+    def _touch_connection(
+        self, entry: ClientEntry, *, user_id: str, conversation_id: str
+    ) -> None:
         """Update entry.connections last communication time.
 
         This is a runtime-only table (client_table). After restart it will be empty; that's fine.
@@ -425,13 +469,17 @@ class MCP2Manager:
                 if use.conversation_id == conversation_id:
                     use.last_comm_time = now
                     return
-            ce.usages.append(ConnectionUsage(conversation_id=conversation_id, last_comm_time=now))
+            ce.usages.append(
+                ConnectionUsage(conversation_id=conversation_id, last_comm_time=now)
+            )
             return
 
         entry.connections.append(
             ConnectionEntry(
                 user_id=user_id,
-                usages=[ConnectionUsage(conversation_id=conversation_id, last_comm_time=now)],
+                usages=[
+                    ConnectionUsage(conversation_id=conversation_id, last_comm_time=now)
+                ],
             )
         )
 
@@ -448,7 +496,9 @@ class MCP2Manager:
         """Call a tool via FastMCP client (client_example-compatible)."""
         key = (server_name, version)
 
-        server = await self._ensure_server_registered(server_name=server_name, version=version)
+        server = await self._ensure_server_registered(
+            server_name=server_name, version=version
+        )
         if not server:
             raise KeyError(f"server not registered: {server_name}:{version}")
 
@@ -472,7 +522,9 @@ class MCP2Manager:
                 result = await entry.client.call_tool(tool_name, params)
 
             entry.last_used_at = _utcnow()
-            self._touch_connection(entry, user_id=user_id, conversation_id=conversation_id)
+            self._touch_connection(
+                entry, user_id=user_id, conversation_id=conversation_id
+            )
 
         return result
 
@@ -489,7 +541,7 @@ class MCP2Manager:
         - GET /models/mcps to find id
         - GET /models/{id}/download to get real download URL
         Then download zip bytes, extract, and register as before.
-         """
+        """
         if not server_key or ":" not in server_key:
             return await self._set_task(
                 user_id=user_id,
@@ -505,7 +557,9 @@ class MCP2Manager:
 
         # Resolve download_url synchronously before starting runner so errors are visible quickly
         try:
-            download_url = await self._resolve_download_url_from_file_system(model_name=server_name, version=version)
+            download_url = await self._resolve_download_url_from_file_system(
+                model_name=server_name, version=version
+            )
         except Exception as e:
             return await self._set_task(
                 user_id=user_id,
@@ -517,7 +571,12 @@ class MCP2Manager:
             )
 
         # ensure list presence immediately ("added" state)
-        await self.add_user_server(user_id=user_id, server_name=server_name, version=version, download_url=download_url)
+        await self.add_user_server(
+            user_id=user_id,
+            server_name=server_name,
+            version=version,
+            download_url=download_url,
+        )
 
         # clear any stale task status from previous runs (e.g., previously failed connect/add)
         await self.clear_task(user_id=user_id, server_name=server_name, version=version)
@@ -542,8 +601,15 @@ class MCP2Manager:
 
         # If a previous add_server task is still running for this same key, do not start another.
         async with self._task_lock:
-            existing_task = self.task_table.get(self._task_key(user_id, server_name, version))
-            if existing_task and existing_task.task_type == 'add_server' and existing_task.runner and not existing_task.runner.done():
+            existing_task = self.task_table.get(
+                self._task_key(user_id, server_name, version)
+            )
+            if (
+                existing_task
+                and existing_task.task_type == "add_server"
+                and existing_task.runner
+                and not existing_task.runner.done()
+            ):
                 return existing_task
 
         async def _runner():
@@ -570,7 +636,9 @@ class MCP2Manager:
 
                 await self.ensure_dirs()
                 target_dir = _script_target_path(server_name, version).parent
-                server_py = self._extract_zip_to_dir(zip_bytes=zip_bytes, target_dir=target_dir)
+                server_py = self._extract_zip_to_dir(
+                    zip_bytes=zip_bytes, target_dir=target_dir
+                )
 
                 await self._set_task(
                     user_id=user_id,
@@ -639,7 +707,9 @@ class MCP2Manager:
         Only after FastMCP client can be created + list_tools succeeds, we record the connection.
         """
 
-        srv = await self._ensure_server_registered(server_name=server_name, version=version)
+        srv = await self._ensure_server_registered(
+            server_name=server_name, version=version
+        )
         if srv is None:
             return await self._set_task(
                 user_id=user_id,
@@ -651,9 +721,17 @@ class MCP2Manager:
             )
 
         # if previous task errored, allow a new attempt by overwriting (do not keep stale error forever)
-        existing_task = await self.get_task_status(user_id=user_id, server_name=server_name, version=version)
-        if existing_task and existing_task.task_type == 'connect' and existing_task.status == 'error':
-            await self.clear_task(user_id=user_id, server_name=server_name, version=version)
+        existing_task = await self.get_task_status(
+            user_id=user_id, server_name=server_name, version=version
+        )
+        if (
+            existing_task
+            and existing_task.task_type == "connect"
+            and existing_task.status == "error"
+        ):
+            await self.clear_task(
+                user_id=user_id, server_name=server_name, version=version
+            )
 
         async with self._registry_lock:
             # already running?
@@ -710,7 +788,9 @@ class MCP2Manager:
             runner=runner_task,
         )
 
-    async def _write_and_register_versioned(self, *, server_name: str, version: str, content: bytes, user_id: str) -> RegisteredServer:
+    async def _write_and_register_versioned(
+        self, *, server_name: str, version: str, content: bytes, user_id: str
+    ) -> RegisteredServer:
         await self.ensure_dirs()
         target = _script_target_path(server_name, version)
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -734,19 +814,25 @@ class MCP2Manager:
 
             return self.server_registry[key]
 
-    async def _index_tools(self, *, server_name: str, version: str, tools: List[Dict[str, Any]]) -> None:
+    async def _index_tools(
+        self, *, server_name: str, version: str, tools: List[Dict[str, Any]]
+    ) -> None:
         async with self._registry_lock:
             for t in tools:
                 name = t.get("name") if isinstance(t, dict) else None
                 if name:
                     self.tool_index[name] = (server_name, version)
 
-    async def _connect_and_list_tools(self, *, server_name: str, version: str, user_id: str, conversation_id: str) -> List[Dict[str, Any]]:
+    async def _connect_and_list_tools(
+        self, *, server_name: str, version: str, user_id: str, conversation_id: str
+    ) -> List[Dict[str, Any]]:
         """Internal connect (sync) used by async task runner."""
         key = (server_name, version)
 
         # create or reuse client instance
-        server = await self._ensure_server_registered(server_name=server_name, version=version)
+        server = await self._ensure_server_registered(
+            server_name=server_name, version=version
+        )
         if not server:
             raise KeyError(f"server not registered: {server_name}:{version}")
 
@@ -771,7 +857,9 @@ class MCP2Manager:
                 tools = await entry.client.list_tools()
 
             entry.last_used_at = _utcnow()
-            self._touch_connection(entry, user_id=user_id, conversation_id=conversation_id)
+            self._touch_connection(
+                entry, user_id=user_id, conversation_id=conversation_id
+            )
 
         out = []
         for t in tools:
@@ -818,16 +906,27 @@ class MCP2Manager:
 
     # --- keep existing public methods for compatibility ---
 
-    async def download_and_register(self, *, server_name: str, download_url: str, user_id: str) -> RegisteredServer:
+    async def download_and_register(
+        self, *, server_name: str, download_url: str, user_id: str
+    ) -> RegisteredServer:
         """(legacy helper) preserve old behavior: compute version from content hash."""
         await self.ensure_dirs()
         content = await self._download_bytes(download_url)
         version = _sha256_bytes(content)[:12]
-        return await self._write_and_register_versioned(server_name=server_name, version=version, content=content, user_id=user_id)
+        return await self._write_and_register_versioned(
+            server_name=server_name, version=version, content=content, user_id=user_id
+        )
 
-    async def connect(self, *, server_name: str, version: str, user_id: str, conversation_id: str) -> List[Dict[str, Any]]:
+    async def connect(
+        self, *, server_name: str, version: str, user_id: str, conversation_id: str
+    ) -> List[Dict[str, Any]]:
         """(legacy helper) sync connect; delegates to internal method."""
-        return await self._connect_and_list_tools(server_name=server_name, version=version, user_id=user_id, conversation_id=conversation_id)
+        return await self._connect_and_list_tools(
+            server_name=server_name,
+            version=version,
+            user_id=user_id,
+            conversation_id=conversation_id,
+        )
 
     async def disconnect(
         self,
@@ -859,9 +958,13 @@ class MCP2Manager:
                     if conversation_id is None:
                         continue
 
-                    new_usages = [u for u in ce.usages if u.conversation_id != conversation_id]
+                    new_usages = [
+                        u for u in ce.usages if u.conversation_id != conversation_id
+                    ]
                     if new_usages:
-                        new_connections.append(ConnectionEntry(user_id=ce.user_id, usages=new_usages))
+                        new_connections.append(
+                            ConnectionEntry(user_id=ce.user_id, usages=new_usages)
+                        )
 
                 entry.connections = new_connections
 
@@ -873,9 +976,13 @@ class MCP2Manager:
                             self.client_table.pop(key, None)
 
         if remove_from_user_servers:
-            await self.remove_user_server(user_id=user_id, server_name=server_name, version=version)
+            await self.remove_user_server(
+                user_id=user_id, server_name=server_name, version=version
+            )
 
-    async def remove_user_server_fully(self, *, user_id: str, server_name: str, version: str) -> None:
+    async def remove_user_server_fully(
+        self, *, user_id: str, server_name: str, version: str
+    ) -> None:
         """Remove all information for a user about a server.
 
         Semantics required by you:
@@ -906,7 +1013,9 @@ class MCP2Manager:
                         text = await resp.text()
                     except Exception:
                         text = ""
-                    raise RuntimeError(f"download failed: HTTP {resp.status}: {text[:200]}")
+                    raise RuntimeError(
+                        f"download failed: HTTP {resp.status}: {text[:200]}"
+                    )
                 return await resp.read()
 
     def _extract_zip_to_dir(self, *, zip_bytes: bytes, target_dir: Path) -> Path:
@@ -919,7 +1028,7 @@ class MCP2Manager:
         zip_path.write_bytes(zip_bytes)
 
         try:
-            with zipfile.ZipFile(zip_path, 'r') as zf:
+            with zipfile.ZipFile(zip_path, "r") as zf:
                 # basic zip-slip protection
                 for member in zf.namelist():
                     p = Path(member)
@@ -934,7 +1043,9 @@ class MCP2Manager:
 
         server_py = target_dir / "server.py"
         if not server_py.exists():
-            raise RuntimeError(f"server.py not found after extracting zip into {target_dir}")
+            raise RuntimeError(
+                f"server.py not found after extracting zip into {target_dir}"
+            )
         return server_py
 
     async def _fetch_mcp_models(self) -> List[Dict[str, Any]]:
@@ -945,13 +1056,17 @@ class MCP2Manager:
             async with session.get(url) as resp:
                 if resp.status != 200:
                     text = await resp.text()
-                    raise RuntimeError(f"FILE_SYSTEM models/mcps failed: HTTP {resp.status}: {text[:200]}")
+                    raise RuntimeError(
+                        f"FILE_SYSTEM models/mcps failed: HTTP {resp.status}: {text[:200]}"
+                    )
                 data = await resp.json()
                 if not isinstance(data, list):
                     raise RuntimeError("FILE_SYSTEM models/mcps returned non-list")
                 return data
 
-    async def _resolve_download_url_from_file_system(self, *, model_name: str, version: str) -> str:
+    async def _resolve_download_url_from_file_system(
+        self, *, model_name: str, version: str
+    ) -> str:
         """Resolve real download url via FILE_SYSTEM.
 
         Steps:
@@ -962,13 +1077,18 @@ class MCP2Manager:
         target = None
         for it in models:
             try:
-                if str(it.get("modelName")) == model_name and str(it.get("version")) == version:
+                if (
+                    str(it.get("modelName")) == model_name
+                    and str(it.get("version")) == version
+                ):
                     target = it
                     break
             except Exception:
                 continue
         if not target:
-            raise RuntimeError(f"MCP model not found in FILE_SYSTEM: modelName={model_name}, version={version}")
+            raise RuntimeError(
+                f"MCP model not found in FILE_SYSTEM: modelName={model_name}, version={version}"
+            )
         model_id = target.get("id")
         if model_id is None:
             raise RuntimeError("FILE_SYSTEM model item missing id")
@@ -979,7 +1099,9 @@ class MCP2Manager:
             async with session.get(url) as resp:
                 if resp.status != 200:
                     text = await resp.text()
-                    raise RuntimeError(f"FILE_SYSTEM download failed: HTTP {resp.status}: {text[:200]}")
+                    raise RuntimeError(
+                        f"FILE_SYSTEM download failed: HTTP {resp.status}: {text[:200]}"
+                    )
 
                 # It might return plain text url or JSON
                 ctype = (resp.headers.get("content-type") or "").lower()
@@ -993,7 +1115,9 @@ class MCP2Manager:
                             return js["data"]
                     if isinstance(js, str):
                         return js
-                    raise RuntimeError(f"unexpected JSON from FILE_SYSTEM download: {js}")
+                    raise RuntimeError(
+                        f"unexpected JSON from FILE_SYSTEM download: {js}"
+                    )
 
                 text = (await resp.text()).strip()
                 if not text:
@@ -1012,4 +1136,3 @@ class MCP2Manager:
 
 
 mcp2_manager = MCP2Manager()
-

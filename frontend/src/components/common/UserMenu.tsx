@@ -3,7 +3,7 @@ import React from 'react';
 import { Dropdown, App, message } from 'antd';
 import type { MenuProps } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, Settings, Languages, Shield, Database, Network } from 'lucide-react';
+import { LogOut, Settings, Languages, Database, Network } from 'lucide-react';
 import { useT } from '../../i18n/hooks';
 import { useI18n } from '../../i18n';
 import { getCurrentUserDisplayName, getCurrentUserRole } from '../../config/user';
@@ -151,15 +151,6 @@ const UserMenu: React.FC<UserMenuProps> = ({
       disabled: true,
     },
     ...(currentUserRole === 'admin' || currentUserRole === 'super_admin' ? [
-      {
-        type: 'divider' as const,
-      },
-      {
-        key: 'admin',
-        icon: <Shield size={16} strokeWidth={1.5} />,
-        label: t('pages.workspace.adminPanel'),
-        onClick: () => navigate('/admin'),
-      },
       {
         type: 'divider' as const,
       },

@@ -1102,6 +1102,12 @@ wheels = [
 ]
 
 [[package]]
+name = "jose"
+version = "1.0.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/01/3d/832caa69cd0d3be2d608d8290be2221072669aa88e87690837f6b31c480f/jose-1.0.0.tar.gz", hash = "sha256:8436c3617cd94e1ba97828fbb1ce27c129f66c78fb855b4bb47e122b5f345fba", size = 9153, upload-time = "2015-11-13T10:52:21.506Z" }
+
+[[package]]
 name = "json5"
 version = "0.12.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1711,6 +1717,7 @@ dependencies = [
     { name = "bs4" },
     { name = "fastapi" },
     { name = "fastmcp" },
+    { name = "jose" },
     { name = "langchain" },
     { name = "matplotlib" },
     { name = "mcp", extra = ["cli"] },
@@ -1745,6 +1752,7 @@ requires-dist = [
     { name = "bs4" },
     { name = "fastapi" },
     { name = "fastmcp", specifier = "==2.8" },
+    { name = "jose", specifier = ">=1.0.0" },
     { name = "langchain" },
     { name = "matplotlib" },
     { name = "mcp", extras = ["cli"], specifier = "==1.9.4" },

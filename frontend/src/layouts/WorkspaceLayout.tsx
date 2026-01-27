@@ -13,11 +13,14 @@ import {
   Database,
   Home,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Smartphone,
+  Users
 } from 'lucide-react';
 import { useT } from '../i18n';
 import UserMenu from '../components/common/UserMenu';
 import { useTour, workspaceTourSteps } from '../components/tour';
+import { getUserInfo } from '../utils/auth';
 import '../components/tour/tour-custom.css';
 
 interface WorkspaceLayoutProps {
@@ -30,6 +33,10 @@ const WorkspaceLayout: React.FC<WorkspaceLayoutProps> = ({ children }) => {
   const t = useT();
   const [collapsed, setCollapsed] = useState(false);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+  
+  // 获取用户信息用于权限判断
+  const userInfo = getUserInfo();
+  const isAdmin = userInfo?.role === 'admin' || userInfo?.role === 'super_admin';
 
   // 引导演示 - 首次访问自动启动
   const { startTour } = useTour({
@@ -55,16 +62,26 @@ const WorkspaceLayout: React.FC<WorkspaceLayoutProps> = ({ children }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // 只在组件挂载时执行一次
 
-  const navItems = [
-    { path: '/workspace/agent-manager', icon: Bot, labelKey: 'pages.workspace.agentManager', tourId: 'workspace-agent-manager' },
-    { path: '/workspace/graph-editor', icon: Network, labelKey: 'pages.workspace.graphEditor', tourId: 'workspace-graph-editor' },
-    { path: '/workspace/model-manager', icon: Cpu, labelKey: 'pages.workspace.modelManager', tourId: 'workspace-model-manager' },
-    { path: '/workspace/system-tools', icon: Wrench, labelKey: 'pages.workspace.systemTools', tourId: 'workspace-system-tools' },
-    { path: '/workspace/mcp-manager', icon: Plug, labelKey: 'pages.workspace.mcpManager', tourId: 'workspace-mcp-manager' },
-    { path: '/workspace/prompt-manager', icon: MessageSquareText, labelKey: 'pages.workspace.promptManager', tourId: 'workspace-prompt-manager' },
-    { path: '/workspace/file-manager', icon: FolderOpen, labelKey: 'pages.workspace.fileManager', tourId: 'workspace-file-manager' },
-    { path: '/workspace/memory-manager', icon: Database, labelKey: 'pages.workspace.memoryManager', tourId: 'workspace-memory-manager' },
+  // 所有导航项
+  const allNavItems = [
+    { path: '/workspace/agent-manager', icon: Bot, labelKey: 'pages.workspace.agentManager', tourId: 'workspace-agent-manager', requiredRole: null },
+    { path: '/workspace/graph-editor', icon: Network, labelKey: 'pages.workspace.graphEditor', tourId: 'workspace-graph-editor', requiredRole: null },
+    { path: '/workspace/model-manager', icon: Cpu, labelKey: 'pages.workspace.modelManager', tourId: 'workspace-model-manager', requiredRole: null },
+    { path: '/workspace/system-tools', icon: Wrench, labelKey: 'pages.workspace.systemTools', tourId: 'workspace-system-tools', requiredRole: null },
+    { path: '/workspace/mcp-manager', icon: Plug, labelKey: 'pages.workspace.mcpManager', tourId: 'workspace-mcp-manager', requiredRole: null },
+    { path: '/workspace/prompt-manager', icon: MessageSquareText, labelKey: 'pages.workspace.promptManager', tourId: 'workspace-prompt-manager', requiredRole: null },
+    { path: '/workspace/file-manager', icon: FolderOpen, labelKey: 'pages.workspace.fileManager', tourId: 'workspace-file-manager', requiredRole: null },
+    { path: '/workspace/memory-manager', icon: Database, labelKey: 'pages.workspace.memoryManager', tourId: 'workspace-memory-manager', requiredRole: null },
+    { path: '/workspace/user-management', icon: Users, labelKey: 'pages.workspace.userManagement', tourId: 'workspace-user-management', requiredRole: 'admin' },
+    { path: '/workspace/device-management', icon: Smartphone, labelKey: 'pages.workspace.deviceManagement', tourId: 'workspace-device-management', requiredRole: 'admin' },
   ];
+  
+  // 根据权限过滤导航项
+  const navItems = allNavItems.filter(item => {
+    if (item.requiredRole === null) return true;
+    if (item.requiredRole === 'admin') return isAdmin;
+    return false;
+  });
 
   // 侧边栏容器样式
   const sidebarStyle: CSSProperties = {
@@ -175,7 +192,7 @@ const WorkspaceLayout: React.FC<WorkspaceLayoutProps> = ({ children }) => {
         `}
       </style>
 
-      <div style={{ display: 'flex', minHeight: '100vh', background: '#ffffff' }}>
+      <div style={{ display: 'flex', height: '100vh', background: '#ffffff', overflow: 'hidden' }}>
         {/* 侧边栏 */}
         <div style={sidebarStyle} data-tour="workspace-sidebar">
           {/* Header */}
@@ -258,7 +275,7 @@ const WorkspaceLayout: React.FC<WorkspaceLayoutProps> = ({ children }) => {
           flex: 1,
           display: 'flex',
           flexDirection: 'column',
-          minHeight: '100vh',
+          minHeight: 0,
           overflow: 'hidden'
         }}
           data-tour="workspace-main-area"
@@ -267,7 +284,7 @@ const WorkspaceLayout: React.FC<WorkspaceLayoutProps> = ({ children }) => {
             flex: 1,
             padding: '0',
             overflow: 'auto',
-            height: '100%'
+            minHeight: 0
           }}>
             {children}
           </div>

@@ -79,6 +79,8 @@
       "systemToolsManager": "System Tools Manager",
       "fileManager": "File Manager",
       "memoryManager": "Memory Manager",
+      "userManagement": "User Management",
+      "deviceManagement": "Device Management",
       "goToChat": "Go to Chat",
       "userMenuSubtitle": "Account Settings",
       "userSettings": "User Settings",

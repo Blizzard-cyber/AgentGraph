@@ -1,4 +1,5 @@
 import logging
+import asyncio
 from contextlib import asynccontextmanager
 from pathlib import Path
 from fastapi import FastAPI, status, Request
@@ -16,6 +17,7 @@ from app.infrastructure.database.mongodb import mongodb_client
 from app.infrastructure.storage.file_storage import FileManager
 from app.core.config import settings
 from app.core.initialization import initialize_system
+from app.core.device_initialization import DeviceInitializer
 from app.services.model.gpustack_client import GPUStackClient
 
 # 配置日志
@@ -42,6 +44,7 @@ def create_progress_bar(progress: float, width: int = 30) -> str:
     filled = int(width * progress / 100)
     bar = "█" * filled + "░" * (width - filled)
     return f"[{bar}] {progress:6.1f}%"
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -82,7 +85,6 @@ async def lifespan(app: FastAPI):
             await model_service.initialize_gpustack_client()
             logger.info("GPUStack客户端初始化流程完成")
 
-
         except Exception as e:
             logger.warning(f"GPUStack客户端初始化失败: {e}")
 
@@ -90,14 +92,26 @@ async def lifespan(app: FastAPI):
         global memory_client
         memory_client = MemoryClient()
 
-        # 10. 初始化 MCP2（加载 user_servers + 启动 idle cleanup loop）
+        # 10. 初始化设备认证服务
+        try:
+            success, message, credentials = await DeviceInitializer.initialize_device()
+            if success:
+                logger.info(
+                    f"设备初始化成功: {credentials.device_id if credentials else '待注册'}"
+                )
+            else:
+                logger.warning(f"设备初始化结果: {message}")
+        except Exception as e:
+            logger.warning(f"设备初始化出错（不阻断启动）: {e}")
+
+        # 11. 初始化 MCP2（加载 user_servers + 启动 idle cleanup loop）
         try:
             from app.services.mcp2.mcp2_init import init_mcp2_state
+
             await init_mcp2_state()
             logger.info("MCP2 初始化完成")
         except Exception as e:
-                logger.warning(f"MCP2 初始化失败（不阻断启动）: {e}")
-
+            logger.warning(f"MCP2 初始化失败（不阻断启动）: {e}")
 
         # 测试记忆服务连接
         try:
@@ -140,19 +154,31 @@ async def lifespan(app: FastAPI):
             logger.error(f"清理记忆客户端时出错: {str(e)}")
 
         try:
-            # 断开MongoDB连接
-            await mongodb_client.disconnect()
-            logger.info("MongoDB连接已断开")
+            # 断开MongoDB连接（添加超时防护）
+            try:
+                await asyncio.wait_for(mongodb_client.disconnect(), timeout=5.0)
+                logger.info("MongoDB连接已断开")
+            except asyncio.TimeoutError:
+                logger.warning("MongoDB连接断开超时，强制关闭")
+                if mongodb_client.client:
+                    try:
+                        mongodb_client.client.close()
+                        logger.info("MongoDB连接已强制关闭")
+                    except Exception as e:
+                        logger.warning(f"强制关闭MongoDB时出错: {str(e)}")
         except Exception as e:
             logger.error(f"断开MongoDB连接时出错: {str(e)}")
         # Stop MCP2 cleanup loop
         try:
             from app.services.mcp2.mcp2_manager import mcp2_manager
-            await mcp2_manager.stop_cleanup_loop()
-            logger.info("MCP2 cleanup loop 已停止")
+
+            try:
+                await asyncio.wait_for(mcp2_manager.stop_cleanup_loop(), timeout=10.0)
+                logger.info("MCP2 cleanup loop 已停止")
+            except asyncio.TimeoutError:
+                logger.warning("停止 MCP2 cleanup loop 超时，继续关闭")
         except Exception as e:
             logger.error(f"停止 MCP2 cleanup loop 失败: {e}")
-
 
 
 # 创建应用（使用lifespan）
