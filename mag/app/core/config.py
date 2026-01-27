@@ -62,10 +62,19 @@ class Settings:
     MEMORY_SERVICE_PORT: int = int(os.getenv("MEMORY_SERVICE_PORT", "8851"))
 
     # FILE_SYSTEM (MCP models) service
-    FILE_SYSTEM_HOST: str = (os.getenv("FILE_SYSTEM_HOST", "") or "").strip() or "127.0.0.1"
-    FILE_SYSTEM_PORT: int = int((os.getenv("FILE_SYSTEM_PORT", "8080") or "8080").strip())
-    FILE_SYSTEM_API_PREFIX: str = (os.getenv("FILE_SYSTEM_API_PREFIX", "/api/v1") or "/api/v1").strip() or "/api/v1"
-    FILE_SYSTEM_BASE_URL: str = os.getenv("FILE_SYSTEM_BASE_URL") or f"http://{FILE_SYSTEM_HOST}:{FILE_SYSTEM_PORT}{FILE_SYSTEM_API_PREFIX}"
+    FILE_SYSTEM_HOST: str = (
+        os.getenv("FILE_SYSTEM_HOST", "") or ""
+    ).strip() or "127.0.0.1"
+    FILE_SYSTEM_PORT: int = int(
+        (os.getenv("FILE_SYSTEM_PORT", "8080") or "8080").strip()
+    )
+    FILE_SYSTEM_API_PREFIX: str = (
+        os.getenv("FILE_SYSTEM_API_PREFIX", "/api/v1") or "/api/v1"
+    ).strip() or "/api/v1"
+    FILE_SYSTEM_BASE_URL: str = (
+        os.getenv("FILE_SYSTEM_BASE_URL")
+        or f"http://{FILE_SYSTEM_HOST}:{FILE_SYSTEM_PORT}{FILE_SYSTEM_API_PREFIX}"
+    )
 
     # GPUStack 平台配置（通过 Cookie 认证拉取 /v2/models）
     # 支持从主机/端口构建 base_url，兼容 .env 中 GPUSTACK_SERVICE_HOST/PORT
@@ -79,15 +88,16 @@ class Settings:
         os.getenv("GPUSTACK_BASE_URL")
         or f"http://{GPUSTACK_SERVICE_HOST}:{GPUSTACK_SERVICE_PORT}"
     )
-    GPUSTACK_API_KEY: str = (os.getenv("GPUSTACK_API_KEY", "gpustack-key") or "gpustack-key").strip()
+    GPUSTACK_API_KEY: str = (
+        os.getenv("GPUSTACK_API_KEY", "gpustack-key") or "gpustack-key"
+    ).strip()
     GPUSTACK_USERNAME: str = (os.getenv("GPUSTACK_USERNAME", "") or "").strip()
     GPUSTACK_PASSWORD: str = (os.getenv("GPUSTACK_PASSWORD", "") or "").strip()
 
     # 云端模型仓库配置
-    CLOUD_MODEL_API_BASE_URL: str = os.getenv(
-        "CLOUD_MODEL_API_BASE_URL", "http://192.168.1.86:8080"
+    CLOUD_GATEWAY_BASE_URL: str = os.getenv(
+        "CLOUD_GATEWAY_BASE_URL", "http://192.168.1.86:8080"
     )
-
 
     # 根据操作系统确定配置目录
     @property
