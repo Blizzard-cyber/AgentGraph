@@ -231,7 +231,7 @@ const MCP2Manager: React.FC = () => {
     }
 
     // poll all
-    for (let i = 0; i < 40; i++) {
+    for (let i = 0; i < 5; i++) {
       let done = 0;
       for (const k of targets) {
         if (finalStatus[k] !== 'pending') {
@@ -257,7 +257,7 @@ const MCP2Manager: React.FC = () => {
         }
       }
       if (done === targets.length) break;
-      await new Promise(r => setTimeout(r, 500));
+      await new Promise(r => setTimeout(r, 10000));
     }
 
     // tally success/fail from finalStatus first; fall back to tools cache if task result arrived late
@@ -298,7 +298,7 @@ const MCP2Manager: React.FC = () => {
 
     await connect(userId, server_name, version);
 
-    for (let i = 0; i < 40; i++) {
+    for (let i = 0; i < 5; i++) {
       const task = await pollTask(userId, server_name, version);
       if (task.status === 'complete') {
         message.success(t('pages.mcpManager.connectSuccess', { name: key }));
@@ -313,7 +313,7 @@ const MCP2Manager: React.FC = () => {
         setConnectStates(prev => ({ ...prev, [key]: 'error' }));
         return;
       }
-      await new Promise(r => setTimeout(r, 500));
+      await new Promise(r => setTimeout(r, 10000));
     }
 
     message.info('Connecting...');
@@ -414,7 +414,7 @@ const MCP2Manager: React.FC = () => {
     await addServer(userId, `${server_name}:${version}`);
 
     // poll add task
-    for (let i = 0; i < 40; i++) {
+    for (let i = 0; i < 5; i++) {
       const task = await mcp2GetTaskStatus({ user_id: userId, server_name, version });
       if (task.status === 'complete') {
         message.success(t('pages.mcpManager.serverAddSuccess', { name: key }));
@@ -443,7 +443,7 @@ const MCP2Manager: React.FC = () => {
         message.error(task.message || 'Add server failed');
         return;
       }
-      await new Promise(r => setTimeout(r, 500));
+      await new Promise(r => setTimeout(r, 10000));
     }
 
     message.info('Downloading...');
@@ -501,7 +501,7 @@ const MCP2Manager: React.FC = () => {
         serversCount={serverKeys.length}
         connectedCount={connectedCount}
         viewMode={'visual'}
-        onViewModeChange={() => {}}
+        onViewModeChange={() => { }}
         t={t}
       />
 
