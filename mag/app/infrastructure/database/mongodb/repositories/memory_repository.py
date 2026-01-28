@@ -221,8 +221,6 @@ class MemoryRepository:
                 # 为每个内容创建记忆条目
                 new_items = []
                 for content in items:
-                    if not content:
-                        continue
 
                     item_id = self._ensure_unique_item_id(existing_ids)
                     existing_ids.add(item_id)
