@@ -168,6 +168,8 @@ class DeviceService:
                 status=DeviceStatus(credentials["status"]),
                 device_name=request.device_name,
                 location=request.location,
+                mac_address=cloud_device.get("macAddress"),
+                ip_address=cloud_device.get("ipAddress"),
                 registration_method=DeviceRegistrationMethod(
                     credentials["registration_method"]
                 ),
@@ -357,45 +359,6 @@ class DeviceService:
             logger.error(f"设备认证失败: {str(e)}")
             return (False, f"认证失败: {str(e)}", None)
 
-    async def get_device_status(
-        self,
-        device_id: str,
-    ) -> Tuple[bool, str, Optional[DeviceStatusResponse]]:
-        """
-        获取设备状态
-
-        Args:
-            device_id: 设备ID
-
-        Returns:
-            Tuple[bool, str, Optional[DeviceStatusResponse]]: (成功标志, 消息, 设备状态)
-        """
-        try:
-            device = await self.device_repository.get_device_info(device_id)
-            if not device:
-                return (False, f"设备 {device_id} 不存在", None)
-
-            status_response = DeviceStatusResponse(
-                device_id=device["device_id"],
-                device_identifier=device["device_identifier"],
-                device_name=device["device_name"],
-                status=DeviceStatus(device["status"]),
-                location=device.get("location"),
-                registration_method=DeviceRegistrationMethod(
-                    device["registration_method"]
-                ),
-                created_at=device["created_at"],
-                approved_at=device.get("approved_at"),
-                activated_at=device.get("activated_at"),
-                message=self._get_status_message(device["status"]),
-            )
-
-            return (True, "获取成功", status_response)
-
-        except Exception as e:
-            logger.error(f"获取设备状态失败: {str(e)}")
-            return (False, f"获取失败: {str(e)}", None)
-
     @staticmethod
     def _get_status_message(status: str) -> str:
         """获取状态对应的消息"""
@@ -477,77 +440,3 @@ class DeviceService:
         except Exception as e:
             logger.error(f"心跳发送失败: {str(e)}")
             return (False, f"心跳发送失败: {str(e)}", None)
-
-    async def sync_device_status(
-        self,
-        device_id: str,
-    ) -> Tuple[bool, str, Optional[dict]]:
-        """
-        从云端同步设备状态
-
-        前端定期调用此接口，获取云端最新的审批状态。
-        如果云端状态为 approved，则更新本地状态，允许设备进行认证。
-
-        Args:
-            device_id: 设备ID
-
-        Returns:
-            Tuple[bool, str, Optional[dict]]: (成功标志, 消息, 响应数据)
-        """
-        try:
-            # 查询本地设备
-            device = await self.device_repository.find_by_device_id(device_id)
-            if not device:
-                return (False, f"设备 {device_id} 不存在", None)
-
-            local_status = device.get("status")
-
-            # 向云端查询设备最新状态
-            status_url = f"{self.cloud_gateway_base_url}/auth/devices"
-            logger.info(f"向云端查询设备状态: {status_url}")
-
-            async with httpx.AsyncClient() as client:
-                response = await client.get(
-                    f"{status_url}/{device_id}",
-                    timeout=10.0,
-                )
-
-                if response.status_code == 404:
-                    return (False, "设备在云端不存在", None)
-                elif response.status_code != 200:
-                    logger.warning(f"云端查询失败: HTTP {response.status_code}")
-                    return (False, f"云端查询失败: {response.status_code}", None)
-
-                cloud_device = response.json()
-                cloud_status = cloud_device.get("status")
-
-            logger.info(f"云端设备状态: {cloud_status}, 本地状态: {local_status}")
-
-            # 如果云端状态更新（特别是已审批），则更新本地
-            updated = False
-            if cloud_status != local_status:
-                await self.device_repository.update_device_status(
-                    device_id, cloud_status
-                )
-                updated = True
-                logger.info(f"设备状态已更新: {device_id} -> {cloud_status}")
-
-            return (
-                True,
-                "状态同步成功",
-                {
-                    "success": True,
-                    "message": "状态同步成功",
-                    "device_id": device_id,
-                    "status": cloud_status,
-                    "updated": updated,
-                    "timestamp": datetime.now().isoformat(),
-                },
-            )
-
-        except httpx.TimeoutException:
-            logger.error(f"状态同步超时: {device_id}")
-            return (False, "状态同步超时", None)
-        except Exception as e:
-            logger.error(f"状态同步失败: {str(e)}")
-            return (False, f"状态同步失败: {str(e)}", None)

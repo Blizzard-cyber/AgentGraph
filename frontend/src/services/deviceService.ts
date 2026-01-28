@@ -30,6 +30,8 @@ export interface DeviceCredentials {
   status: 'pending' | 'approved' | 'active' | 'disabled';
   device_name: string;
   location?: string;
+  mac_address?: string;
+  ip_address?: string;
   registration_method: 'self_register' | 'admin_register';
   created_at: string;
   updated_at: string;
@@ -127,6 +129,8 @@ class DeviceService {
           status: response.data.device.status,
           device_name: response.data.device.device_name,
           location: response.data.device.location,
+          mac_address: response.data.device.mac_address,
+          ip_address: response.data.device.ip_address,
           registration_method: response.data.device.registration_method,
           created_at: response.data.device.created_at,
           updated_at: response.data.device.updated_at,
@@ -192,26 +196,6 @@ class DeviceService {
         message: error.response?.data?.detail || '设备认证失败',
         error,
       };
-    }
-  }
-
-  /**
-   * 查询设备状态
-   * @param deviceId 设备ID
-   */
-  async checkDeviceStatus(deviceId: string): Promise<DeviceStatus | null> {
-    try {
-      const response = await api.post(`${this.baseURL}/device/status`, {
-        device_id: deviceId,
-      });
-
-      if (response.data) {
-        return response.data;
-      }
-      return null;
-    } catch (error: any) {
-      console.error('Device status check error:', error);
-      return null;
     }
   }
 

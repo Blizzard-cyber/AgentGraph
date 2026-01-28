@@ -32,6 +32,9 @@ const DeviceManagementPage: React.FC = () => {
   const [setupModalVisible, setSetupModalVisible] = useState(false);
   const [autoConfigured, setAutoConfigured] = useState(true);
   const [showAuthSection, setShowAuthSection] = useState(false);
+  const [registrationStatus, setRegistrationStatus] = useState<'unregistered' | 'pending' | 'registered'>('unregistered');
+  const [deviceIdentifier, setDeviceIdentifier] = useState<string>('');
+  const [checking, setChecking] = useState(false);
 
   useEffect(() => {
     loadDeviceInfo();
@@ -58,27 +61,45 @@ const DeviceManagementPage: React.FC = () => {
   const loadDeviceInfo = async () => {
     setLoading(true);
     try {
-      const savedCredentials = deviceService.getCredentials();
-      const savedToken = deviceService.getDeviceToken();
-
-      setCredentials(savedCredentials);
-      setToken(savedToken);
-
-      // 获取设备状态（从后端获取最新状态）
-      if (savedCredentials) {
-        const mockStatus: DeviceStatus = {
-          state: savedToken ? 'active' : savedCredentials.device_id ? 'approved' : 'pending',
-          lastUpdate: Date.now(),
-          cloudConnected: !!savedToken,
-          registrationTime: savedCredentials.device_id ? Date.now() - 3600000 : undefined
-        };
-        setDeviceStatus(mockStatus);
+      // 首先检查注册状态
+      const statusResponse = await fetch('/api/device/registration-status');
+      if (statusResponse.ok) {
+        const statusData = await statusResponse.json();
+        console.log('注册状态:', statusData);
         
-        // 立即同步一次状态
-        await syncDeviceStatus();
-      } else {
-        setAutoConfigured(false);
-        setDeviceStatus({ state: null });
+        setRegistrationStatus(statusData.status);
+        
+        if (statusData.status === 'pending') {
+          // 等待审批状态
+          setDeviceIdentifier(statusData.device_identifier || '');
+          setAutoConfigured(false);
+          setDeviceStatus({ state: 'pending' });
+        } else if (statusData.status === 'registered') {
+          // 已注册状态
+          const savedCredentials = deviceService.getCredentials();
+          const savedToken = deviceService.getDeviceToken();
+
+          setCredentials(savedCredentials);
+          setToken(savedToken);
+          setAutoConfigured(true);
+
+          if (savedCredentials) {
+            const mockStatus: DeviceStatus = {
+              state: savedToken ? 'active' : savedCredentials.device_id ? 'approved' : 'pending',
+              lastUpdate: Date.now(),
+              cloudConnected: !!savedToken,
+              registrationTime: savedCredentials.device_id ? Date.now() - 3600000 : undefined
+            };
+            setDeviceStatus(mockStatus);
+            
+            // 立即同步一次状态
+            await syncDeviceStatus();
+          }
+        } else {
+          // 未注册状态
+          setAutoConfigured(false);
+          setDeviceStatus({ state: null });
+        }
       }
     } catch (error) {
       console.error('Failed to load device info:', error);
@@ -92,39 +113,29 @@ const DeviceManagementPage: React.FC = () => {
     if (!credentials?.device_id) return;
     
     try {
-      const response = await fetch('/api/device/sync-status', {
+      const response = await fetch('/api/device/check-approval', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          device_id: credentials.device_id,
-        }),
       });
 
       if (response.ok) {
         const data = await response.json();
         console.log('设备状态同步:', data);
         
-        if (data.success && data.status) {
-          // 更新设备状态
-          const statusMap: Record<string, any> = {
-            'pending': 'pending',
-            'approved': 'approved',
-            'active': 'active',
-            'disabled': 'disabled'
-          };
-          
+        if (data.success && data.approved && data.credentials) {
+          // 更新设备凭证和状态
+          setCredentials(data.credentials);
           setDeviceStatus(prev => ({
             ...prev,
-            state: statusMap[data.status] || 'pending',
+            state: data.credentials.status || 'pending',
             lastUpdate: Date.now()
           }));
           
-          // 如果状态更新，显示提示
-          if (data.updated) {
-            message.info(`设备状态已更新为: ${data.status}`);
-          }
+          message.success('设备已审批通过，凭证已更新');
+        } else if (data.success && !data.approved) {
+          message.info(data.message || '设备仍在等待审批');
         }
       } else {
         console.error('状态同步失败:', response.status);
@@ -192,6 +203,60 @@ const DeviceManagementPage: React.FC = () => {
       message.error('刷新失败');
     } finally {
       setRefreshing(false);
+    }
+  };
+
+  const handleCheckApproval = async () => {
+    setChecking(true);
+    try {
+      const response = await fetch('/api/device/check-approval', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('审批状态检查结果:', data);
+        
+        if (data.success && data.approved && data.credentials) {
+          // 审批通过，保存凭证
+          const creds: DeviceCredentials = {
+            device_id: data.credentials.device_id,
+            device_identifier: data.credentials.device_identifier,
+            device_secret: data.credentials.device_secret,
+            status: data.credentials.status,
+            device_name: data.credentials.device_name,
+            location: data.credentials.location,
+            mac_address: data.credentials.mac_address,
+            ip_address: data.credentials.ip_address,
+            registration_method: 'self_register',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          };
+          
+          deviceService.saveCredentials(creds);
+          setCredentials(creds);
+          setRegistrationStatus('registered');
+          setDeviceStatus(prev => ({
+            ...prev,
+            state: 'approved',
+          }));
+          setShowAuthSection(true);
+          
+          message.success('设备审批通过！请继续完成认证。');
+        } else {
+          message.info(data.message || '设备仍在等待审批');
+        }
+      } else {
+        message.error('检查审批状态失败');
+      }
+    } catch (error) {
+      console.error('Failed to check approval:', error);
+      message.error('检查审批状态时出错');
+    } finally {
+      setChecking(false);
     }
   };
 
@@ -375,7 +440,81 @@ const DeviceManagementPage: React.FC = () => {
       {/* Content 内容区 */}
       <Content style={{ flex: 1, minHeight: 0, padding: '24px 48px 32px', overflow: 'auto', display: 'flex', justifyContent: 'center' }}>
         <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          {!credentials ? (
+          {registrationStatus === 'pending' ? (
+            // 等待审批状态
+            <Row gutter={[32, 32]}>
+              <Col xs={24}>
+                <Card
+                  style={{
+                    borderRadius: '12px',
+                    border: '1px solid rgba(250, 173, 20, 0.3)',
+                    boxShadow: '0 2px 8px rgba(250, 173, 20, 0.15)',
+                    background: 'linear-gradient(135deg, rgba(250, 173, 20, 0.05) 0%, rgba(255, 255, 255, 1) 100%)'
+                  }}
+                >
+                  <Space direction="vertical" style={{ width: '100%' }} size="large" align="center">
+                    <div style={{ textAlign: 'center' }}>
+                      <AlertCircle size={48} color="#faad14" style={{ marginBottom: '16px' }} />
+                      <Title level={4} style={{ margin: 0, color: '#2d2d2d' }}>
+                        等待云端审批
+                      </Title>
+                      <Text type="secondary" style={{ fontSize: '14px', marginTop: '8px', display: 'block' }}>
+                        设备注册申请已提交，请联系管理员在云端设备管理页面审批
+                      </Text>
+                    </div>
+                    
+                    <Card
+                      size="small"
+                      style={{
+                        width: '100%',
+                        maxWidth: '500px',
+                        background: 'rgba(255, 255, 255, 0.8)',
+                        border: '1px solid rgba(24, 144, 255, 0.1)'
+                      }}
+                    >
+                      <Space direction="vertical" style={{ width: '100%' }} size="small">
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                          <Text strong>设备标识符：</Text>
+                          <Text code>{deviceIdentifier || '加载中...'}</Text>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                          <Text strong>注册状态：</Text>
+                          <AntTag color="warning">待审批</AntTag>
+                        </div>
+                      </Space>
+                    </Card>
+                    
+                    <Space size="middle">
+                      <Button 
+                        type="primary" 
+                        icon={<RefreshCw size={16} />}
+                        onClick={handleCheckApproval}
+                        loading={checking}
+                      >
+                        检查审批状态
+                      </Button>
+                      <Button onClick={handleRefresh} loading={refreshing}>
+                        刷新页面
+                      </Button>
+                    </Space>
+                    
+                    <div style={{
+                      padding: '12px 16px',
+                      background: 'rgba(24, 144, 255, 0.08)',
+                      borderLeft: '3px solid #1890ff',
+                      borderRadius: '4px',
+                      width: '100%',
+                      maxWidth: '500px'
+                    }}>
+                      <Text style={{ fontSize: '13px', color: '#666' }}>
+                        💡 提示：点击"检查审批状态"按钮可手动检查云端审批进度。审批通过后将自动保存设备凭证。
+                      </Text>
+                    </div>
+                  </Space>
+                </Card>
+              </Col>
+            </Row>
+          ) : !credentials ? (
             // 未配置状态：显示注册表单
             <Row gutter={[32, 32]}>
               <Col xs={24} md={12}>
@@ -759,6 +898,40 @@ const DeviceManagementPage: React.FC = () => {
                         color: '#2d2d2d'
                       }}>
                         {credentials.location || '—'}
+                      </div>
+                    </div>
+                  </Col>
+
+                  <Col xs={24} md={12}>
+                    <div>
+                      <Text type="secondary" style={{ fontSize: '12px' }}>MAC地址</Text>
+                      <div style={{
+                        marginTop: '6px',
+                        padding: '10px 12px',
+                        background: 'rgba(99, 102, 241, 0.05)',
+                        borderRadius: '6px',
+                        fontFamily: 'monospace',
+                        fontSize: '12px',
+                        color: '#2d2d2d'
+                      }}>
+                        {credentials.mac_address || credentials.device_identifier || '—'}
+                      </div>
+                    </div>
+                  </Col>
+
+                  <Col xs={24} md={12}>
+                    <div>
+                      <Text type="secondary" style={{ fontSize: '12px' }}>IP地址</Text>
+                      <div style={{
+                        marginTop: '6px',
+                        padding: '10px 12px',
+                        background: 'rgba(99, 102, 241, 0.05)',
+                        borderRadius: '6px',
+                        fontFamily: 'monospace',
+                        fontSize: '12px',
+                        color: '#2d2d2d'
+                      }}>
+                        {credentials.ip_address || '—'}
                       </div>
                     </div>
                   </Col>
