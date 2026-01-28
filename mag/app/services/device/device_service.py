@@ -70,9 +70,9 @@ class DeviceService:
         设备自助注册（向云端注册）
 
         流程：
-        1. 生成本地设备ID和密钥
-        2. 调用云端API进行注册
-        3. 保存返回的凭证到本地
+        1. 调用云端API进行注册（云端会处理重复注册和PSK验证）
+        2. 保存返回的凭证到本地
+        3. 如果本地已有旧记录，自动删除并使用新凭证
 
         Args:
             request: 设备自助注册请求
@@ -81,20 +81,14 @@ class DeviceService:
             Tuple[bool, str, Optional[DeviceCredentials]]: (成功标志, 消息, 设备凭证)
         """
         try:
-            # 检查本地是否已注册
+            # 检查本地是否有旧记录（不阻止注册，只是记录日志）
             existing_device = await self.device_repository.find_by_device_identifier(
                 request.device_identifier
             )
             if existing_device:
-                return (
-                    False,
-                    f"设备标识符 {request.device_identifier} 已注册",
-                    None,
+                logger.info(
+                    f"设备 {request.device_identifier} 本地已有记录，将向云端请求重新注册"
                 )
-
-            # 生成设备ID和密钥
-            device_id = self.generate_device_id()
-            device_secret = self.generate_device_secret()
 
             # 调用云端认证服务进行注册（使用驼峰格式）
             logger.info(f"准备向云端注册设备: {request.device_identifier}")
@@ -150,11 +144,16 @@ class DeviceService:
                 f"云端注册成功: deviceId={cloud_device.get('deviceId')}, status={cloud_device.get('status')}"
             )
 
+            # 如果本地已有旧记录，先删除
+            if existing_device:
+                logger.info(f"删除本地旧记录: {existing_device['device_id']}")
+                await self.device_repository.delete_device(existing_device["device_id"])
+
             # 保存本地设备凭证（使用驼峰字段）
             credentials = await self.device_repository.create_device(
                 device_identifier=request.device_identifier,
-                device_id=cloud_device.get("deviceId", device_id),
-                device_secret=cloud_device_secret or device_secret,
+                device_id=cloud_device.get("deviceId"),
+                device_secret=cloud_device_secret,
                 device_name=request.device_name,
                 status=cloud_device.get("status", "pending"),
                 registration_method=cloud_device.get("registrationMethod", "self"),
@@ -165,7 +164,7 @@ class DeviceService:
             device_credentials = DeviceCredentials(
                 device_id=credentials["device_id"],
                 device_identifier=request.device_identifier,
-                device_secret=cloud_device_secret or device_secret,
+                device_secret=cloud_device_secret,
                 status=DeviceStatus(credentials["status"]),
                 device_name=request.device_name,
                 location=request.location,
@@ -212,16 +211,58 @@ class DeviceService:
             # 检查本地设备是否存在
             device = await self.device_repository.find_by_device_id(device_id)
             if not device:
+                logger.error(f"设备不存在: {device_id}")
                 return (
                     False,
                     f"设备 {device_id} 不存在",
                     None,
                 )
 
-            # 验证设备密钥
-            if device["device_secret_hash"] != device_secret:
-                logger.warning(f"设备密钥验证失败: {device_id}")
+            logger.info(f"找到设备: {device_id}, 状态: {device.get('status')}")
+
+            # 验证设备密钥（直接比对，因为当前存储的是明文）
+            stored_secret = device.get("device_secret_hash", "")
+            if stored_secret != device_secret:
+                logger.warning(
+                    f"设备密钥验证失败: {device_id}, 提供密钥: {device_secret[:20]}..., 存储密钥: {stored_secret[:20]}..."
+                )
                 return (False, "设备密钥验证失败", None)
+
+            logger.info(f"设备密钥验证成功: {device_id}")
+
+            # 认证前先从云端同步设备状态（获取最新的审批状态）
+            logger.info(f"开始同步云端设备状态: {device_id}")
+            try:
+                status_url = f"{self.cloud_gateway_base_url}/auth/devices/{device_id}"
+                async with httpx.AsyncClient(timeout=10.0) as client:
+                    response = await client.get(status_url)
+
+                    if response.status_code == 200:
+                        cloud_device = response.json()
+                        cloud_status = cloud_device.get("status")
+                        local_status = device.get("status")
+
+                        # 如果云端状态与本地不同，更新本地状态
+                        if cloud_status != local_status:
+                            await self.device_repository.update_device_status(
+                                device_id, cloud_status
+                            )
+                            logger.info(
+                                f"设备状态已更新: {device_id}, {local_status} -> {cloud_status}"
+                            )
+                            device = await self.device_repository.find_by_device_id(
+                                device_id
+                            )
+                        else:
+                            logger.info(
+                                f"设备状态无变化: {device_id}, 状态: {cloud_status}"
+                            )
+                    else:
+                        logger.warning(
+                            f"从云端同步状态失败: HTTP {response.status_code}"
+                        )
+            except Exception as e:
+                logger.warning(f"同步云端状态异常: {str(e)}, 继续使用本地状态")
 
             # 检查设备状态
             status = device.get("status")
@@ -234,7 +275,13 @@ class DeviceService:
                     None,
                 )
 
-            # 调用云端认证服务获取Token（使用驼峰格式）
+            logger.info(f"设备状态检查通过: {device_id}, 状态: {status}")
+
+            # 调用云端认证服务获取Token
+            # 注意：发送给云端时需要转换为驼峰格式
+            auth_url = f"{self.cloud_gateway_base_url}/auth/devices/token"
+            logger.info(f"调用云端认证URL: {auth_url}")
+
             async with httpx.AsyncClient(timeout=30.0) as client:
                 payload = {
                     "deviceId": device_id,
@@ -242,13 +289,19 @@ class DeviceService:
                     "grantType": "client_credentials",
                 }
 
+                logger.info(f"发送认证请求: {payload}")
+
                 response = await client.post(
-                    f"{self.cloud_gateway_base_url}/auth/devices/token",
+                    auth_url,
                     json=payload,
                 )
 
+            logger.info(f"云端认证响应: HTTP {response.status_code}")
+
             if response.status_code != 200:
-                logger.warning(f"云端认证失败: {response.status_code}")
+                logger.warning(
+                    f"云端认证失败: {response.status_code}, 响应: {response.text}"
+                )
                 return (
                     False,
                     f"云端认证失败: {response.status_code}",
@@ -256,6 +309,8 @@ class DeviceService:
                 )
 
             cloud_response = response.json()
+            logger.info(f"云端认证响应内容: {cloud_response}")
+
             if not cloud_response.get("success"):
                 return (
                     False,
@@ -269,6 +324,7 @@ class DeviceService:
             # 如果还不是active状态，则更新为active
             if status != "active":
                 await self.device_repository.update_device_status(device_id, "active")
+                logger.info(f"设备状态更新为active: {device_id}")
 
             # 构建认证响应
             device_info = DeviceInfo(
@@ -350,3 +406,148 @@ class DeviceService:
             "disabled": "已禁用，无法使用",
         }
         return messages.get(status, "未知状态")
+
+    async def send_heartbeat(
+        self,
+        device_id: str,
+    ) -> Tuple[bool, str, Optional[dict]]:
+        """
+        向云端发送设备心跳
+
+        Args:
+            device_id: 设备ID
+
+        Returns:
+            Tuple[bool, str, Optional[dict]]: (成功标志, 消息, 响应数据)
+        """
+        try:
+            # 查询本地设备信息
+            device = await self.device_repository.find_by_device_id(device_id)
+            if not device:
+                return (False, f"设备 {device_id} 不存在", None)
+
+            # 调用云端心跳接口
+            heartbeat_url = f"{self.cloud_gateway_base_url}/auth/devices/heartbeat"
+            logger.info(f"向云端发送心跳: {heartbeat_url}")
+
+            async with httpx.AsyncClient() as client:
+                response = await client.post(
+                    heartbeat_url,
+                    json={"device_id": device_id},
+                    timeout=10.0,
+                )
+
+                if response.status_code != 200:
+                    return (
+                        False,
+                        f"云端心跳返回状态 {response.status_code}",
+                        None,
+                    )
+
+                response_data = response.json()
+                if not response_data.get("success"):
+                    return (
+                        False,
+                        response_data.get("message", "心跳记录失败"),
+                        None,
+                    )
+
+                # 更新本地设备的最后心跳时间
+                await self.device_repository.update_device_status(
+                    device_id,
+                    device.get("status"),
+                    {"last_heartbeat_at": datetime.now()},
+                )
+
+                return (
+                    True,
+                    "心跳发送成功",
+                    {
+                        "success": True,
+                        "message": "心跳记录成功",
+                        "device_id": device_id,
+                        "online": True,
+                        "timestamp": datetime.now().isoformat(),
+                    },
+                )
+
+        except httpx.TimeoutException:
+            logger.error(f"心跳请求超时: {device_id}")
+            return (False, "心跳请求超时", None)
+        except Exception as e:
+            logger.error(f"心跳发送失败: {str(e)}")
+            return (False, f"心跳发送失败: {str(e)}", None)
+
+    async def sync_device_status(
+        self,
+        device_id: str,
+    ) -> Tuple[bool, str, Optional[dict]]:
+        """
+        从云端同步设备状态
+
+        前端定期调用此接口，获取云端最新的审批状态。
+        如果云端状态为 approved，则更新本地状态，允许设备进行认证。
+
+        Args:
+            device_id: 设备ID
+
+        Returns:
+            Tuple[bool, str, Optional[dict]]: (成功标志, 消息, 响应数据)
+        """
+        try:
+            # 查询本地设备
+            device = await self.device_repository.find_by_device_id(device_id)
+            if not device:
+                return (False, f"设备 {device_id} 不存在", None)
+
+            local_status = device.get("status")
+
+            # 向云端查询设备最新状态
+            status_url = f"{self.cloud_gateway_base_url}/auth/devices"
+            logger.info(f"向云端查询设备状态: {status_url}")
+
+            async with httpx.AsyncClient() as client:
+                response = await client.get(
+                    f"{status_url}/{device_id}",
+                    timeout=10.0,
+                )
+
+                if response.status_code == 404:
+                    return (False, "设备在云端不存在", None)
+                elif response.status_code != 200:
+                    logger.warning(f"云端查询失败: HTTP {response.status_code}")
+                    return (False, f"云端查询失败: {response.status_code}", None)
+
+                cloud_device = response.json()
+                cloud_status = cloud_device.get("status")
+
+            logger.info(f"云端设备状态: {cloud_status}, 本地状态: {local_status}")
+
+            # 如果云端状态更新（特别是已审批），则更新本地
+            updated = False
+            if cloud_status != local_status:
+                await self.device_repository.update_device_status(
+                    device_id, cloud_status
+                )
+                updated = True
+                logger.info(f"设备状态已更新: {device_id} -> {cloud_status}")
+
+            return (
+                True,
+                "状态同步成功",
+                {
+                    "success": True,
+                    "message": "状态同步成功",
+                    "device_id": device_id,
+                    "status": cloud_status,
+                    "updated": updated,
+                    "timestamp": datetime.now().isoformat(),
+                },
+            )
+
+        except httpx.TimeoutException:
+            logger.error(f"状态同步超时: {device_id}")
+            return (False, "状态同步超时", None)
+        except Exception as e:
+            logger.error(f"状态同步失败: {str(e)}")
+            return (False, f"状态同步失败: {str(e)}", None)

@@ -1,0 +1,111 @@
+/* 脉动动画 */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+/* 向下滑入动画 */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 向上滑入动画 */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 应用脉动动画到元素 */
+.pulse {
+  animation: pulse 2s infinite;
+}
+
+.slideDown {
+  animation: slideDown 0.3s ease;
+}
+
+.slideUp {
+  animation: slideUp 0.5s ease;
+}
+
+/* 流程卡片样式优化 */
+.device-management-page .progress-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.device-management-page .progress-card:hover {
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.15);
+}
+
+/* 状态指示器发光效果 */
+.status-indicator {
+  transition: all 0.3s ease;
+}
+
+.status-indicator.active {
+  box-shadow: 0 0 12px rgba(52, 211, 153, 0.4);
+}
+
+.status-indicator.pending {
+  box-shadow: 0 0 12px rgba(250, 173, 20, 0.4);
+}
+
+.status-indicator.processing {
+  animation: pulse 1s infinite;
+}
+
+/* 卡片进入动画 */
+.card-enter {
+  animation: slideUp 0.5s ease;
+}
+
+/* 信息框样式 */
+.info-box {
+  transition: all 0.2s ease;
+  background: rgba(99, 102, 241, 0.05);
+}
+
+.info-box:hover {
+  background: rgba(99, 102, 241, 0.08);
+}
+
+/* 按钮样式优化 */
+.btn-primary-action {
+  background: linear-gradient(135deg, #1890ff 0%, #0050b3 100%);
+  transition: all 0.3s ease;
+}
+
+.btn-primary-action:hover {
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+/* 响应式优化 */
+@media (max-width: 768px) {
+  .progress-step {
+    font-size: 12px;
+  }
+
+  .progress-step-circle {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+}

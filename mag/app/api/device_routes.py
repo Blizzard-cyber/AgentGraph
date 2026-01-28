@@ -167,6 +167,60 @@ async def authenticate_device(
         )
 
 
+@router.post("/sync-status")
+async def sync_device_status(
+    request_body: dict,
+    device_service: DeviceService = Depends(get_device_service),
+):
+    """
+    同步设备状态（从云端获取最新审批状态）
+
+    前端定期调用此接口查询设备在云端的最新审批状态。
+    如果设备已被审批，将更新本地数据库的状态。
+
+    请求体:
+    - device_id: 设备ID
+
+    返回:
+    - success: 是否成功
+    - status: 设备当前状态（pending|approved|active|disabled）
+    - message: 状态消息
+    - updated: 是否从云端更新了状态
+
+    状态码:
+    - 200: 查询成功
+    - 404: 设备不存在
+    - 503: 服务不可用
+    """
+    try:
+        device_id = request_body.get("device_id")
+        if not device_id:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="缺少必填字段: device_id",
+            )
+
+        logger.info(f"同步设备状态: {device_id}")
+
+        success, message, response = await device_service.sync_device_status(device_id)
+
+        if not success:
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=message
+            )
+
+        return response
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"同步设备状态错误: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"同步失败: {str(e)}",
+        )
+
+
 @router.post("/status", response_model=DeviceStatusResponse)
 async def check_device_status(
     request: DeviceStatusCheckRequest,
@@ -274,3 +328,56 @@ async def get_system_info():
             "device_id_suggestion": f"UUID-{str(uuid.uuid4())}",
             "default_location": "Chengdu",
         }
+
+
+@router.post("/heartbeat")
+async def device_heartbeat(
+    request_body: dict,
+    device_service: DeviceService = Depends(get_device_service),
+):
+    """
+    设备心跳接口
+
+    边缘设备定时调用此接口，向云端发送心跳以维持连接状态。
+
+    请求体:
+    - device_id: 设备ID
+
+    返回:
+    - success: 是否成功
+    - message: 操作消息
+    - online: 是否在线
+
+    状态码:
+    - 200: 心跳记录成功
+    - 400: 请求参数错误
+    - 404: 设备不存在
+    - 503: 服务不可用
+    """
+    try:
+        device_id = request_body.get("device_id")
+        if not device_id:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="缺少必填字段: device_id",
+            )
+
+        logger.info(f"设备心跳: {device_id}")
+
+        success, message, response = await device_service.send_heartbeat(device_id)
+
+        if not success:
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=message
+            )
+
+        return response
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"设备心跳错误: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"心跳发送失败: {str(e)}",
+        )
