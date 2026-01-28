@@ -79,6 +79,8 @@
       "systemToolsManager": "系统工具管理",
       "fileManager": "文件管理",
       "memoryManager": "记忆管理",
+      "userManagement": "用户管理",
+      "deviceManagement": "设备管理",
       "goToChat": "前往对话",
       "userMenuSubtitle": "账户设置",
       "userSettings": "个人设置",
@@ -785,7 +787,7 @@
       "exportPreview": "导出预览"
     },
     "adminPanel": {
-      "title": "管理后台",
+      "title": "用户管理",
       "usersCount": "{{count}} 位用户",
       "inviteCodesCount": "{{count}} 个邀请码",
       "backHome": "返回工作台",

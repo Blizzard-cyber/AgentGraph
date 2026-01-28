@@ -14,22 +14,24 @@ from .agent_repository import AgentRepository
 from .agent_run_repository import AgentRunRepository
 from .memory_repository import MemoryRepository
 from .share_repository import ShareRepository
+from .device_repository import DeviceRepository
 
 __all__ = [
-    'ConversationRepository',
-    'GraphRunRepository',
-    'TaskRepository',
-    'GraphConfigRepository',
-    'PromptRepository',
-    'ModelConfigRepository',
-    'MCPConfigRepository',
-    'PreviewRepository',
-    'UserRepository',
-    'InviteCodeRepository',
-    'TeamSettingsRepository',
-    'RefreshTokenRepository',
-    'AgentRepository',
-    'AgentRunRepository',
-    'MemoryRepository',
-    'ShareRepository'
+    "ConversationRepository",
+    "GraphRunRepository",
+    "TaskRepository",
+    "GraphConfigRepository",
+    "PromptRepository",
+    "ModelConfigRepository",
+    "MCPConfigRepository",
+    "PreviewRepository",
+    "UserRepository",
+    "InviteCodeRepository",
+    "TeamSettingsRepository",
+    "RefreshTokenRepository",
+    "AgentRepository",
+    "AgentRunRepository",
+    "MemoryRepository",
+    "ShareRepository",
+    "DeviceRepository",
 ]

@@ -1,7 +1,7 @@
 // src/pages/AdminPanel.tsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Layout, message, App } from 'antd';
+import { message, App } from 'antd';
 import { isAdmin } from '../utils/auth';
 import {
   listUsers,
@@ -19,8 +19,6 @@ import UsersTable from '../components/admin/UsersTable';
 import InviteCodesTable from '../components/admin/InviteCodesTable';
 import CreateInviteCodeModal from '../components/admin/CreateInviteCodeModal';
 import { COLORS, getPrimaryButtonStyle, getSecondaryButtonStyle, getConfirmModalStyles } from '../constants/adminPanelStyles';
-
-const { Content } = Layout;
 
 const AdminPanel: React.FC = () => {
   const navigate = useNavigate();
@@ -175,7 +173,15 @@ const AdminPanel: React.FC = () => {
   };
 
   return (
-    <Layout style={{ minHeight: '100vh', background: COLORS.background }}>
+    <div
+      style={{
+        height: '100%',
+        minHeight: 0,
+        background: COLORS.background,
+        display: 'flex',
+        flexDirection: 'column'
+      }}
+    >
       {/* Header 顶栏 */}
       <AdminHeader
         title={t('pages.adminPanel.title')}
@@ -183,12 +189,20 @@ const AdminPanel: React.FC = () => {
         inviteCodesCount={inviteCodes.length}
         viewMode={viewMode}
         onViewModeChange={() => setViewMode(viewMode === 'users' ? 'invites' : 'users')}
-        onBack={() => navigate('/')}
         t={t}
       />
-
       {/* Content 内容区 */}
-      <Content style={{ padding: '32px 48px', overflow: 'auto' }}>
+      <div
+        style={{
+          flex: 1,
+          minHeight: 0,
+          padding: '24px 32px 32px',
+          overflow: 'auto',
+          display: 'flex',
+          justifyContent: 'center'
+        }}
+      >
+        <div style={{ width: '100%', maxWidth: '1200px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
         {/* 用户管理视图 */}
         {viewMode === 'users' && (
           <UsersTable
@@ -217,7 +231,8 @@ const AdminPanel: React.FC = () => {
             t={t}
           />
         )}
-      </Content>
+        </div>
+      </div>
 
       {/* 创建邀请码描述弹窗 */}
       <CreateInviteCodeModal
@@ -230,7 +245,7 @@ const AdminPanel: React.FC = () => {
         onCancel={() => setDescriptionModalVisible(false)}
         t={t}
       />
-    </Layout>
+    </div>
   );
 };
 

@@ -18,6 +18,7 @@ from app.infrastructure.database.mongodb.repositories import (
     AgentRunRepository,
     MemoryRepository,
     ShareRepository,
+    DeviceRepository,
 )
 
 logger = logging.getLogger(__name__)
@@ -46,6 +47,7 @@ class MongoDBClient:
         self.agent_run_collection = None
         self.memories_collection = None
         self.conversation_shares_collection = None
+        self.devices_collection = None
 
         self.is_connected = False
 
@@ -65,6 +67,7 @@ class MongoDBClient:
         self.agent_run_repository = None
         self.memory_repository = None
         self.share_repository = None
+        self.device_repository = None
 
     async def initialize(self, connection_string: str, database_name: str = None):
         """初始化MongoDB连接"""
@@ -94,6 +97,7 @@ class MongoDBClient:
             self.agent_run_collection = self.db.agent_run
             self.memories_collection = self.db.memories
             self.conversation_shares_collection = self.db.conversation_shares
+            self.devices_collection = self.db.devices
 
             await self.client.admin.command("ping")
 
@@ -167,6 +171,8 @@ class MongoDBClient:
         self.share_repository = ShareRepository(
             self.db, self.conversation_shares_collection
         )
+
+        self.device_repository = DeviceRepository(self.db, self.devices_collection)
 
     async def _create_indexes(self):
         """创建必要的索引"""
@@ -282,6 +288,16 @@ class MongoDBClient:
             await self.conversation_shares_collection.create_index([("user_id", 1)])
             await self.conversation_shares_collection.create_index([("created_at", -1)])
 
+            # 设备集合索引
+            await self.devices_collection.create_index([("device_id", 1)], unique=True)
+            await self.devices_collection.create_index(
+                [("device_identifier", 1)], unique=True
+            )
+            await self.devices_collection.create_index([("status", 1)])
+            await self.devices_collection.create_index([("registration_method", 1)])
+            await self.devices_collection.create_index([("created_at", -1)])
+            await self.devices_collection.create_index([("updated_at", -1)])
+
             logger.info("MongoDB索引创建成功")
 
         except Exception as e:
@@ -290,9 +306,14 @@ class MongoDBClient:
     async def disconnect(self):
         """断开MongoDB连接"""
         if self.client:
-            self.client.close()
-            self.is_connected = False
-            logger.info("MongoDB连接已断开")
+            try:
+                # Motor 的 close() 是同步的，但在异步上下文中不应该阻塞
+                self.client.close()
+                self.is_connected = False
+                logger.info("MongoDB连接已断开")
+            except Exception as e:
+                logger.warning(f"MongoDB断开连接时出现异常（已忽略）: {str(e)}")
+                self.is_connected = False
 
     # === 对话管理方法 ===
 

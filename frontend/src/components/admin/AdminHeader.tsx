@@ -1,6 +1,6 @@
 import React from 'react';
 import { Layout, Typography, Space, Tag, Button } from 'antd';
-import { Shield, Users, Key, ArrowLeft } from 'lucide-react';
+import { Shield, Users, Key } from 'lucide-react';
 import { COLORS, GRADIENTS, SHADOWS, getTagStyle, getSecondaryButtonStyle } from '../../constants/adminPanelStyles';
 
 const { Header } = Layout;
@@ -12,7 +12,6 @@ interface AdminHeaderProps {
   inviteCodesCount: number;
   viewMode: 'users' | 'invites';
   onViewModeChange: () => void;
-  onBack: () => void;
   t: (key: string, params?: any) => string;
 }
 
@@ -25,7 +24,6 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({
   inviteCodesCount,
   viewMode,
   onViewModeChange,
-  onBack,
   t,
 }) => {
   return (
@@ -68,53 +66,39 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({
           </Tag>
         </Space>
 
-        {/* 右侧：视图切换按钮 + 返回按钮 */}
-        <Space size="middle">
-          <Button
-            onClick={onViewModeChange}
-            style={{
-              ...getSecondaryButtonStyle(),
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              letterSpacing: '0.3px'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = COLORS.primary;
-              e.currentTarget.style.color = COLORS.primary;
-              e.currentTarget.style.background = COLORS.whiteAlpha95;
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = 'rgba(24, 144, 255, 0.2)';
-              e.currentTarget.style.color = COLORS.tertiary;
-              e.currentTarget.style.background = COLORS.whiteAlpha85;
-            }}
-          >
-            {viewMode === 'users' ? (
-              <>
-                <Key size={16} strokeWidth={1.5} />
-                {t('pages.adminPanel.inviteCodeManagement')}
-              </>
-            ) : (
-              <>
-                <Users size={16} strokeWidth={1.5} />
-                {t('pages.adminPanel.userManagement')}
-              </>
-            )}
-          </Button>
-          <Button
-            icon={<ArrowLeft size={16} strokeWidth={1.5} />}
-            onClick={onBack}
-            style={{
-              ...getSecondaryButtonStyle(),
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px'
-            }}
-          >
-            {t('pages.adminPanel.backHome')}
-          </Button>
-        </Space>
+        {/* 右侧：视图切换按钮 */}
+        <Button
+          onClick={onViewModeChange}
+          style={{
+            ...getSecondaryButtonStyle(),
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            letterSpacing: '0.3px'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.borderColor = COLORS.primary;
+            e.currentTarget.style.color = COLORS.primary;
+            e.currentTarget.style.background = COLORS.whiteAlpha95;
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.borderColor = 'rgba(24, 144, 255, 0.2)';
+            e.currentTarget.style.color = COLORS.tertiary;
+            e.currentTarget.style.background = COLORS.whiteAlpha85;
+          }}
+        >
+          {viewMode === 'users' ? (
+            <>
+              <Key size={16} strokeWidth={1.5} />
+              {t('pages.adminPanel.inviteCodeManagement')}
+            </>
+          ) : (
+            <>
+              <Users size={16} strokeWidth={1.5} />
+              {t('pages.adminPanel.userManagement')}
+            </>
+          )}
+        </Button>
       </div>
     </Header>
   );

@@ -2,6 +2,7 @@
 Agent 服务
 整合 Agent 管理功能，提供统一的业务逻辑层
 """
+
 import logging
 from datetime import datetime
 from typing import Dict, List, Any, Optional, Tuple
@@ -20,7 +21,9 @@ class AgentService:
         """初始化 Agent 服务"""
         self.agent_stream_executor = AgentStreamExecutor()
 
-    def _normalize_mcp_servers(self, mcp_config: List[Any]) -> List[Dict[str, Optional[str]]]:
+    def _normalize_mcp_servers(
+        self, mcp_config: List[Any]
+    ) -> List[Dict[str, Optional[str]]]:
         """
         标准化MCP服务器配置为统一格式（向后兼容）
 
@@ -56,15 +59,16 @@ class AgentService:
 
             elif isinstance(item, dict):
                 # 新格式：对象 -> 提取 name 和 version
-                normalized.append({
-                    "name": item.get("name"),
-                    "version": item.get("version")
-                })
+                normalized.append(
+                    {"name": item.get("name"), "version": item.get("version")}
+                )
             else:
                 logger.warning(f"无效的MCP服务器配置项: {item} (类型: {type(item)})")
         return normalized
 
-    async def create_agent(self, agent_config: Dict[str, Any], user_id: str) -> Dict[str, Any]:
+    async def create_agent(
+        self, agent_config: Dict[str, Any], user_id: str
+    ) -> Dict[str, Any]:
         """
         创建 Agent
 
@@ -77,52 +81,52 @@ class AgentService:
         """
         try:
             # 验证配置
-            is_valid, error_msg = await self.validate_agent_config(agent_config, user_id)
+            is_valid, error_msg = await self.validate_agent_config(
+                agent_config, user_id
+            )
             if not is_valid:
-                return {
-                    "success": False,
-                    "error": f"Agent 配置验证失败: {error_msg}"
-                }
+                return {"success": False, "error": f"Agent 配置验证失败: {error_msg}"}
 
             # 创建 Agent
-            agent_id = await mongodb_client.agent_repository.create_agent(agent_config, user_id)
+            agent_id = await mongodb_client.agent_repository.create_agent(
+                agent_config, user_id
+            )
 
             if agent_id:
                 # 创建对应的 memory 文档
-                agent_name = agent_config.get('name')
+                agent_name = agent_config.get("name")
                 try:
-                    await mongodb_client.memories_collection.insert_one({
-                        "user_id": user_id,
-                        "owner_type": "agent",
-                        "owner_id": agent_name,
-                        "memories": {},
-                        "created_at": datetime.now(),
-                        "updated_at": datetime.now()
-                    })
+                    await mongodb_client.memories_collection.insert_one(
+                        {
+                            "user_id": user_id,
+                            "owner_type": "agent",
+                            "owner_id": agent_name,
+                            "memories": {},
+                            "created_at": datetime.now(),
+                            "updated_at": datetime.now(),
+                        }
+                    )
                     logger.info(f"为 Agent 创建 memory 文档成功: {agent_name}")
                 except Exception as mem_error:
-                    logger.warning(f"为 Agent 创建 memory 文档失败: {agent_name}, 错误: {str(mem_error)}")
+                    logger.warning(
+                        f"为 Agent 创建 memory 文档失败: {agent_name}, 错误: {str(mem_error)}"
+                    )
 
                 logger.info(f"创建 Agent 成功: {agent_name} (user_id: {user_id})")
-                return {
-                    "success": True,
-                    "agent_id": agent_id,
-                    "agent_name": agent_name
-                }
+                return {"success": True, "agent_id": agent_id, "agent_name": agent_name}
             else:
                 return {
                     "success": False,
-                    "error": "创建 Agent 失败，可能 Agent 名称已存在"
+                    "error": "创建 Agent 失败，可能 Agent 名称已存在",
                 }
 
         except Exception as e:
             logger.error(f"创建 Agent 失败: {str(e)}")
-            return {
-                "success": False,
-                "error": str(e)
-            }
+            return {"success": False, "error": str(e)}
 
-    async def get_agent(self, agent_name: str, user_id: str) -> Optional[Dict[str, Any]]:
+    async def get_agent(
+        self, agent_name: str, user_id: str
+    ) -> Optional[Dict[str, Any]]:
         """
         获取 Agent
 
@@ -140,10 +144,7 @@ class AgentService:
             return None
 
     async def update_agent(
-            self,
-            agent_name: str,
-            agent_config: Dict[str, Any],
-            user_id: str
+        self, agent_name: str, agent_config: Dict[str, Any], user_id: str
     ) -> Dict[str, Any]:
         """
         更新 Agent
@@ -158,38 +159,26 @@ class AgentService:
         """
         try:
             # 验证配置
-            is_valid, error_msg = await self.validate_agent_config(agent_config, user_id)
+            is_valid, error_msg = await self.validate_agent_config(
+                agent_config, user_id
+            )
             if not is_valid:
-                return {
-                    "success": False,
-                    "error": f"Agent 配置验证失败: {error_msg}"
-                }
+                return {"success": False, "error": f"Agent 配置验证失败: {error_msg}"}
 
             # 更新 Agent
             success = await mongodb_client.agent_repository.update_agent(
-                agent_name=agent_name,
-                user_id=user_id,
-                agent_config=agent_config
+                agent_name=agent_name, user_id=user_id, agent_config=agent_config
             )
 
             if success:
                 logger.info(f"更新 Agent 成功: {agent_name} (user_id: {user_id})")
-                return {
-                    "success": True,
-                    "agent_name": agent_name
-                }
+                return {"success": True, "agent_name": agent_name}
             else:
-                return {
-                    "success": False,
-                    "error": "更新 Agent 失败，Agent 可能不存在"
-                }
+                return {"success": False, "error": "更新 Agent 失败，Agent 可能不存在"}
 
         except Exception as e:
             logger.error(f"更新 Agent 失败 ({agent_name}): {str(e)}")
-            return {
-                "success": False,
-                "error": str(e)
-            }
+            return {"success": False, "error": str(e)}
 
     async def delete_agent(self, agent_name: str, user_id: str) -> bool:
         """
@@ -203,22 +192,28 @@ class AgentService:
             删除成功返回 True，失败返回 False
         """
         try:
-            success = await mongodb_client.agent_repository.delete_agent(agent_name, user_id)
+            success = await mongodb_client.agent_repository.delete_agent(
+                agent_name, user_id
+            )
 
             if success:
                 # 删除对应的 memory 文档
                 try:
-                    delete_result = await mongodb_client.memories_collection.delete_one({
-                        "user_id": user_id,
-                        "owner_type": "agent",
-                        "owner_id": agent_name
-                    })
+                    delete_result = await mongodb_client.memories_collection.delete_one(
+                        {
+                            "user_id": user_id,
+                            "owner_type": "agent",
+                            "owner_id": agent_name,
+                        }
+                    )
                     if delete_result.deleted_count > 0:
                         logger.info(f"删除 Agent 的 memory 文档成功: {agent_name}")
                     else:
                         logger.warning(f"未找到 Agent 的 memory 文档: {agent_name}")
                 except Exception as mem_error:
-                    logger.warning(f"删除 Agent 的 memory 文档失败: {agent_name}, 错误: {str(mem_error)}")
+                    logger.warning(
+                        f"删除 Agent 的 memory 文档失败: {agent_name}, 错误: {str(mem_error)}"
+                    )
 
                 logger.info(f"删除 Agent 成功: {agent_name} (user_id: {user_id})")
             else:
@@ -231,11 +226,11 @@ class AgentService:
             return False
 
     async def list_agents(
-            self,
-            user_id: str,
-            category: Optional[str] = None,
-            skip: int = 0,
-            limit: int = 100
+        self,
+        user_id: str,
+        category: Optional[str] = None,
+        skip: int = 0,
+        limit: int = 100,
     ) -> Dict[str, Any]:
         """
         列出 Agents（支持分类过滤和分页）
@@ -251,15 +246,11 @@ class AgentService:
         """
         try:
             agents = await mongodb_client.agent_repository.list_agents(
-                user_id=user_id,
-                category=category,
-                skip=skip,
-                limit=limit
+                user_id=user_id, category=category, skip=skip, limit=limit
             )
 
             total = await mongodb_client.agent_repository.count_agents(
-                user_id=user_id,
-                category=category
+                user_id=user_id, category=category
             )
 
             return {
@@ -267,17 +258,12 @@ class AgentService:
                 "agents": agents,
                 "total": total,
                 "skip": skip,
-                "limit": limit
+                "limit": limit,
             }
 
         except Exception as e:
             logger.error(f"列出 Agents 失败: {str(e)}")
-            return {
-                "success": False,
-                "error": str(e),
-                "agents": [],
-                "total": 0
-            }
+            return {"success": False, "error": str(e), "agents": [], "total": 0}
 
     async def list_categories(self, user_id: str) -> List[Dict[str, Any]]:
         """
@@ -296,9 +282,7 @@ class AgentService:
             return []
 
     async def list_agents_in_category(
-            self,
-            user_id: str,
-            category: str
+        self, user_id: str, category: str
     ) -> List[Dict[str, Any]]:
         """
         列出指定分类下的所有 Agents（只返回 name 和 tags）
@@ -312,17 +296,14 @@ class AgentService:
         """
         try:
             return await mongodb_client.agent_repository.list_agents_in_category(
-                user_id=user_id,
-                category=category
+                user_id=user_id, category=category
             )
         except Exception as e:
             logger.error(f"列出分类下 Agents 失败 ({category}): {str(e)}")
             return []
 
     async def get_agent_details(
-            self,
-            agent_name: str,
-            user_id: str
+        self, agent_name: str, user_id: str
     ) -> Optional[Dict[str, Any]]:
         """
         获取 Agent 详细信息（包括完整的 card）
@@ -336,17 +317,14 @@ class AgentService:
         """
         try:
             return await mongodb_client.agent_repository.get_agent_details(
-                agent_name=agent_name,
-                user_id=user_id
+                agent_name=agent_name, user_id=user_id
             )
         except Exception as e:
             logger.error(f"获取 Agent 详情失败 ({agent_name}): {str(e)}")
             return None
 
     async def validate_agent_config(
-            self,
-            agent_config: Dict[str, Any],
-            user_id: str
+        self, agent_config: Dict[str, Any], user_id: str
     ) -> Tuple[bool, Optional[str]]:
         """
         验证 Agent 配置的有效性
@@ -375,10 +353,12 @@ class AgentService:
                     import httpx
                     from app.core.config import settings
 
-                    logger.info(f"agent_config中没有model_id，尝试从云端API查询模型 {model_name}")
+                    logger.info(
+                        f"agent_config中没有model_id，尝试从云端API查询模型 {model_name}"
+                    )
 
                     # 获取云端模型列表
-                    models_api_url = f"{settings.CLOUD_MODEL_API_BASE_URL}/api/v1/models"
+                    models_api_url = f"{settings.CLOUD_GATEWAY_BASE_URL}/api/v1/models"
                     async with httpx.AsyncClient(timeout=10.0) as client:
                         models_response = await client.get(models_api_url)
                         models_response.raise_for_status()
@@ -396,7 +376,9 @@ class AgentService:
                     for model_item in models_list:
                         if model_item.get("name") == model_name:
                             model_id = model_item.get("id")
-                            logger.info(f"从云端API找到模型 {model_name}，ID: {model_id}")
+                            logger.info(
+                                f"从云端API找到模型 {model_name}，ID: {model_id}"
+                            )
                             break
 
                     if not model_id:
@@ -419,14 +401,16 @@ class AgentService:
                             from app.core.config import settings
 
                             # 获取下载链接
-                            download_api_url = f"{settings.CLOUD_MODEL_API_BASE_URL}/api/v1/models/{model_id}/download"
+                            download_api_url = f"{settings.CLOUD_GATEWAY_BASE_URL}/api/v1/models/{model_id}/download"
                             async with httpx.AsyncClient(timeout=10.0) as client:
                                 download_response = await client.get(download_api_url)
                                 download_response.raise_for_status()
                                 download_url = download_response.text.strip()
 
                             if download_url:
-                                logger.info(f"获取到模型下载链接: {download_url[:100]}...")
+                                logger.info(
+                                    f"获取到模型下载链接: {download_url[:100]}..."
+                                )
 
                                 # 构建部署配置
                                 model_payload = {
@@ -439,7 +423,9 @@ class AgentService:
                                     "extended_kv_cache": {"enabled": False},
                                     "speculative_config": {"enabled": False},
                                     "categories": ["imported"],
-                                    "backend_parameters": ["--gpu-memory-utilization=0.4"],
+                                    "backend_parameters": [
+                                        "--gpu-memory-utilization=0.4"
+                                    ],
                                     "distributed_inference_across_workers": True,
                                     "restart_on_error": True,
                                     "generic_proxy": False,
@@ -451,19 +437,29 @@ class AgentService:
                                 }
 
                                 # 创建模型部署任务
-                                created_model_id, is_existing = await model_service.gpustack_client.create_model(
-                                    model_payload)
+                                created_model_id, is_existing = (
+                                    await model_service.gpustack_client.create_model(
+                                        model_payload
+                                    )
+                                )
 
                                 if created_model_id:
                                     if is_existing:
-                                        logger.info(f"模型 {model_name} 已存在于GPUStack，ID: {created_model_id}")
+                                        logger.info(
+                                            f"模型 {model_name} 已存在于GPUStack，ID: {created_model_id}"
+                                        )
                                     else:
-                                        logger.info(f"模型 {model_name} 部署任务已创建，ID: {created_model_id}")
+                                        logger.info(
+                                            f"模型 {model_name} 部署任务已创建，ID: {created_model_id}"
+                                        )
 
                                         # 新部署的模型，监听初始状态（最多等待30秒）
                                         try:
                                             import asyncio
-                                            logger.info(f"开始监听模型 {model_name} 的部署状态...")
+
+                                            logger.info(
+                                                f"开始监听模型 {model_name} 的部署状态..."
+                                            )
 
                                             event_count = 0
                                             max_events = 20
@@ -471,35 +467,58 @@ class AgentService:
 
                                             async def watch_with_timeout():
                                                 nonlocal event_count
-                                                async for event in model_service.gpustack_client.watch_model_instances(
-                                                        model_id=created_model_id, timeout=timeout_seconds
+                                                async for (
+                                                    event
+                                                ) in model_service.gpustack_client.watch_model_instances(
+                                                    model_id=created_model_id,
+                                                    timeout=timeout_seconds,
                                                 ):
                                                     event_count += 1
-                                                    state = event.get("state", "unknown")
-                                                    download_progress = event.get("download_progress")
+                                                    state = event.get(
+                                                        "state", "unknown"
+                                                    )
+                                                    download_progress = event.get(
+                                                        "download_progress"
+                                                    )
 
                                                     # 记录关键状态变化
-                                                    if state in ["initializing", "downloading", "analyzing", "error"]:
+                                                    if state in [
+                                                        "initializing",
+                                                        "downloading",
+                                                        "analyzing",
+                                                        "error",
+                                                    ]:
                                                         if download_progress:
                                                             logger.info(
-                                                                f"模型 {model_name} 状态: {state}, 进度: {download_progress:.1f}%")
+                                                                f"模型 {model_name} 状态: {state}, 进度: {download_progress:.1f}%"
+                                                            )
                                                         else:
-                                                            logger.info(f"模型 {model_name} 状态: {state}")
+                                                            logger.info(
+                                                                f"模型 {model_name} 状态: {state}"
+                                                            )
 
                                                     # 检查错误状态
                                                     if state == "error":
-                                                        error_msg = event.get("state_message", "未知错误")
-                                                        logger.error(f"模型 {model_name} 部署失败: {error_msg}")
+                                                        error_msg = event.get(
+                                                            "state_message", "未知错误"
+                                                        )
+                                                        logger.error(
+                                                            f"模型 {model_name} 部署失败: {error_msg}"
+                                                        )
                                                         return False
 
                                                     # 如果已经开始下载，认为部署任务启动成功
                                                     if state == "downloading":
-                                                        logger.info(f"模型 {model_name} 已开始下载，部署任务启动成功")
+                                                        logger.info(
+                                                            f"模型 {model_name} 已开始下载，部署任务启动成功"
+                                                        )
                                                         return True
 
                                                     # 防止监听太久
                                                     if event_count >= max_events:
-                                                        logger.info(f"模型 {model_name} 监听达到最大事件数，停止监听")
+                                                        logger.info(
+                                                            f"模型 {model_name} 监听达到最大事件数，停止监听"
+                                                        )
                                                         return True
 
                                                 # 超时或没有事件
@@ -509,16 +528,23 @@ class AgentService:
                                             try:
                                                 deployment_ok = await asyncio.wait_for(
                                                     watch_with_timeout(),
-                                                    timeout=timeout_seconds + 5
+                                                    timeout=timeout_seconds + 5,
                                                 )
                                                 if not deployment_ok:
-                                                    return False, f"模型 {model_name} 部署过程中出现错误"
+                                                    return (
+                                                        False,
+                                                        f"模型 {model_name} 部署过程中出现错误",
+                                                    )
                                             except asyncio.TimeoutError:
-                                                logger.warning(f"模型 {model_name} 状态监听超时，但部署任务已创建")
+                                                logger.warning(
+                                                    f"模型 {model_name} 状态监听超时，但部署任务已创建"
+                                                )
                                                 # 超时不算失败，部署任务已在后台运行
 
                                         except Exception as e:
-                                            logger.warning(f"监听模型部署状态时出错: {str(e)}，但部署任务已创建")
+                                            logger.warning(
+                                                f"监听模型部署状态时出错: {str(e)}，但部署任务已创建"
+                                            )
                                             # 监听失败不影响主流程
 
                                     # 注册模型到用户数据库
@@ -531,18 +557,26 @@ class AgentService:
                                             "api_key": settings.GPUSTACK_API_KEY,
                                             "model": model_name,
                                             "provider": "openai",
-                                            "model_type": "llm"
+                                            "model_type": "llm",
                                         }
 
-                                        success = await model_service.add_model(user_id, model_config_data)
+                                        success = await model_service.add_model(
+                                            user_id, model_config_data
+                                        )
                                         if success:
-                                            logger.info(f"模型 {model_name} 已成功注册到用户数据库")
+                                            logger.info(
+                                                f"模型 {model_name} 已成功注册到用户数据库"
+                                            )
                                         else:
                                             # 模型可能已在数据库中，记录日志但不视为错误
-                                            logger.info(f"模型 {model_name} 注册失败，可能已存在")
+                                            logger.info(
+                                                f"模型 {model_name} 注册失败，可能已存在"
+                                            )
 
                                     except Exception as e:
-                                        logger.error(f"注册模型到数据库时出错: {str(e)}")
+                                        logger.error(
+                                            f"注册模型到数据库时出错: {str(e)}"
+                                        )
                                         # 不阻断主流程，模型部署已成功
 
                                     # 模型部署/已存在，验证通过
@@ -556,9 +590,15 @@ class AgentService:
                             logger.error(f"从云端部署模型失败: {str(e)}")
                             return False, f"从云端部署模型 {model_name} 失败: {str(e)}"
                     else:
-                        return False, f"模型 {model_name} 未找到，且缺少model_id无法自动部署"
+                        return (
+                            False,
+                            f"模型 {model_name} 未找到，且缺少model_id无法自动部署",
+                        )
                 else:
-                    return False, f"模型不存在: {model_name} (本地未注册，且GPUStack客户端未初始化)"
+                    return (
+                        False,
+                        f"模型不存在: {model_name} (本地未注册，且GPUStack客户端未初始化)",
+                    )
 
             # 3. 验证 mcp 服务器列表
             mcp_servers = agent_config.get("mcp", [])
@@ -572,7 +612,10 @@ class AgentService:
                 logger.info(f"当前用户 MCP2 servers: {user_id}")
                 user_servers = await mcp2_manager.list_user_servers_with_status(user_id)
                 # Set for fast lookup
-                user_server_keys = {(s.get("server_name"), s.get("version")) for s in (user_servers or [])}
+                user_server_keys = {
+                    (s.get("server_name"), s.get("version"))
+                    for s in (user_servers or [])
+                }
 
                 # 验证每个服务器是否已 add-server（若未 add 且有 version 则自动 add，测试模式下为本地注册）
                 for server_info in normalized_servers:
@@ -585,11 +628,15 @@ class AgentService:
 
                     # MCP2 必须有 version（因为 serverKey = server_name:version）
                     if not server_version:
-                        logger.warning(f"MCP2 服务器 {server_name} 缺少 version，无法验证/自动注册")
+                        logger.warning(
+                            f"MCP2 服务器 {server_name} 缺少 version，无法验证/自动注册"
+                        )
                         return False, f"MCP服务器未配置且缺少版本信息: {server_name}"
 
                     if (server_name, server_version) not in user_server_keys:
-                        logger.info(f"MCP2 服务器 {server_name}:{server_version} 未添加，尝试 add-server...")
+                        logger.info(
+                            f"MCP2 服务器 {server_name}:{server_version} 未添加，尝试 add-server..."
+                        )
                         try:
                             # 组合成 server_key 格式: "name:version"
                             server_key = f"{server_name}:{server_version}"
@@ -626,8 +673,13 @@ class AgentService:
                             user_server_keys.add((server_name, server_version))
                             logger.info(f"MCP服务器 {server_name}:{server_version} 注册成功")
                         except Exception as e:
-                            logger.error(f"注册 MCP2 服务器 {server_name}:{server_version} 失败: {str(e)}")
-                            return False, f"注册 MCP2 服务器失败: {server_name}:{server_version}"
+                            logger.error(
+                                f"注册 MCP2 服务器 {server_name}:{server_version} 失败: {str(e)}"
+                            )
+                            return (
+                                False,
+                                f"注册 MCP2 服务器失败: {server_name}:{server_version}",
+                            )
 
             # 4. 验证 system_tools 列表
             system_tool_names = agent_config.get("system_tools", [])
