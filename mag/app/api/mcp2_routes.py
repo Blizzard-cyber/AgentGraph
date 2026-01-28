@@ -35,7 +35,9 @@ async def list_servers(current_user: CurrentUser = Depends(get_current_user_hybr
 
 
 @router.post("/add-server", response_model=MCP2StartTaskResponse)
-async def add_server(req: MCP2AddServerRequest):
+async def add_server(req: MCP2AddServerRequest,
+                     current_user: CurrentUser = Depends(get_current_user_hybrid),
+                     ):
     """Unified add_server (async).
 
     Frontend provides user_id + server_name where server_name is serverKey "modelName:version".
@@ -44,6 +46,7 @@ async def add_server(req: MCP2AddServerRequest):
     Status values: started/downloading/complete/error.
 
     """
+    req.user_id = current_user.user_id
     task = await mcp2_manager.start_add_server_task(user_id=req.user_id, server_key=req.server_name)
 
     # normalize task key for response
@@ -64,9 +67,11 @@ async def add_server(req: MCP2AddServerRequest):
     }
 
 
-@router.post("/connect", response_model=MCP2StartTaskResponse)
-async def connect(req: MCP2TaskKey, conversation_id: str | None = None):
+@router.post("/connect", response_model=MCP2StartTaskResponse, )
+async def connect(req: MCP2TaskKey, conversation_id: str | None = None,
+                  current_user: CurrentUser = Depends(get_current_user_hybrid)):
     """Async connect task. When complete, task.result contains tools."""
+    req.user_id = current_user.user_id
     task = await mcp2_manager.start_connect_task(
         user_id=req.user_id,
         server_name=req.server_name,
@@ -136,12 +141,15 @@ async def tool_call(
 
 
 @router.post("/disconnect")
-async def disconnect(req: MCP2DisconnectRequest):
+async def disconnect(req: MCP2DisconnectRequest,
+                     current_user: CurrentUser = Depends(get_current_user_hybrid)
+                     ):
     """Disconnect: close client usage for this user.
 
     This only affects runtime connections (client_table). It does NOT delete the server from the user's list.
     """
     try:
+        req.user_id = current_user.user_id
         await mcp2_manager.disconnect(
             server_name=req.server_name,
             version=req.version,
@@ -164,7 +172,9 @@ async def debug_connections(current_user: CurrentUser = Depends(get_current_user
 
 
 @router.post("/servers/update")
-async def update_server(payload: Dict[str, Any]):
+async def update_server(payload: Dict[str, Any],
+                        current_user: CurrentUser = Depends(get_current_user_hybrid)
+                        ):
     """Update a server entry for a user.
 
     Payload:
@@ -175,7 +185,7 @@ async def update_server(payload: Dict[str, Any]):
     Note: This updates the user's server list (disk-backed). It does not download anything.
     """
     try:
-        user_id = str(payload.get("user_id"))
+        user_id = current_user.user_id
         old_server_name = str(payload.get("old_server_name"))
         old_version = str(payload.get("old_version"))
         new_server_name = str(payload.get("new_server_name"))
@@ -196,7 +206,9 @@ async def update_server(payload: Dict[str, Any]):
 
 
 @router.post("/servers/remove")
-async def remove_server(payload: Dict[str, Any]):
+async def remove_server(payload: Dict[str, Any],
+                        current_user: CurrentUser = Depends(get_current_user_hybrid)
+                        ):
     """Remove: delete all records for this user about server_name:version.
 
     - Removes from user's server list (user_servers.json)
@@ -205,7 +217,7 @@ async def remove_server(payload: Dict[str, Any]):
     - Keeps server_registry entry.
     """
     try:
-        user_id = str(payload.get("user_id"))
+        user_id = current_user.user_id
         server_name = str(payload.get("server_name"))
         version = str(payload.get("version"))
         if not all([user_id, server_name, version]):
