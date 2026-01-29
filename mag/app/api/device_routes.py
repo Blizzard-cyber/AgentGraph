@@ -18,6 +18,8 @@ from app.models.device_schema import (
     DeviceStatusResponse,
     DeviceInfo,
 )
+from app.models.auth_schema import CurrentUser
+from app.auth.dependencies import get_current_user_hybrid
 from app.services.device.device_service import DeviceService
 from app.infrastructure.database.mongodb import mongodb_client
 
@@ -228,11 +230,14 @@ async def get_system_info():
 async def device_heartbeat(
     request_body: dict,
     device_service: DeviceService = Depends(get_device_service),
+    current_user: CurrentUser = Depends(get_current_user_hybrid),
 ):
     """
-    设备心跳接口
+    设备心跳接口（需要认证）
 
     边缘设备定时调用此接口，向云端发送心跳以维持连接状态。
+
+    **安全要求**：需要用户认证
 
     请求体:
     - device_id: 设备ID
@@ -245,6 +250,7 @@ async def device_heartbeat(
     状态码:
     - 200: 心跳记录成功
     - 400: 请求参数错误
+    - 401: 未认证
     - 404: 设备不存在
     - 503: 服务不可用
     """
@@ -278,14 +284,18 @@ async def device_heartbeat(
 
 
 @router.get("/registration-status")
-async def get_registration_status():
+async def get_registration_status(
+    current_user: CurrentUser = Depends(get_current_user_hybrid),
+):
     """
-    获取设备注册状态
+    获取设备注册状态（需要认证）
 
     用于前端页面加载时检查设备当前的注册状态：
     - 未注册：没有本地凭证也没有PSK
     - 等待审批：有PSK但没有凭证（已提交注册申请）
     - 已注册：有本地凭证
+
+    **安全要求**：需要用户认证
 
     返回:
     - status: 注册状态（unregistered|pending|registered）
@@ -334,12 +344,16 @@ async def get_registration_status():
 
 
 @router.post("/check-approval")
-async def check_approval_status():
+async def check_approval_status(
+    current_user: CurrentUser = Depends(get_current_user_hybrid),
+):
     """
-    手动检查设备审批状态
+    手动检查设备审批状态（需要认证）
 
     当设备处于pending状态时，前端可调用此接口检查云端审批状态。
     如果审批通过，将保存凭证到本地。
+
+    **安全要求**：需要用户认证
 
     返回:
     - success: 是否成功
