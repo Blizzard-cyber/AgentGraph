@@ -13,7 +13,6 @@ from fastapi import APIRouter, HTTPException, status, Depends
 from app.models.device_schema import (
     DeviceSelfRegisterRequest,
     DeviceAuthRequest,
-    DeviceStatusCheckRequest,
     DeviceRegistrationResponse,
     DeviceAuthResponse,
     DeviceStatusResponse,
@@ -87,6 +86,8 @@ async def self_register_device(
             device_name=credentials.device_name,
             status=credentials.status,
             location=credentials.location,
+            mac_address=credentials.mac_address,
+            ip_address=credentials.ip_address,
             registration_method=credentials.registration_method,
             approved_at=credentials.approved_at,
             activated_at=credentials.activated_at,
@@ -167,59 +168,6 @@ async def authenticate_device(
         )
 
 
-@router.post("/status", response_model=DeviceStatusResponse)
-async def check_device_status(
-    request: DeviceStatusCheckRequest,
-    device_service: DeviceService = Depends(get_device_service),
-):
-    """
-    查询设备状态
-
-    获取设备当前的注册和认证状态。
-
-    请求体:
-    - device_id: 设备ID
-    - device_identifier: 设备标识符（可选，用于首次查询）
-
-    返回:
-    - device_id: 设备ID
-    - device_identifier: 设备标识符
-    - device_name: 设备名称
-    - status: 设备状态（pending|approved|active|disabled）
-    - location: 设备位置
-    - registration_method: 注册方式
-    - created_at: 创建时间
-    - approved_at: 审批时间
-    - activated_at: 激活时间
-    - message: 状态消息
-
-    状态码:
-    - 200: 查询成功
-    - 404: 设备不存在
-    - 503: 服务不可用
-    """
-    try:
-        logger.info(f"设备状态查询: {request.device_id}")
-
-        success, message, status_response = await device_service.get_device_status(
-            request.device_id
-        )
-
-        if not success:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=message)
-
-        return status_response
-
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"设备状态查询错误: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"查询失败: {str(e)}",
-        )
-
-
 @router.get("/health")
 async def device_service_health():
     """
@@ -274,3 +222,164 @@ async def get_system_info():
             "device_id_suggestion": f"UUID-{str(uuid.uuid4())}",
             "default_location": "Chengdu",
         }
+
+
+@router.post("/heartbeat")
+async def device_heartbeat(
+    request_body: dict,
+    device_service: DeviceService = Depends(get_device_service),
+):
+    """
+    设备心跳接口
+
+    边缘设备定时调用此接口，向云端发送心跳以维持连接状态。
+
+    请求体:
+    - device_id: 设备ID
+
+    返回:
+    - success: 是否成功
+    - message: 操作消息
+    - online: 是否在线
+
+    状态码:
+    - 200: 心跳记录成功
+    - 400: 请求参数错误
+    - 404: 设备不存在
+    - 503: 服务不可用
+    """
+    try:
+        device_id = request_body.get("device_id")
+        if not device_id:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="缺少必填字段: device_id",
+            )
+
+        logger.info(f"设备心跳: {device_id}")
+
+        success, message, response = await device_service.send_heartbeat(device_id)
+
+        if not success:
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=message
+            )
+
+        return response
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"设备心跳错误: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"心跳发送失败: {str(e)}",
+        )
+
+
+@router.get("/registration-status")
+async def get_registration_status():
+    """
+    获取设备注册状态
+
+    用于前端页面加载时检查设备当前的注册状态：
+    - 未注册：没有本地凭证也没有PSK
+    - 等待审批：有PSK但没有凭证（已提交注册申请）
+    - 已注册：有本地凭证
+
+    返回:
+    - status: 注册状态（unregistered|pending|registered）
+    - device_identifier: 设备标识符（如果有）
+    - device_id: 设备ID（如果已注册）
+    - message: 状态描述
+    """
+    try:
+        from app.core.device_initialization import DeviceInitializer
+
+        # 检查是否有本地凭证
+        credentials = DeviceInitializer._load_local_credentials()
+        if credentials:
+            return {
+                "success": True,
+                "status": "registered",
+                "device_id": credentials.device_id,
+                "device_identifier": credentials.device_identifier,
+                "device_name": credentials.device_name,
+                "device_status": credentials.status.value,
+                "mac_address": credentials.mac_address,
+                "ip_address": credentials.ip_address,
+                "location": credentials.location,
+                "message": "设备已注册",
+            }
+
+        # 检查是否有PSK（说明已提交注册但未审批）
+        psk_data = DeviceInitializer._load_psk()
+        if psk_data:
+            return {
+                "success": True,
+                "status": "pending",
+                "device_identifier": psk_data.get("device_identifier"),
+                "message": "注册申请已提交，等待云端管理员审批",
+            }
+
+        # 未注册状态
+        return {"success": True, "status": "unregistered", "message": "设备未注册"}
+
+    except Exception as e:
+        logger.error(f"获取注册状态失败: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"获取注册状态失败: {str(e)}",
+        )
+
+
+@router.post("/check-approval")
+async def check_approval_status():
+    """
+    手动检查设备审批状态
+
+    当设备处于pending状态时，前端可调用此接口检查云端审批状态。
+    如果审批通过，将保存凭证到本地。
+
+    返回:
+    - success: 是否成功
+    - approved: 是否已审批
+    - status: 设备状态
+    - credentials: 设备凭证（如果已审批）
+    - message: 状态消息
+    """
+    try:
+        from app.core.device_initialization import DeviceInitializer
+
+        # 检查审批状态
+        approved, message, credentials = await DeviceInitializer.check_approval_status()
+
+        if approved and credentials:
+            # 审批通过，保存到数据库
+            await DeviceInitializer.on_device_registered(credentials)
+
+            return {
+                "success": True,
+                "approved": True,
+                "status": credentials.status.value,
+                "credentials": {
+                    "device_id": credentials.device_id,
+                    "device_identifier": credentials.device_identifier,
+                    "device_name": credentials.device_name,
+                    "device_secret": credentials.device_secret,
+                    "status": credentials.status.value,
+                    "location": credentials.location,
+                    "mac_address": credentials.mac_address,
+                    "ip_address": credentials.ip_address,
+                },
+                "message": message,
+            }
+        else:
+            return {"success": True, "approved": False, "message": message}
+
+    except Exception as e:
+        logger.error(f"检查审批状态失败: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"检查审批状态失败: {str(e)}",
+        )

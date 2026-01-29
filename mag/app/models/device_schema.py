@@ -73,6 +73,8 @@ class DeviceInfo(BaseModel):
     device_name: str
     status: DeviceStatus
     location: Optional[str] = None
+    mac_address: Optional[str] = None
+    ip_address: Optional[str] = None
     registration_method: DeviceRegistrationMethod
     approved_at: Optional[datetime] = None
     activated_at: Optional[datetime] = None
@@ -143,6 +145,8 @@ class DeviceCredentials(BaseModel):
     status: DeviceStatus = DeviceStatus.PENDING
     device_name: str
     location: Optional[str] = None
+    mac_address: Optional[str] = None
+    ip_address: Optional[str] = None
     registration_method: DeviceRegistrationMethod
     approved_at: Optional[datetime] = None
     activated_at: Optional[datetime] = None
