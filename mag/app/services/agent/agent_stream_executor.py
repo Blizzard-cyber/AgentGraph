@@ -13,6 +13,7 @@ from memory_client import MEMORY_CLIENT
 from app.services.tool_execution import ToolExecutor
 from app.infrastructure.database.mongodb import mongodb_client
 from app.services.system_tools import get_system_tools_by_names
+from app.services.trajectory import trajectory_service
 
 logger = logging.getLogger(__name__)
 
@@ -387,7 +388,24 @@ class AgentStreamExecutor:
         config["agent_name"] = agent_name
         config["model_name"] = agent_config.get("model")
         config["system_prompt"] = agent_config.get("instruction", "")
-        config["mcp_servers"] = agent_config.get("mcp", []).copy()
+        
+        # 处理MCP服务器配置：支持字典和字符串两种格式
+        mcp_raw = agent_config.get("mcp", [])
+        mcp_normalized = []
+        for item in mcp_raw:
+            if isinstance(item, dict):
+                # 字典格式：{'name': 'xxx', 'version': 'yyy'} -> 'xxx:yyy'
+                name = item.get("name", "")
+                version = item.get("version", "")
+                if name and version:
+                    mcp_normalized.append(f"{name}:{version}")
+                elif name:
+                    mcp_normalized.append(name)
+            elif isinstance(item, str):
+                # 字符串格式：直接使用
+                mcp_normalized.append(item)
+        config["mcp_servers"] = mcp_normalized
+        
         config["system_tools"] = agent_config.get("system_tools", []).copy()
         config["max_iterations"] = agent_config.get("max_actions", 50)
 
@@ -407,13 +425,34 @@ class AgentStreamExecutor:
         # 添加工具（去重）
         if mcp_servers:
             original_count = len(config["mcp_servers"])
-            config["mcp_servers"] = list(set(config["mcp_servers"] + mcp_servers))
+            # 支持字符串和字典两种格式的去重
+            existing_servers = config["mcp_servers"]
+            combined = existing_servers + mcp_servers
+            
+            # 生成唯一标识符用于去重
+            seen = set()
+            deduped = []
+            for item in combined:
+                if isinstance(item, str):
+                    key = item
+                elif isinstance(item, dict):
+                    # 使用 name:version 或 name 作为唯一标识
+                    key = f"{item.get('name', '')}:{item.get('version', '')}"
+                else:
+                    continue
+                    
+                if key not in seen:
+                    seen.add(key)
+                    deduped.append(item)
+            
+            config["mcp_servers"] = deduped
             added = len(config["mcp_servers"]) - original_count
             if added > 0:
                 logger.info(f"添加 MCP 服务器: {added} 个")
 
         if system_tools:
             original_count = len(config["system_tools"])
+            # system_tools 通常是字符串列表，可以直接用 set 去重
             config["system_tools"] = list(set(config["system_tools"] + system_tools))
             added = len(config["system_tools"]) - original_count
             if added > 0:
@@ -472,6 +511,24 @@ class AgentStreamExecutor:
             logger.debug(
                 f"Graph 节点调用 Agent: {agent_name}, conversation_id={conversation_id}"
             )
+
+        # 创建轨迹收集器（仅在非子Agent、非Graph节点时收集）
+        trajectory_collector = None
+        if not is_sub_agent and not is_graph_node:
+            # 获取用户查询（从messages中提取最后一条用户消息）
+            user_query = ""
+            for msg in reversed(current_messages):
+                if msg.get("role") == "user":
+                    user_query = msg.get("content", "")
+                    break
+            
+            if user_query:
+                trajectory_collector = trajectory_service.create_trajectory_collector(
+                    agent_id=agent_name or "unknown_agent",
+                    user_id=user_id,
+                    query=user_query,
+                )
+                logger.info(f"已创建轨迹收集器: agent={agent_name}, user={user_id}")
 
         try:
             while iteration < max_iterations:
@@ -643,10 +700,44 @@ class AgentStreamExecutor:
                         tool_message["task_id"] = task_id
                     yield f"data: {json.dumps(tool_message)}\n\n"
 
+                # 收集轨迹数据：记录工具调用步骤
+                if trajectory_collector:
+                    # 遍历本次迭代的所有工具调用，为每个工具调用创建一个步骤
+                    for tool_call, tool_result in zip(current_tool_calls, tool_results):
+                        tool_name = tool_call.get("function", {}).get("name", "unknown_tool")
+                        tool_args = tool_call.get("function", {}).get("arguments", "{}")
+                        
+                        # 提取reasoning作为thought
+                        thought = accumulated_reasoning if accumulated_reasoning else f"调用工具 {tool_name} 处理任务"
+                        
+                        # 解析工具输出
+                        try:
+                            output_content = tool_result.get("content", "")
+                            # 尝试解析为JSON
+                            try:
+                                output = json.loads(output_content)
+                            except:
+                                output = output_content
+                        except:
+                            output = str(tool_result)
+                        
+                        # 添加步骤（depend_on暂时为空，可以根据实际依赖关系设置）
+                        trajectory_collector.add_step(
+                            agent_name=agent_name,
+                            thought=thought,
+                            tool=f"[{tool_name}]",
+                            output=output,
+                            depend_on=[],
+                        )
+
             if iteration >= max_iterations:
                 logger.warning(
                     f"Agent {agent_name} - 达到最大迭代次数 {max_iterations}"
                 )
+
+            # 上传轨迹数据（异步执行，不阻塞响应）
+            if trajectory_collector:
+                asyncio.create_task(self._upload_trajectory_async(trajectory_collector))
 
             # 返回完整结果
             result = {
@@ -927,3 +1018,19 @@ class AgentStreamExecutor:
             return True
         else:
             return False
+
+    async def _upload_trajectory_async(self, trajectory_collector) -> None:
+        """
+        异步上传轨迹数据（不阻塞主流程）
+        
+        Args:
+            trajectory_collector: 轨迹收集器实例
+        """
+        try:
+            success = await trajectory_collector.upload()
+            if success:
+                logger.info(f"轨迹数据上传成功: agent={trajectory_collector.agent_id}, steps={len(trajectory_collector.steps)}")
+            else:
+                logger.warning(f"轨迹数据上传失败: agent={trajectory_collector.agent_id}")
+        except Exception as e:
+            logger.error(f"轨迹数据上传异常: {str(e)}", exc_info=True)

@@ -15,6 +15,7 @@ import uuid
 from .agent_stream_executor import AgentStreamExecutor
 from .dag_executor import DAGExecutor
 from .dag_service import RealAgentInterface
+from app.services.trajectory import trajectory_service
 
 logger = logging.getLogger("plan_service")
 
@@ -259,8 +260,19 @@ class PlanService:
         Yields:
             SSE格式的流式输出
         """
+        execution_id = None
+        trajectory_collector = None
+        
         try:
             execution_id = str(uuid.uuid4())[:12]
+            
+            # 创建Plan轨迹收集器
+            trajectory_collector = trajectory_service.create_plan_trajectory_collector(
+                plan_agent_id=plan_agent_name,
+                user_id=user_id,
+                query=user_query,
+            )
+            logger.info(f"已创建Plan轨迹收集器: plan_agent={plan_agent_name}, user={user_id}")
             
             # 阶段1：发送规划开始消息
             yield f"data: {json.dumps({'type': 'planning_start', 'message': f'开始任务规划（使用{plan_agent_name}）...', 'execution_id': execution_id}, ensure_ascii=False)}\n\n"
@@ -295,6 +307,37 @@ class PlanService:
                 conversation_id=conversation_id
             )
             
+            # 收集轨迹数据：遍历DAG中的每个步骤
+            for step in dag_plan.steps:
+                if step.result and step.result.status.value == "completed":
+                    # 提取步骤信息
+                    step_info = dag_definition.get('步骤', [])[step.id - 1] if dag_definition.get('步骤') else {}
+                    
+                    # 提取thought（从action描述或结果中）
+                    thought = step_info.get('action', f'执行步骤 {step.id}')
+                    
+                    # 提取tool（从action中推断）
+                    tool = f"[{step.agent}]"
+                    
+                    # 提取output
+                    output = step.result.output_data if step.result.output_data else "执行成功"
+                    
+                    # 提取依赖关系
+                    depend_on = step.depends_on if step.depends_on else []
+                    
+                    # 添加到轨迹收集器
+                    trajectory_collector.add_step(
+                        agent_name=step.agent,
+                        thought=thought,
+                        tool=tool,
+                        output=output,
+                        depend_on=depend_on,
+                    )
+            
+            # 异步上传轨迹数据
+            if trajectory_collector:
+                asyncio.create_task(self._upload_plan_trajectory_async(trajectory_collector))
+            
             # 阶段4：发送执行结果
             status = executor.get_execution_status(dag_plan)
             yield f"data: {json.dumps({'type': 'execution_complete', 'status': status, 'execution_id': execution_id}, ensure_ascii=False)}\n\n"
@@ -307,10 +350,26 @@ class PlanService:
             error_msg = {
                 'type': 'error',
                 'message': f'执行失败: {str(e)}',
-                'execution_id': execution_id if 'execution_id' in locals() else 'unknown'
+                'execution_id': execution_id if execution_id else 'unknown'
             }
             yield f"data: {json.dumps(error_msg, ensure_ascii=False)}\n\n"
             yield "data: [DONE]\n\n"
+
+    async def _upload_plan_trajectory_async(self, trajectory_collector) -> None:
+        """
+        异步上传Plan轨迹数据（不阻塞主流程）
+        
+        Args:
+            trajectory_collector: Plan轨迹收集器实例
+        """
+        try:
+            success = await trajectory_collector.upload()
+            if success:
+                logger.info(f"Plan轨迹数据上传成功: plan_agent={trajectory_collector.plan_agent_id}, steps={len(trajectory_collector.steps)}")
+            else:
+                logger.warning(f"Plan轨迹数据上传失败: plan_agent={trajectory_collector.plan_agent_id}")
+        except Exception as e:
+            logger.error(f"Plan轨迹数据上传异常: {str(e)}", exc_info=True)
 
 
 # 全局实例
