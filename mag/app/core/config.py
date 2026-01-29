@@ -99,6 +99,14 @@ class Settings:
         "CLOUD_GATEWAY_BASE_URL", "http://192.168.1.86:8080"
     )
 
+    # 轨迹数据上传服务配置
+    TRAJECTORY_ENABLED: bool = os.getenv("TRAJECTORY_ENABLED", "true").lower() == "true"
+    TRAJECTORY_API_HOST: str = os.getenv("TRAJECTORY_API_HOST", "192.168.1.86")
+    TRAJECTORY_API_PORT: int = int(os.getenv("TRAJECTORY_API_PORT", "8226"))
+    TRAJECTORY_SINGLE_AGENT_PATH: str = os.getenv("TRAJECTORY_SINGLE_AGENT_PATH", "/trajectory/uploadSingleAgentTrajectory")
+    TRAJECTORY_MULTI_AGENT_PATH: str = os.getenv("TRAJECTORY_MULTI_AGENT_PATH", "/trajectory/uploadMultiAgentTrajectory")
+    TRAJECTORY_USE_HTTPS: bool = os.getenv("TRAJECTORY_USE_HTTPS", "true").lower() == "true"
+
     # 根据操作系统确定配置目录
     @property
     def MAG_DIR(self) -> Path:

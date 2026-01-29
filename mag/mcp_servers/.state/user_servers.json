@@ -1,0 +1,10 @@
+{
+  "hsz": [
+    {
+      "server_name": "MCP-Server-Alpha",
+      "version": "1.0.0",
+      "added_at": "2026-01-27T08:43:48.013625",
+      "download_url": "http://192.168.1.86:9000/llm-models/MCP-Server-Alpha/1.0.0/69765234e4b01e1f25249b88.zip?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20260127T084348Z&X-Amz-SignedHeaders=host&X-Amz-Expires=3599&X-Amz-Credential=rustfsadmin%2F20260127%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=6db289e6ba11403d448cf6d855721adce849e239404e81de1df480d2f08be4bc"
+    }
+  ]
+}
