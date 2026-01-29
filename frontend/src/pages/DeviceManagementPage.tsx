@@ -9,6 +9,7 @@ import { Smartphone, Cloud, Check, X, AlertCircle, RefreshCw, Settings } from 'l
 import { deviceService, DeviceCredentials } from '../services/deviceService';
 import DeviceRegistration from '../components/common/DeviceRegistration';
 import { useT } from '../i18n/hooks';
+import './DeviceManagementPage.css';
 
 const { Header, Content } = Layout;
 const { Text, Title } = Typography;
@@ -30,40 +31,149 @@ const DeviceManagementPage: React.FC = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [setupModalVisible, setSetupModalVisible] = useState(false);
   const [autoConfigured, setAutoConfigured] = useState(true);
+  const [showAuthSection, setShowAuthSection] = useState(false);
+  const [registrationStatus, setRegistrationStatus] = useState<'unregistered' | 'pending' | 'registered'>('unregistered');
+  const [deviceIdentifier, setDeviceIdentifier] = useState<string>('');
+  const [checking, setChecking] = useState(false);
 
   useEffect(() => {
     loadDeviceInfo();
-    const interval = setInterval(() => checkCloudConnection(), 5000);
-    return () => clearInterval(interval);
+    // 每5秒检查云端连接状态
+    const checkInterval = setInterval(() => checkCloudConnection(), 5000);
+    // 每10秒同步一次设备状态（查询审批状态）
+    const syncInterval = setInterval(() => syncDeviceStatus(), 10000);
+    // 每30秒向云端发送一次心跳
+    const heartbeatInterval = setInterval(() => sendHeartbeat(), 30000);
+    return () => {
+      clearInterval(checkInterval);
+      clearInterval(syncInterval);
+      clearInterval(heartbeatInterval);
+    };
   }, []);
+
+  // 监听设备状态变化，当变为approved时自动显示认证界面
+  useEffect(() => {
+    if (deviceStatus.state === 'approved' && !token) {
+      setShowAuthSection(true);
+    }
+  }, [deviceStatus.state, token]);
 
   const loadDeviceInfo = async () => {
     setLoading(true);
     try {
-      const savedCredentials = deviceService.getCredentials();
-      const savedToken = deviceService.getDeviceToken();
+      // 首先检查注册状态
+      const statusResponse = await fetch('/api/device/registration-status');
+      if (statusResponse.ok) {
+        const statusData = await statusResponse.json();
+        console.log('注册状态:', statusData);
+        
+        setRegistrationStatus(statusData.status);
+        
+        if (statusData.status === 'pending') {
+          // 等待审批状态
+          setDeviceIdentifier(statusData.device_identifier || '');
+          setAutoConfigured(false);
+          setDeviceStatus({ state: 'pending' });
+        } else if (statusData.status === 'registered') {
+          // 已注册状态
+          const savedCredentials = deviceService.getCredentials();
+          const savedToken = deviceService.getDeviceToken();
 
-      setCredentials(savedCredentials);
-      setToken(savedToken);
+          setCredentials(savedCredentials);
+          setToken(savedToken);
+          setAutoConfigured(true);
 
-      // 模拟获取设备状态（实际应该从后端API获取）
-      if (savedCredentials) {
-        const mockStatus: DeviceStatus = {
-          state: savedToken ? 'active' : savedCredentials.device_id ? 'approved' : 'pending',
-          lastUpdate: Date.now(),
-          cloudConnected: !!savedToken,
-          registrationTime: savedCredentials.device_id ? Date.now() - 3600000 : undefined
-        };
-        setDeviceStatus(mockStatus);
-      } else {
-        setAutoConfigured(false);
-        setDeviceStatus({ state: null });
+          if (savedCredentials) {
+            const mockStatus: DeviceStatus = {
+              state: savedToken ? 'active' : savedCredentials.device_id ? 'approved' : 'pending',
+              lastUpdate: Date.now(),
+              cloudConnected: !!savedToken,
+              registrationTime: savedCredentials.device_id ? Date.now() - 3600000 : undefined
+            };
+            setDeviceStatus(mockStatus);
+            
+            // 立即同步一次状态
+            await syncDeviceStatus();
+          }
+        } else {
+          // 未注册状态
+          setAutoConfigured(false);
+          setDeviceStatus({ state: null });
+        }
       }
     } catch (error) {
       console.error('Failed to load device info:', error);
       message.error('设备信息加载失败');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const syncDeviceStatus = async () => {
+    if (!credentials?.device_id) return;
+    
+    try {
+      const response = await fetch('/api/device/check-approval', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('设备状态同步:', data);
+        
+        if (data.success && data.approved && data.credentials) {
+          // 更新设备凭证和状态
+          setCredentials(data.credentials);
+          setDeviceStatus(prev => ({
+            ...prev,
+            state: data.credentials.status || 'pending',
+            lastUpdate: Date.now()
+          }));
+          
+          message.success('设备已审批通过，凭证已更新');
+        } else if (data.success && !data.approved) {
+          message.info(data.message || '设备仍在等待审批');
+        }
+      } else {
+        console.error('状态同步失败:', response.status);
+      }
+    } catch (error) {
+      console.error('Failed to sync device status:', error);
+    }
+  };
+
+  const sendHeartbeat = async () => {
+    if (!credentials?.device_id) return;
+    
+    try {
+      const response = await fetch('/api/device/heartbeat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          device_id: credentials.device_id,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('心跳发送成功:', data);
+        if (data.success) {
+          setDeviceStatus(prev => ({
+            ...prev,
+            cloudConnected: true,
+            lastUpdate: Date.now()
+          }));
+        }
+      } else {
+        console.error('心跳发送失败:', response.status);
+      }
+    } catch (error) {
+      console.error('Failed to send heartbeat:', error);
     }
   };
 
@@ -93,6 +203,60 @@ const DeviceManagementPage: React.FC = () => {
       message.error('刷新失败');
     } finally {
       setRefreshing(false);
+    }
+  };
+
+  const handleCheckApproval = async () => {
+    setChecking(true);
+    try {
+      const response = await fetch('/api/device/check-approval', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('审批状态检查结果:', data);
+        
+        if (data.success && data.approved && data.credentials) {
+          // 审批通过，保存凭证
+          const creds: DeviceCredentials = {
+            device_id: data.credentials.device_id,
+            device_identifier: data.credentials.device_identifier,
+            device_secret: data.credentials.device_secret,
+            status: data.credentials.status,
+            device_name: data.credentials.device_name,
+            location: data.credentials.location,
+            mac_address: data.credentials.mac_address,
+            ip_address: data.credentials.ip_address,
+            registration_method: 'self_register',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          };
+          
+          deviceService.saveCredentials(creds);
+          setCredentials(creds);
+          setRegistrationStatus('registered');
+          setDeviceStatus(prev => ({
+            ...prev,
+            state: 'approved',
+          }));
+          setShowAuthSection(true);
+          
+          message.success('设备审批通过！请继续完成认证。');
+        } else {
+          message.info(data.message || '设备仍在等待审批');
+        }
+      } else {
+        message.error('检查审批状态失败');
+      }
+    } catch (error) {
+      console.error('Failed to check approval:', error);
+      message.error('检查审批状态时出错');
+    } finally {
+      setChecking(false);
     }
   };
 
@@ -274,9 +438,83 @@ const DeviceManagementPage: React.FC = () => {
       </Header>
 
       {/* Content 内容区 */}
-      <Content style={{ flex: 1, minHeight: 0, padding: '24px 32px 32px', overflow: 'auto', display: 'flex', justifyContent: 'center' }}>
-        <div style={{ width: '100%', maxWidth: '1200px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          {!credentials ? (
+      <Content style={{ flex: 1, minHeight: 0, padding: '24px 48px 32px', overflow: 'auto', display: 'flex', justifyContent: 'center' }}>
+        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          {registrationStatus === 'pending' ? (
+            // 等待审批状态
+            <Row gutter={[32, 32]}>
+              <Col xs={24}>
+                <Card
+                  style={{
+                    borderRadius: '12px',
+                    border: '1px solid rgba(250, 173, 20, 0.3)',
+                    boxShadow: '0 2px 8px rgba(250, 173, 20, 0.15)',
+                    background: 'linear-gradient(135deg, rgba(250, 173, 20, 0.05) 0%, rgba(255, 255, 255, 1) 100%)'
+                  }}
+                >
+                  <Space direction="vertical" style={{ width: '100%' }} size="large" align="center">
+                    <div style={{ textAlign: 'center' }}>
+                      <AlertCircle size={48} color="#faad14" style={{ marginBottom: '16px' }} />
+                      <Title level={4} style={{ margin: 0, color: '#2d2d2d' }}>
+                        等待云端审批
+                      </Title>
+                      <Text type="secondary" style={{ fontSize: '14px', marginTop: '8px', display: 'block' }}>
+                        设备注册申请已提交，请联系管理员在云端设备管理页面审批
+                      </Text>
+                    </div>
+                    
+                    <Card
+                      size="small"
+                      style={{
+                        width: '100%',
+                        maxWidth: '500px',
+                        background: 'rgba(255, 255, 255, 0.8)',
+                        border: '1px solid rgba(24, 144, 255, 0.1)'
+                      }}
+                    >
+                      <Space direction="vertical" style={{ width: '100%' }} size="small">
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                          <Text strong>设备标识符：</Text>
+                          <Text code>{deviceIdentifier || '加载中...'}</Text>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                          <Text strong>注册状态：</Text>
+                          <AntTag color="warning">待审批</AntTag>
+                        </div>
+                      </Space>
+                    </Card>
+                    
+                    <Space size="middle">
+                      <Button 
+                        type="primary" 
+                        icon={<RefreshCw size={16} />}
+                        onClick={handleCheckApproval}
+                        loading={checking}
+                      >
+                        检查审批状态
+                      </Button>
+                      <Button onClick={handleRefresh} loading={refreshing}>
+                        刷新页面
+                      </Button>
+                    </Space>
+                    
+                    <div style={{
+                      padding: '12px 16px',
+                      background: 'rgba(24, 144, 255, 0.08)',
+                      borderLeft: '3px solid #1890ff',
+                      borderRadius: '4px',
+                      width: '100%',
+                      maxWidth: '500px'
+                    }}>
+                      <Text style={{ fontSize: '13px', color: '#666' }}>
+                        💡 提示：点击"检查审批状态"按钮可手动检查云端审批进度。审批通过后将自动保存设备凭证。
+                      </Text>
+                    </div>
+                  </Space>
+                </Card>
+              </Col>
+            </Row>
+          ) : !credentials ? (
             // 未配置状态：显示注册表单
             <Row gutter={[32, 32]}>
               <Col xs={24} md={12}>
@@ -367,74 +605,262 @@ const DeviceManagementPage: React.FC = () => {
           ) : (
             // 已配置状态：显示设备信息和连接状态
             <Space direction="vertical" style={{ width: '100%' }} size="large">
-            {/* 顶部状态卡片 */}
-            <Row gutter={[16, 16]}>
-              <Col xs={24} sm={12} lg={6}>
-                <Card style={{ borderRadius: '12px', border: '1px solid rgba(24, 144, 255, 0.15)', textAlign: 'center' }}>
-                  <Statistic
-                    title="设备状态"
-                    value={getStatusText(deviceStatus.state)}
-                    valueStyle={{ color: getStatusColor(deviceStatus.state) === 'success' ? '#52c41a' : '#1890ff', fontSize: '16px' }}
-                    prefix={
-                      deviceStatus.state === 'active' ? <Check size={20} /> :
-                      deviceStatus.state === 'pending' ? <AlertCircle size={20} /> : <Smartphone size={20} />
-                    }
-                  />
-                </Card>
-              </Col>
-
-              <Col xs={24} sm={12} lg={6}>
-                <Card style={{ borderRadius: '12px', border: '1px solid rgba(24, 144, 255, 0.15)', textAlign: 'center' }}>
-                  <Statistic
-                    title="云端连接"
-                    value={deviceStatus.cloudConnected ? '已连接' : '未连接'}
-                    valueStyle={{ color: deviceStatus.cloudConnected ? '#52c41a' : '#d4380d', fontSize: '16px' }}
-                    prefix={deviceStatus.cloudConnected ? <Cloud size={20} color="#52c41a" /> : <Cloud size={20} color="#d4380d" />}
-                  />
-                </Card>
-              </Col>
-
-              <Col xs={24} sm={12} lg={6}>
-                <Card style={{ borderRadius: '12px', border: '1px solid rgba(24, 144, 255, 0.15)', textAlign: 'center' }}>
-                  <Statistic
-                    title="认证状态"
-                    value={token ? '已认证' : '未认证'}
-                    valueStyle={{ color: token ? '#52c41a' : '#d4380d', fontSize: '16px' }}
-                    prefix={token ? <Check size={20} /> : <X size={20} />}
-                  />
-                </Card>
-              </Col>
-
-              <Col xs={24} sm={12} lg={6}>
-                <Card style={{ borderRadius: '12px', border: '1px solid rgba(24, 144, 255, 0.15)', textAlign: 'center' }}>
-                  <Statistic
-                    title="最后更新"
-                    value={deviceStatus.lastUpdate ? new Date(deviceStatus.lastUpdate).toLocaleTimeString() : '—'}
-                    valueStyle={{ fontSize: '14px', color: '#2d2d2d' }}
-                  />
-                </Card>
-              </Col>
-            </Row>
-
-            {/* 设备详细信息 */}
+            {/* 顶部状态卡片 - 简化版本 */}
             <Card style={{
               borderRadius: '12px',
-              border: '1px solid rgba(24, 144, 255, 0.15)',
-              boxShadow: '0 1px 4px rgba(24, 144, 255, 0.08)'
+              border: 'none',
+              background: deviceStatus.state === 'active' 
+                ? 'linear-gradient(135deg, rgba(52, 211, 153, 0.05) 0%, rgba(52, 211, 153, 0.02) 100%)'
+                : deviceStatus.state === 'approved'
+                ? 'linear-gradient(135deg, rgba(24, 144, 255, 0.05) 0%, rgba(24, 144, 255, 0.02) 100%)'
+                : 'linear-gradient(135deg, rgba(250, 173, 20, 0.05) 0%, rgba(250, 173, 20, 0.02) 100%)',
+              boxShadow: '0 1px 2px rgba(0, 0, 0, 0.06)',
+              padding: '16px'
             }}>
-              <Space direction="vertical" style={{ width: '100%' }} size="large">
+              <Row gutter={[24, 0]}>
+                <Col xs={24} sm={12} lg={6}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div style={{
+                      width: '48px',
+                      height: '48px',
+                      borderRadius: '50%',
+                      background: deviceStatus.state === 'active' ? 'rgba(52, 211, 153, 0.15)' : 'rgba(24, 144, 255, 0.15)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '24px'
+                    }}>
+                      {deviceStatus.state === 'active' ? '✅' : deviceStatus.state === 'pending' ? '⏳' : '📱'}
+                    </div>
+                    <div>
+                      <Text type="secondary" style={{ fontSize: '12px' }}>设备状态</Text>
+                      <div style={{ fontSize: '16px', fontWeight: 600, color: deviceStatus.state === 'active' ? '#22c55e' : '#1890ff', marginTop: '2px' }}>
+                        {getStatusText(deviceStatus.state)}
+                      </div>
+                    </div>
+                  </div>
+                </Col>
+
+                <Col xs={24} sm={12} lg={6}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div style={{
+                      width: '48px',
+                      height: '48px',
+                      borderRadius: '50%',
+                      background: deviceStatus.cloudConnected ? 'rgba(52, 211, 153, 0.15)' : 'rgba(239, 68, 68, 0.15)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '24px'
+                    }}>
+                      {deviceStatus.cloudConnected ? '☁️' : '❌'}
+                    </div>
+                    <div>
+                      <Text type="secondary" style={{ fontSize: '12px' }}>云端连接</Text>
+                      <div style={{ fontSize: '16px', fontWeight: 600, color: deviceStatus.cloudConnected ? '#22c55e' : '#ef4444', marginTop: '2px' }}>
+                        {deviceStatus.cloudConnected ? '已连接' : '未连接'}
+                      </div>
+                    </div>
+                  </div>
+                </Col>
+
+                <Col xs={24} sm={12} lg={6}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div style={{
+                      width: '48px',
+                      height: '48px',
+                      borderRadius: '50%',
+                      background: token ? 'rgba(52, 211, 153, 0.15)' : 'rgba(239, 68, 68, 0.15)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '24px'
+                    }}>
+                      {token ? '🔐' : '🔓'}
+                    </div>
+                    <div>
+                      <Text type="secondary" style={{ fontSize: '12px' }}>认证</Text>
+                      <div style={{ fontSize: '16px', fontWeight: 600, color: token ? '#22c55e' : '#ef4444', marginTop: '2px' }}>
+                        {token ? '已认证' : '未认证'}
+                      </div>
+                    </div>
+                  </div>
+                </Col>
+
+                <Col xs={24} sm={12} lg={6}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div style={{
+                      width: '48px',
+                      height: '48px',
+                      borderRadius: '50%',
+                      background: 'rgba(99, 102, 241, 0.1)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '20px'
+                    }}>
+                      🕐
+                    </div>
+                    <div>
+                      <Text type="secondary" style={{ fontSize: '12px' }}>更新时间</Text>
+                      <div style={{ fontSize: '14px', fontWeight: 600, color: '#595959', marginTop: '2px' }}>
+                        {deviceStatus.lastUpdate ? new Date(deviceStatus.lastUpdate).toLocaleTimeString() : '—'}
+                      </div>
+                    </div>
+                  </div>
+                </Col>
+              </Row>
+            </Card>
+
+            {/* 状态流程进度卡片 - 增强版本 */}
+            <Card style={{
+              borderRadius: '12px',
+              border: 'none',
+              background: 'linear-gradient(135deg, rgba(24, 144, 255, 0.03) 0%, rgba(24, 144, 255, 0.01) 100%)',
+              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)'
+            }}>
+              <Space direction="vertical" style={{ width: '100%' }} size="middle">
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <Text strong style={{ fontSize: '14px', color: '#2d2d2d' }}>
+                    🔄 注册认证流程
+                  </Text>
+                  <Text type="secondary" style={{ fontSize: '12px' }}>
+                    {deviceStatus.state === 'pending' && '⏳ 等待管理员审批'}
+                    {deviceStatus.state === 'approved' && '⏳ 待提交认证'}
+                    {deviceStatus.state === 'active' && '✅ 已完成'}
+                  </Text>
+                </div>
+
+                {/* 流程步骤 - 增强动画效果 */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '12px', gap: '8px' }}>
+                  {/* 第一步：注册 */}
+                  <div style={{ textAlign: 'center', flex: 1 }}>
+                    <div style={{
+                      width: '44px',
+                      height: '44px',
+                      borderRadius: '50%',
+                      background: 'rgba(24, 144, 255, 0.9)',
+                      color: 'white',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      margin: '0 auto 8px',
+                      fontSize: '18px',
+                      fontWeight: 'bold',
+                      boxShadow: '0 2px 8px rgba(24, 144, 255, 0.3)',
+                      transition: 'all 0.3s ease'
+                    }}>
+                      ✓
+                    </div>
+                    <Text style={{ fontSize: '12px', color: '#2d2d2d', fontWeight: 600 }}>注册</Text>
+                    <div style={{ fontSize: '11px', color: '#52c41a', marginTop: '2px' }}>已完成</div>
+                  </div>
+
+                  {/* 箭头1 */}
+                  <div style={{
+                    flex: 0.5,
+                    textAlign: 'center',
+                    color: 'rgba(24, 144, 255, 0.6)',
+                    fontSize: '20px',
+                    animation: 'pulse 2s infinite'
+                  }}>
+                    →
+                  </div>
+
+                  {/* 第二步：审批 */}
+                  <div style={{ textAlign: 'center', flex: 1 }}>
+                    <div style={{
+                      width: '44px',
+                      height: '44px',
+                      borderRadius: '50%',
+                      background: deviceStatus.state === 'pending' ? 'rgba(250, 173, 20, 0.2)' : 'rgba(24, 144, 255, 0.9)',
+                      color: deviceStatus.state === 'pending' ? '#faad14' : 'white',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      margin: '0 auto 8px',
+                      fontSize: '18px',
+                      fontWeight: 'bold',
+                      border: deviceStatus.state === 'pending' ? '2px solid #faad14' : 'none',
+                      boxShadow: deviceStatus.state === 'pending' ? '0 2px 8px rgba(250, 173, 20, 0.3)' : '0 2px 8px rgba(24, 144, 255, 0.3)',
+                      animation: deviceStatus.state === 'pending' ? 'pulse 1s infinite' : 'none',
+                      transition: 'all 0.3s ease'
+                    }}>
+                      {deviceStatus.state === 'pending' ? '⏳' : '✓'}
+                    </div>
+                    <Text style={{ fontSize: '12px', color: '#2d2d2d', fontWeight: 600 }}>审批</Text>
+                    <div style={{ fontSize: '11px', color: deviceStatus.state === 'pending' ? '#faad14' : '#52c41a', marginTop: '2px' }}>
+                      {deviceStatus.state === 'pending' ? '进行中' : '已完成'}
+                    </div>
+                  </div>
+
+                  {/* 箭头2 */}
+                  <div style={{
+                    flex: 0.5,
+                    textAlign: 'center',
+                    color: deviceStatus.state === 'approved' || deviceStatus.state === 'active' ? 'rgba(24, 144, 255, 0.6)' : 'rgba(0, 0, 0, 0.15)',
+                    fontSize: '20px',
+                    animation: deviceStatus.state === 'approved' ? 'pulse 1.5s infinite' : 'none'
+                  }}>
+                    →
+                  </div>
+
+                  {/* 第三步：认证 */}
+                  <div style={{ textAlign: 'center', flex: 1 }}>
+                    <div style={{
+                      width: '44px',
+                      height: '44px',
+                      borderRadius: '50%',
+                      background: 
+                        deviceStatus.state === 'active' ? 'rgba(52, 211, 153, 0.9)' :
+                        deviceStatus.state === 'approved' ? 'rgba(24, 144, 255, 0.2)' :
+                        'rgba(0, 0, 0, 0.08)',
+                      color: 
+                        deviceStatus.state === 'active' ? 'white' :
+                        deviceStatus.state === 'approved' ? '#1890ff' :
+                        '#bfbfbf',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      margin: '0 auto 8px',
+                      fontSize: '18px',
+                      fontWeight: 'bold',
+                      border: deviceStatus.state === 'approved' ? '2px solid #1890ff' : 'none',
+                      boxShadow: deviceStatus.state === 'approved' ? '0 2px 8px rgba(24, 144, 255, 0.2)' : 'none',
+                      animation: deviceStatus.state === 'approved' ? 'pulse 1.5s infinite' : 'none',
+                      transition: 'all 0.3s ease'
+                    }}>
+                      {deviceStatus.state === 'active' ? '✓' : deviceStatus.state === 'approved' ? '○' : '○'}
+                    </div>
+                    <Text style={{ fontSize: '12px', color: '#2d2d2d', fontWeight: 600 }}>认证</Text>
+                    <div style={{ fontSize: '11px', color: deviceStatus.state === 'approved' ? '#1890ff' : deviceStatus.state === 'active' ? '#52c41a' : '#bfbfbf', marginTop: '2px' }}>
+                      {deviceStatus.state === 'active' ? '已完成' : deviceStatus.state === 'approved' ? '进行中' : '待进行'}
+                    </div>
+                  </div>
+                </div>
+              </Space>
+            </Card>
+
+            {/* 设备信息卡片 - 精简版本 */}
+            <Card style={{
+              borderRadius: '12px',
+              border: 'none',
+              background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.02) 0%, rgba(99, 102, 241, 0.01) 100%)',
+              boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)'
+            }}>
+              <Space direction="vertical" style={{ width: '100%' }} size="middle">
                 <Title level={5} style={{ margin: 0, color: '#2d2d2d' }}>
                   📋 设备信息
                 </Title>
 
-                <Row gutter={[32, 24]}>
+                <Row gutter={[24, 16]}>
                   <Col xs={24} md={12}>
-                    <div style={{ fontSize: '13px' }}>
-                      <Text type="secondary">设备ID</Text>
+                    <div>
+                      <Text type="secondary" style={{ fontSize: '12px' }}>设备ID</Text>
                       <div style={{
-                        marginTop: '8px',
-                        padding: '12px',
-                        background: 'rgba(0, 0, 0, 0.02)',
+                        marginTop: '6px',
+                        padding: '10px 12px',
+                        background: 'rgba(99, 102, 241, 0.05)',
                         borderRadius: '6px',
                         fontFamily: 'monospace',
                         fontSize: '12px',
@@ -447,12 +873,12 @@ const DeviceManagementPage: React.FC = () => {
                   </Col>
 
                   <Col xs={24} md={12}>
-                    <div style={{ fontSize: '13px' }}>
-                      <Text type="secondary">设备名称</Text>
+                    <div>
+                      <Text type="secondary" style={{ fontSize: '12px' }}>设备名称</Text>
                       <div style={{
-                        marginTop: '8px',
-                        padding: '12px',
-                        background: 'rgba(0, 0, 0, 0.02)',
+                        marginTop: '6px',
+                        padding: '10px 12px',
+                        background: 'rgba(99, 102, 241, 0.05)',
                         borderRadius: '6px',
                         color: '#2d2d2d'
                       }}>
@@ -462,12 +888,12 @@ const DeviceManagementPage: React.FC = () => {
                   </Col>
 
                   <Col xs={24} md={12}>
-                    <div style={{ fontSize: '13px' }}>
-                      <Text type="secondary">位置</Text>
+                    <div>
+                      <Text type="secondary" style={{ fontSize: '12px' }}>位置</Text>
                       <div style={{
-                        marginTop: '8px',
-                        padding: '12px',
-                        background: 'rgba(0, 0, 0, 0.02)',
+                        marginTop: '6px',
+                        padding: '10px 12px',
+                        background: 'rgba(99, 102, 241, 0.05)',
                         borderRadius: '6px',
                         color: '#2d2d2d'
                       }}>
@@ -477,16 +903,55 @@ const DeviceManagementPage: React.FC = () => {
                   </Col>
 
                   <Col xs={24} md={12}>
-                    <div style={{ fontSize: '13px' }}>
-                      <Text type="secondary">注册时间</Text>
+                    <div>
+                      <Text type="secondary" style={{ fontSize: '12px' }}>MAC地址</Text>
                       <div style={{
-                        marginTop: '8px',
-                        padding: '12px',
-                        background: 'rgba(0, 0, 0, 0.02)',
+                        marginTop: '6px',
+                        padding: '10px 12px',
+                        background: 'rgba(99, 102, 241, 0.05)',
                         borderRadius: '6px',
+                        fontFamily: 'monospace',
+                        fontSize: '12px',
                         color: '#2d2d2d'
                       }}>
-                        {deviceStatus.registrationTime ? new Date(deviceStatus.registrationTime).toLocaleString() : '—'}
+                        {credentials.mac_address || credentials.device_identifier || '—'}
+                      </div>
+                    </div>
+                  </Col>
+
+                  <Col xs={24} md={12}>
+                    <div>
+                      <Text type="secondary" style={{ fontSize: '12px' }}>IP地址</Text>
+                      <div style={{
+                        marginTop: '6px',
+                        padding: '10px 12px',
+                        background: 'rgba(99, 102, 241, 0.05)',
+                        borderRadius: '6px',
+                        fontFamily: 'monospace',
+                        fontSize: '12px',
+                        color: '#2d2d2d'
+                      }}>
+                        {credentials.ip_address || '—'}
+                      </div>
+                    </div>
+                  </Col>
+
+                  <Col xs={24} md={12}>
+                    <div>
+                      <Text type="secondary" style={{ fontSize: '12px' }}>状态</Text>
+                      <div style={{
+                        marginTop: '6px',
+                        padding: '10px 12px',
+                        background: deviceStatus.state === 'active' ? 'rgba(52, 211, 153, 0.1)' : 'rgba(24, 144, 255, 0.1)',
+                        borderRadius: '6px',
+                        color: deviceStatus.state === 'active' ? '#22c55e' : '#1890ff',
+                        fontWeight: 600,
+                        fontSize: '12px'
+                      }}>
+                        {deviceStatus.state === 'pending' && '⏳ 待批准'}
+                        {deviceStatus.state === 'approved' && '⏳ 待提交认证'}
+                        {deviceStatus.state === 'active' && '✅ 已激活'}
+                        {deviceStatus.state === 'disabled' && '❌ 已禁用'}
                       </div>
                     </div>
                   </Col>
@@ -498,56 +963,96 @@ const DeviceManagementPage: React.FC = () => {
             {deviceStatus.state !== 'active' && (
               <Card style={{
                 borderRadius: '12px',
-                border: '1px solid rgba(24, 144, 255, 0.15)',
-                background: 'linear-gradient(135deg, rgba(24, 144, 255, 0.03) 0%, rgba(24, 144, 255, 0.01) 100%)',
-                boxShadow: '0 1px 4px rgba(24, 144, 255, 0.08)'
+                border: 'none',
+                background: 'linear-gradient(135deg, rgba(24, 144, 255, 0.04) 0%, rgba(24, 144, 255, 0.02) 100%)',
+                boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
+                transition: 'all 0.3s ease'
               }}>
                 <Space direction="vertical" style={{ width: '100%' }} size="middle">
                   <div style={{
                     padding: '12px 16px',
-                    background: 'rgba(250, 173, 20, 0.08)',
-                    borderLeft: '3px solid #faad14',
+                    background: deviceStatus.state === 'approved' ? 'rgba(24, 144, 255, 0.08)' : 'rgba(250, 173, 20, 0.08)',
+                    borderLeft: `3px solid ${deviceStatus.state === 'approved' ? '#1890ff' : '#faad14'}`,
                     borderRadius: '4px'
                   }}>
-                    <Text strong style={{ fontSize: '13px', color: '#2d2d2d' }}>
-                      ⏳ 设备认证
-                    </Text>
-                    <div style={{ fontSize: '12px', color: 'rgba(0, 0, 0, 0.65)', marginTop: '8px' }}>
-                      {deviceStatus.state === 'pending'
-                        ? '您的设备已注册，正在等待管理员批准。批准后将自动进行认证。'
-                        : '您的设备已获批准。请点击下方按钮进行认证，建立与云端的安全连接。'}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div>
+                        <Text strong style={{ fontSize: '14px', color: '#2d2d2d' }}>
+                          {deviceStatus.state === 'approved' ? '⏳ 待提交认证' : '⏳ 待认证'}
+                        </Text>
+                        <div style={{ fontSize: '12px', color: 'rgba(0, 0, 0, 0.65)', marginTop: '8px' }}>
+                          {deviceStatus.state === 'pending'
+                            ? '您的设备已注册，正在等待管理员批准。批准后请进行认证。'
+                            : deviceStatus.state === 'approved'
+                              ? '您的设备已获批准！请立即提交认证信息，建立与云端的安全连接。'
+                              : '请先注册设备或等待审批。'}
+                        </div>
+                      </div>
+                      {deviceStatus.state === 'approved' && !showAuthSection && (
+                        <Button
+                          type="primary"
+                          size="small"
+                          onClick={() => setShowAuthSection(!showAuthSection)}
+                          style={{ fontSize: '12px' }}
+                        >
+                          {showAuthSection ? '收起' : '提交认证'}
+                        </Button>
+                      )}
                     </div>
                   </div>
 
-                  {deviceStatus.state === 'approved' && !token && (
-                    <DeviceRegistration
-                      onRegistrationSuccess={handleRegistrationSuccess}
-                      onAuthenticationSuccess={handleAuthenticationSuccess}
-                    />
+                  {deviceStatus.state === 'approved' && !token && showAuthSection && (
+                    <div style={{
+                      padding: '16px',
+                      background: 'rgba(255, 255, 255, 0.5)',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(24, 144, 255, 0.2)',
+                      animation: 'slideDown 0.3s ease'
+                    }}>
+                      <DeviceRegistration
+                        mode="authenticate"
+                        currentStatus={deviceStatus.state}
+                        onRegistrationSuccess={handleRegistrationSuccess}
+                        onAuthenticationSuccess={handleAuthenticationSuccess}
+                        compact={true}
+                      />
+                    </div>
                   )}
                 </Space>
               </Card>
             )}
 
-            {/* 已激活状态 */}
+            {/* 已激活状态 - 成功提示 */}
             {deviceStatus.state === 'active' && token && (
               <Card style={{
                 borderRadius: '12px',
-                border: '1px solid rgba(82, 196, 26, 0.15)',
-                background: 'linear-gradient(135deg, rgba(82, 196, 26, 0.03) 0%, rgba(82, 196, 26, 0.01) 100%)',
-                boxShadow: '0 1px 4px rgba(82, 196, 26, 0.08)'
+                border: 'none',
+                background: 'linear-gradient(135deg, rgba(52, 211, 153, 0.04) 0%, rgba(52, 211, 153, 0.02) 100%)',
+                boxShadow: '0 2px 8px rgba(52, 211, 153, 0.15)',
+                animation: 'slideUp 0.5s ease'
               }}>
-                <Space direction="vertical" style={{ width: '100%' }} size="small">
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Check size={20} color="#52c41a" />
-                    <Title level={5} style={{ margin: 0, color: '#52c41a' }}>
-                      设备已成功连接到云端
-                    </Title>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{
+                    width: '48px',
+                    height: '48px',
+                    borderRadius: '50%',
+                    background: 'rgba(52, 211, 153, 0.2)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '24px'
+                  }}>
+                    ✅
                   </div>
-                  <Text type="secondary" style={{ fontSize: '12px' }}>
-                    设备处于活跃状态，可以与云端正常通信。系统将自动同步更新和维护连接状态。
-                  </Text>
-                </Space>
+                  <div>
+                    <Title level={5} style={{ margin: 0, color: '#22c55e', fontSize: '14px' }}>
+                      设备已连接到云端
+                    </Title>
+                    <Text type="secondary" style={{ fontSize: '12px', display: 'block', marginTop: '4px' }}>
+                      设备处于活跃状态，可以与云端正常通信。
+                    </Text>
+                  </div>
+                </div>
               </Card>
             )}
           </Space>

@@ -202,7 +202,7 @@ const AdminPanel: React.FC = () => {
           justifyContent: 'center'
         }}
       >
-        <div style={{ width: '100%', maxWidth: '1200px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '16px' }}>
         {/* 用户管理视图 */}
         {viewMode === 'users' && (
           <UsersTable

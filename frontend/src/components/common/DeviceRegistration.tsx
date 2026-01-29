@@ -13,6 +13,7 @@ interface DeviceRegistrationProps {
   onAuthenticationSuccess?: (token: string) => void;
   mode?: 'register' | 'authenticate';
   compact?: boolean;
+  currentStatus?: 'pending' | 'approved' | 'active' | 'disabled';
 }
 
 const DeviceRegistration: React.FC<DeviceRegistrationProps> = ({
@@ -20,6 +21,7 @@ const DeviceRegistration: React.FC<DeviceRegistrationProps> = ({
   onAuthenticationSuccess,
   mode = 'register',
   compact = false,
+  currentStatus,
 }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -254,7 +256,7 @@ const DeviceRegistration: React.FC<DeviceRegistrationProps> = ({
                 <strong style={{ color: '#2d2d2d' }}>设备信息</strong>
               </div>
               <div>设备ID: <code style={{ fontSize: '11px', background: 'rgba(0,0,0,0.05)', padding: '2px 4px', borderRadius: '3px' }}>{credentials?.device_id}</code></div>
-              <div style={{ marginTop: '4px' }}>状态: <strong>{credentials?.status === 'active' ? '已激活' : credentials?.status === 'approved' ? '已批准' : '待批准'}</strong></div>
+              <div style={{ marginTop: '4px' }}>状态: <strong>{(currentStatus || credentials?.status) === 'active' ? '✅ 已激活' : (currentStatus || credentials?.status) === 'approved' ? ' 待提交认证' : '待批准'}</strong></div>
             </div>
           )}
 

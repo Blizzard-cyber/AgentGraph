@@ -101,6 +101,7 @@ async def lifespan(app: FastAPI):
                 )
             else:
                 logger.warning(f"设备初始化结果: {message}")
+                logger.info("提示：可在前端设备管理页面手动检查审批状态")
         except Exception as e:
             logger.warning(f"设备初始化出错（不阻断启动）: {e}")
 
