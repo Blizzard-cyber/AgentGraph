@@ -84,6 +84,7 @@ class RealAgentInterface(AgentInterface):
                 "output": assistant_content.strip() or "执行完成",
                 "input_processed": input_data,
                 "timestamp": datetime.now().isoformat(),
+                "tools_used": final_result.get("tools_used", []) if final_result else [],  # 添加工具信息
                 "execution_details": {
                     "conversation_id": temp_conversation_id,
                     "iterations": final_result.get("iteration_count", 0) if final_result else 0,

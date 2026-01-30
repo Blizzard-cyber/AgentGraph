@@ -514,6 +514,9 @@ class AgentStreamExecutor:
 
         # 创建轨迹收集器（仅在非子Agent、非Graph节点时收集）
         trajectory_collector = None
+        # 记录本次执行使用的所有工具
+        tools_used = []
+        
         if not is_sub_agent and not is_graph_node:
             # 获取用户查询（从messages中提取最后一条用户消息）
             user_query = ""
@@ -629,6 +632,23 @@ class AgentStreamExecutor:
                     logger.info(
                         f"Agent {agent_name} - 第 {iteration} 轮无工具调用，执行完成"
                     )
+                    
+                    # 收集轨迹数据：记录没有工具调用的步骤
+                    if trajectory_collector:
+                        # 提取reasoning作为thought，如果没有则使用最终回答
+                        thought = accumulated_reasoning if accumulated_reasoning else accumulated_content.strip()
+                        if not thought:
+                            thought = "生成最终回答"
+                        
+                        # 添加步骤，tool为空列表
+                        trajectory_collector.add_step(
+                            agent_name=agent_name,
+                            thought=thought,
+                            tool=[],
+                            output=accumulated_content.strip(),
+                            depend_on=[],
+                        )
+                    
                     break
 
                 # 执行工具调用
@@ -701,34 +721,39 @@ class AgentStreamExecutor:
                     yield f"data: {json.dumps(tool_message)}\n\n"
 
                 # 收集轨迹数据：记录工具调用步骤
-                if trajectory_collector:
+                if trajectory_collector or not is_sub_agent:
                     # 遍历本次迭代的所有工具调用，为每个工具调用创建一个步骤
                     for tool_call, tool_result in zip(current_tool_calls, tool_results):
                         tool_name = tool_call.get("function", {}).get("name", "unknown_tool")
                         tool_args = tool_call.get("function", {}).get("arguments", "{}")
                         
-                        # 提取reasoning作为thought
-                        thought = accumulated_reasoning if accumulated_reasoning else f"调用工具 {tool_name} 处理任务"
+                        # 记录使用的工具
+                        if tool_name not in tools_used:
+                            tools_used.append(tool_name)
                         
-                        # 解析工具输出
-                        try:
-                            output_content = tool_result.get("content", "")
-                            # 尝试解析为JSON
+                        if trajectory_collector:
+                            # 提取reasoning作为thought
+                            thought = accumulated_reasoning if accumulated_reasoning else f"调用工具 {tool_name} 处理任务"
+                            
+                            # 解析工具输出
                             try:
-                                output = json.loads(output_content)
+                                output_content = tool_result.get("content", "")
+                                # 尝试解析为JSON
+                                try:
+                                    output = json.loads(output_content)
+                                except:
+                                    output = output_content
                             except:
-                                output = output_content
-                        except:
-                            output = str(tool_result)
-                        
-                        # 添加步骤（depend_on暂时为空，可以根据实际依赖关系设置）
-                        trajectory_collector.add_step(
-                            agent_name=agent_name,
-                            thought=thought,
-                            tool=f"[{tool_name}]",
-                            output=output,
-                            depend_on=[],
-                        )
+                                output = str(tool_result)
+                            
+                            # 添加步骤（depend_on暂时为空，可以根据实际依赖关系设置）
+                            trajectory_collector.add_step(
+                                agent_name=agent_name,
+                                thought=thought,
+                                tool=[tool_name],
+                                output=output,
+                                depend_on=[],
+                            )
 
             if iteration >= max_iterations:
                 logger.warning(
@@ -746,6 +771,7 @@ class AgentStreamExecutor:
                 "elapsed_time_ms": round_elapsed_time_ms,
                 "iteration_count": iteration,
                 "agent_name": agent_name,
+                "tools_used": tools_used,  # 添加使用的工具列表
             }
 
             if is_sub_agent:
@@ -1029,8 +1055,8 @@ class AgentStreamExecutor:
         try:
             success = await trajectory_collector.upload()
             if success:
-                logger.info(f"轨迹数据上传成功: agent={trajectory_collector.agent_id}, steps={len(trajectory_collector.steps)}")
+                logger.info(f"轨迹数据上传成功: agent={trajectory_collector}, steps={len(trajectory_collector.steps)}")
             else:
-                logger.warning(f"轨迹数据上传失败: agent={trajectory_collector.agent_id}")
+                logger.warning(f"轨迹数据上传失败: agent={trajectory_collector}")
         except Exception as e:
             logger.error(f"轨迹数据上传异常: {str(e)}", exc_info=True)
