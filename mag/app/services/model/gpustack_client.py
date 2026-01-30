@@ -1,6 +1,8 @@
 import logging
 from typing import Dict, Any, Optional, List, AsyncGenerator
 import json
+import asyncio
+import time
 
 import httpx
 from app.core.config import settings
@@ -45,6 +47,12 @@ class GPUStackClient:
         )
         self.timeout = timeout
         self._client: Optional[httpx.AsyncClient] = None
+        # 防止无限循环的re-login机制
+        self._login_lock: Optional[asyncio.Lock] = None
+        self._last_login_failure_time: float = 0.0  # 上次登录失败的时间
+        self._login_failure_count: int = 0  # 连续登录失败次数
+        self._max_login_failures: int = 3  # 连续失败次数上限
+        self._login_failure_cooldown: int = 60  # 登录失败后的冷却时间（秒）
 
     async def _ensure_client(self) -> httpx.AsyncClient:
         if self._client is None:
@@ -56,6 +64,57 @@ class GPUStackClient:
                 headers={"accept": "application/json"},
             )
         return self._client
+
+    async def _get_login_lock(self) -> asyncio.Lock:
+        """获取登录锁，防止并发re-login"""
+        if self._login_lock is None:
+            self._login_lock = asyncio.Lock()
+        return self._login_lock
+
+    def _can_retry_login(self) -> bool:
+        """检查是否可以进行登录重试
+
+        防护规则：
+        1. 连续登录失败次数未超过上限，或已过冷却时间
+        2. 距离上次登录失败已过冷却时间
+
+        Returns:
+            bool: 是否可以重试登录
+        """
+        # 如果没有失败过，可以直接重试
+        if self._login_failure_count == 0:
+            return True
+
+        # 检查冷却时间
+        time_since_last_failure = time.time() - self._last_login_failure_time
+        if time_since_last_failure < self._login_failure_cooldown:
+            logger.debug(
+                f"[GPUStack] 登录冷却中，已等待{time_since_last_failure:.1f}s/"
+                f"{self._login_failure_cooldown}s"
+            )
+            return False
+
+        # 冷却时间已过，重置计数并允许重试
+        logger.info(
+            f"[GPUStack] 冷却时间已过，重置失败计数 "
+            f"(之前失败 {self._login_failure_count} 次)，允许重新尝试"
+        )
+        self._login_failure_count = 0
+        self._last_login_failure_time = 0.0
+        self._login_failure_count += 1
+        self._last_login_failure_time = time.time()
+        logger.error(
+            f"[GPUStack] 登录失败 (连续失败 {self._login_failure_count}/{self._max_login_failures})"
+        )
+
+    def _record_login_success(self) -> None:
+        """记录登录成功，重置失败计数"""
+        if self._login_failure_count > 0:
+            logger.info(
+                f"[GPUStack] 登录成功，失败计数已重置 (之前失败 {self._login_failure_count} 次)"
+            )
+        self._login_failure_count = 0
+        self._last_login_failure_time = 0.0
 
     async def login(self) -> bool:
         """登录以获取认证 Cookie"""
@@ -79,14 +138,18 @@ class GPUStackClient:
                     logger.info(
                         f"GPUStack 登录成功，已获取并保存 Cookie: {cookie_names}"
                     )
+                    self._record_login_success()  # 重置失败计数
                 else:
                     logger.warning("GPUStack 登录成功但未获取到 Cookie")
+                    self._record_login_success()
                 return True
             # 避免记录响应正文，降低泄露风险
             logger.warning(f"GPUStack 登录失败: HTTP {resp.status_code}")
+            self._record_login_failure()
             return False
         except Exception as e:
             logger.warning(f"GPUStack 登录异常: {e}")
+            self._record_login_failure()
             return False
 
     def has_valid_cookies(self) -> bool:
@@ -99,6 +162,90 @@ class GPUStackClient:
             return False
         cookies_dict = dict(self._client.cookies)
         return len(cookies_dict) > 0
+
+    async def _request_with_retry(
+        self, method: str, url: str, max_retries: int = 1, **kwargs
+    ) -> httpx.Response:
+        """带自动re-login重试的HTTP请求，防止无限循环
+
+        当收到401 Unauthorized时，尝试重新登录并重试请求。
+
+        防护机制：
+        1. 最多重试1次（可配置）
+        2. 登录失败次数超过3次后启动冷却机制（冷却60秒）
+        3. 冷却时间过后允许重新尝试
+        4. 使用asyncio.Lock防止并发re-login竞争
+
+        Args:
+            method: HTTP方法（GET, POST, DELETE, PUT）
+            url: 请求URL
+            max_retries: 401错误时的最大重试次数（默认1）
+            **kwargs: 其他httpx请求参数
+
+        Returns:
+            httpx.Response: HTTP响应对象
+        """
+        client = await self._ensure_client()
+        retry_count = 0
+
+        while retry_count <= max_retries:
+            try:
+                # 执行HTTP请求
+                if method.upper() == "GET":
+                    resp = await client.get(url, **kwargs)
+                elif method.upper() == "POST":
+                    resp = await client.post(url, **kwargs)
+                elif method.upper() == "DELETE":
+                    resp = await client.delete(url, **kwargs)
+                elif method.upper() == "PUT":
+                    resp = await client.put(url, **kwargs)
+                else:
+                    resp = await client.request(method, url, **kwargs)
+
+                # 如果不是401或已达最大重试次数，直接返回
+                if resp.status_code != 401 or retry_count >= max_retries:
+                    return resp
+
+                # 检测到401且还有重试次数，尝试re-login
+                if not self._can_retry_login():
+                    logger.warning(
+                        f"[GPUStack] 401错误但无法重试登录（防护激活）- URL: {url}"
+                    )
+                    return resp
+
+                logger.warning(
+                    f"[GPUStack] 收到401错误，正在重新登录 "
+                    f"(重试 {retry_count + 1}/{max_retries}) - URL: {url}"
+                )
+
+                # 使用锁防止多个并发请求同时re-login
+                lock = await self._get_login_lock()
+                async with lock:
+                    # 再次检查Cookie是否已被其他请求更新
+                    if self.has_valid_cookies():
+                        logger.debug(f"[GPUStack] Cookie已由其他请求更新，跳过re-login")
+                    else:
+                        # 执行登录
+                        login_ok = await self.login()
+                        if not login_ok:
+                            logger.error(
+                                f"[GPUStack] re-login失败，放弃重试 - URL: {url}"
+                            )
+                            return resp
+
+                logger.info(f"[GPUStack] re-login成功，正在重试请求 - URL: {url}")
+                retry_count += 1
+                # 重新获取client，确保使用最新的Cookie
+                client = await self._ensure_client()
+                # 继续循环重试
+
+            except Exception as e:
+                logger.warning(f"[GPUStack] HTTP请求异常 ({method} {url}): {e}")
+                raise
+
+        return resp
+
+        return resp
 
     @staticmethod
     def _parse_models_response(data: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
@@ -121,7 +268,6 @@ class GPUStackClient:
         """获取所有模型状态，返回以模型名称为键的字典"""
         result: Dict[str, Dict[str, Any]] = {}
         try:
-            client = await self._ensure_client()
             url = f"{self.base_url}/v2/models"
 
             # 记录使用cookie进行鉴权
@@ -130,7 +276,8 @@ class GPUStackClient:
             else:
                 logger.warning(f"请求 {url} 时未检测到 Cookie，可能需要先登录")
 
-            resp = await client.get(url)
+            # 使用带重试的请求方法，自动处理401
+            resp = await self._request_with_retry("GET", url, max_retries=1)
             if resp.status_code != 200:
                 logger.warning(f"获取模型状态失败: HTTP {resp.status_code}")
                 return result
@@ -145,13 +292,14 @@ class GPUStackClient:
         """使用 API Key 获取所有模型状态，返回以模型名称为键的字典"""
         result: Dict[str, Dict[str, Any]] = {}
         try:
-            client = await self._ensure_client()
             url = f"{self.base_url}/v2/models"
             headers = {
                 "accept": "application/json",
                 "Authorization": f"Bearer {api_key}",
             }
-            resp = await client.get(url, headers=headers)
+            resp = await self._request_with_retry(
+                "GET", url, headers=headers, max_retries=1
+            )
             if resp.status_code != 200:
                 logger.warning(f"(API Key) 获取模型状态失败: HTTP {resp.status_code}")
                 return result
@@ -169,7 +317,6 @@ class GPUStackClient:
             List[Dict]: 模型列表
         """
         try:
-            client = await self._ensure_client()
             url = f"{self.base_url}/v2/models"
 
             if self.has_valid_cookies():
@@ -177,7 +324,7 @@ class GPUStackClient:
             else:
                 logger.warning(f"请求 {url} 时未检测到 Cookie，可能需要先登录")
 
-            resp = await client.get(url)
+            resp = await self._request_with_retry("GET", url, max_retries=1)
             if resp.status_code != 200:
                 logger.warning(f"获取模型列表失败: HTTP {resp.status_code}")
                 return []
@@ -200,10 +347,9 @@ class GPUStackClient:
             Optional[Dict]: 模型信息，不存在则返回None
         """
         try:
-            client = await self._ensure_client()
             url = f"{self.base_url}/v2/models/{model_id}"
 
-            resp = await client.get(url)
+            resp = await self._request_with_retry("GET", url, max_retries=1)
             if resp.status_code == 200:
                 logger.debug(f"获取模型 {model_id} 信息成功")
                 return resp.json()
@@ -235,7 +381,6 @@ class GPUStackClient:
             tuple[Optional[int], bool]: (模型ID, 是否已存在)，创建失败返回(None, False)
         """
         try:
-            client = await self._ensure_client()
             url = f"{self.base_url}/v2/models"
 
             model_name = payload.get("name", "unknown")
@@ -246,7 +391,9 @@ class GPUStackClient:
                 f"source={payload.get('source')}"
             )
 
-            resp = await client.post(url, json=payload)
+            resp = await self._request_with_retry(
+                "POST", url, json=payload, max_retries=1
+            )
 
             if resp.status_code in [200, 201]:
                 data = resp.json()
@@ -261,7 +408,9 @@ class GPUStackClient:
                     for model in models:
                         if model.get("name") == model_name:
                             existing_id = model.get("id")
-                            logger.info(f"找到已存在的模型 {model_name}，ID: {existing_id}")
+                            logger.info(
+                                f"找到已存在的模型 {model_name}，ID: {existing_id}"
+                            )
                             return existing_id, True  # 已存在的模型
                     logger.warning(f"模型 {model_name} 已存在但无法查询到ID")
                     return None, False
@@ -290,11 +439,10 @@ class GPUStackClient:
             bool: 删除成功返回True
         """
         try:
-            client = await self._ensure_client()
             url = f"{self.base_url}/v2/models/{model_id}"
 
             logger.info(f"开始删除模型: {model_id}")
-            resp = await client.delete(url)
+            resp = await self._request_with_retry("DELETE", url, max_retries=1)
 
             if resp.status_code in [200, 204]:
                 logger.info(f"模型 {model_id} 删除成功")
@@ -323,14 +471,15 @@ class GPUStackClient:
             List[Dict]: 模型实例列表
         """
         try:
-            client = await self._ensure_client()
             url = f"{self.base_url}/v2/model-instances"
 
             params = {}
             if model_id is not None:
                 params["model_id"] = model_id
 
-            resp = await client.get(url, params=params)
+            resp = await self._request_with_retry(
+                "GET", url, params=params, max_retries=1
+            )
             if resp.status_code != 200:
                 logger.warning(f"获取模型实例失败: HTTP {resp.status_code}")
                 return []
