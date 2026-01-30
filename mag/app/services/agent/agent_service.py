@@ -424,7 +424,9 @@ class AgentService:
                                     "speculative_config": {"enabled": False},
                                     "categories": ["imported"],
                                     "backend_parameters": [
-                                        "--gpu-memory-utilization=0.4"
+                                        "--enable-auto-tool-choice",
+                                        "--tool-call-parser=hermes",
+                                        "--max-model-len=8192",
                                     ],
                                     "distributed_inference_across_workers": True,
                                     "restart_on_error": True,
@@ -647,31 +649,53 @@ class AgentService:
 
                             # 等待任务完成（最多60秒）
                             import asyncio
+
                             max_wait = 60
                             wait_interval = 2
                             elapsed = 0
-                            
-                            while task.status not in ["complete", "error"] and elapsed < max_wait:
+
+                            while (
+                                task.status not in ["complete", "error"]
+                                and elapsed < max_wait
+                            ):
                                 await asyncio.sleep(wait_interval)
                                 elapsed += wait_interval
                                 # 重新获取任务状态
-                                task = await mcp2_manager.get_task_status(user_id=user_id, server_name=server_name, version=server_version)
+                                task = await mcp2_manager.get_task_status(
+                                    user_id=user_id,
+                                    server_name=server_name,
+                                    version=server_version,
+                                )
                                 if not task:
                                     break
-                                logger.debug(f"等待MCP服务器添加任务完成: {server_name}:{server_version}, 状态={task.status}, 已等待{elapsed}秒")
+                                logger.debug(
+                                    f"等待MCP服务器添加任务完成: {server_name}:{server_version}, 状态={task.status}, 已等待{elapsed}秒"
+                                )
 
                             if not task or task.status == "error":
                                 error_msg = task.message if task else "任务不存在"
-                                logger.warning(f"MCP服务器 {server_name}:{server_version} 注册失败: {error_msg}")
-                                return False, f"MCP服务器 {server_name}:{server_version} 注册失败: {error_msg}"
-                            
+                                logger.warning(
+                                    f"MCP服务器 {server_name}:{server_version} 注册失败: {error_msg}"
+                                )
+                                return (
+                                    False,
+                                    f"MCP服务器 {server_name}:{server_version} 注册失败: {error_msg}",
+                                )
+
                             if task.status != "complete":
-                                logger.warning(f"MCP服务器 {server_name}:{server_version} 注册超时（{max_wait}秒），当前状态: {task.status}")
-                                return False, f"MCP服务器 {server_name}:{server_version} 注册超时，请稍后重试"
+                                logger.warning(
+                                    f"MCP服务器 {server_name}:{server_version} 注册超时（{max_wait}秒），当前状态: {task.status}"
+                                )
+                                return (
+                                    False,
+                                    f"MCP服务器 {server_name}:{server_version} 注册超时，请稍后重试",
+                                )
 
                             # 更新本地缓存集合，避免后续重复 add
                             user_server_keys.add((server_name, server_version))
-                            logger.info(f"MCP服务器 {server_name}:{server_version} 注册成功")
+                            logger.info(
+                                f"MCP服务器 {server_name}:{server_version} 注册成功"
+                            )
                         except Exception as e:
                             logger.error(
                                 f"注册 MCP2 服务器 {server_name}:{server_version} 失败: {str(e)}"

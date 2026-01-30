@@ -31,21 +31,6 @@ logger = logging.getLogger("mag")
 memory_client: MemoryClient = None
 
 
-def create_progress_bar(progress: float, width: int = 30) -> str:
-    """创建可视化进度条
-
-    Args:
-        progress: 进度百分比 (0-100)
-        width: 进度条宽度（字符数）
-
-    Returns:
-        str: 格式化的进度条字符串
-    """
-    filled = int(width * progress / 100)
-    bar = "█" * filled + "░" * (width - filled)
-    return f"[{bar}] {progress:6.1f}%"
-
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """应用生命周期管理"""
