@@ -426,7 +426,6 @@ class AgentService:
                                     "backend_parameters": [
                                         "--enable-auto-tool-choice",
                                         "--tool-call-parser=hermes",
-                                        "--max-model-len=8192",
                                     ],
                                     "distributed_inference_across_workers": True,
                                     "restart_on_error": True,
