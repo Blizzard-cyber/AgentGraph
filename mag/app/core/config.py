@@ -105,7 +105,7 @@ class Settings:
     TRAJECTORY_API_PORT: int = int(os.getenv("TRAJECTORY_API_PORT", "8226"))
     TRAJECTORY_SINGLE_AGENT_PATH: str = os.getenv("TRAJECTORY_SINGLE_AGENT_PATH", "/trajectory/uploadSingleAgentTrajectory")
     TRAJECTORY_MULTI_AGENT_PATH: str = os.getenv("TRAJECTORY_MULTI_AGENT_PATH", "/trajectory/uploadMultiAgentTrajectory")
-    TRAJECTORY_USE_HTTPS: bool = os.getenv("TRAJECTORY_USE_HTTPS", "true").lower() == "true"
+    TRAJECTORY_USE_HTTPS: bool = os.getenv("TRAJECTORY_USE_HTTPS", "false").lower() == "true"
 
     # 根据操作系统确定配置目录
     @property

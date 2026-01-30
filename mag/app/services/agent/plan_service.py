@@ -313,11 +313,17 @@ class PlanService:
                     # 提取步骤信息
                     step_info = dag_definition.get('步骤', [])[step.id - 1] if dag_definition.get('步骤') else {}
                     
-                    # 提取thought（从action描述或结果中）
+                    # 提取thought（从step_info中）
                     thought = step_info.get('action', f'执行步骤 {step.id}')
                     
-                    # 提取tool（从action中推断）
-                    tool = f"[{step.agent}]"
+                    # 提取tool（从step.result.output_data中获取实际使用的工具）
+                    tools = []
+                    if step.result.output_data and isinstance(step.result.output_data, dict):
+                        tools = step.result.output_data.get('tools_used', [])
+                    
+                    # 如果没有使用工具，tool字段为空列表
+                    if not tools:
+                        tools = []
                     
                     # 提取output
                     output = step.result.output_data if step.result.output_data else "执行成功"
@@ -329,7 +335,7 @@ class PlanService:
                     trajectory_collector.add_step(
                         agent_name=step.agent,
                         thought=thought,
-                        tool=tool,
+                        tool=tools,
                         output=output,
                         depend_on=depend_on,
                     )

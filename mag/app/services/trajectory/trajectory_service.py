@@ -24,7 +24,7 @@ class TrajectoryService:
         single_agent_path: str = "/trajectory/uploadSingleAgentTrajectory",
         multi_agent_path: str = "/trajectory/uploadMultiAgentTrajectory",
         enabled: bool = True,
-        use_https: bool = True,
+        use_https: bool = False,
     ):
         """
         初始化轨迹服务
