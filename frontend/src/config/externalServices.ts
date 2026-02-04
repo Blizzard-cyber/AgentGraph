@@ -38,7 +38,7 @@ export const getExternalServices = (): ExternalServiceConfig => {
   }
 
   // 开发环境从环境变量读取
-  const gpuStackHost = import.meta.env.VITE_GPUSTACK_SERVICE_HOST || '192.168.1.86';
+  const gpuStackHost = import.meta.env.VITE_GPUSTACK_SERVICE_HOST || '192.168.1.90';
   const gpuStackPort = import.meta.env.VITE_GPUSTACK_SERVICE_PORT || '8899';
   const higressHost = import.meta.env.VITE_HIGRESS_CONSOLE_HOST || '192.168.1.85';
   const higressPort = import.meta.env.VITE_HIGRESS_CONSOLE_PORT || '8001';

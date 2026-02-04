@@ -6,9 +6,9 @@ cat > /usr/share/nginx/html/config.js <<EOF
 window.APP_CONFIG = {
   externalServices: {
     gpuStack: {
-      host: '${GPUSTACK_SERVICE_HOST:-192.168.1.86}',
+      host: '${GPUSTACK_SERVICE_HOST:-192.168.1.90}',
       port: '${GPUSTACK_SERVICE_PORT:-8899}',
-      url: 'http://${GPUSTACK_SERVICE_HOST:-192.168.1.86}:${GPUSTACK_SERVICE_PORT:-8899}'
+      url: 'http://${GPUSTACK_SERVICE_HOST:-192.168.1.90}:${GPUSTACK_SERVICE_PORT:-8899}'
     },
     higressConsole: {
       host: '${HIGRESS_GATEWAY_HOST:-192.168.1.85}',

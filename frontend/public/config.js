@@ -3,9 +3,9 @@
 window.APP_CONFIG = {
   externalServices: {
     gpuStack: {
-      host: '192.168.1.86',
+      host: '192.168.1.90',
       port: '8899',
-      url: 'http://192.168.1.86:8899'
+      url: 'http://192.168.1.90:8899'
     },
     higressConsole: {
       host: '192.168.1.85',
