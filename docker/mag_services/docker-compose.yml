@@ -1,4 +1,3 @@
-
 services:
   # Higress 主服务
   higress-ai:
@@ -231,7 +230,7 @@ services:
         max-file: "10"
 ############### MemMachine Services ###############
   postgres:
-    image: ${REGISTRY:-}pgvector/pgvector:pg16
+    image: registry.ndsl/memmachine/pgvector:pg16
     container_name: memmachine-postgres
     restart: unless-stopped
     ports:
@@ -258,7 +257,7 @@ services:
 
   # Neo4j database for graph storage
   neo4j:
-    image: ${REGISTRY:-}neo4j:5.23-community
+    image: registry.ndsl/memmachine/neo4j:5.23-community
     container_name: memmachine-neo4j
     restart: unless-stopped
     ports:
@@ -296,8 +295,8 @@ services:
 
   # MemMachine application
   memmachine:
-    # Use a pre-built image tag; set this in your environment.
-    image: ${MEMMACHINE_IMAGE:-${REGISTRY:-}memmachine/memmachine:latest}
+    # Use Harbor image directly (no .env indirection)
+    image: registry.ndsl/memmachine/memmachine:latest
     restart: unless-stopped
     ports:
       - "${MEMORY_SERVER_PORT:-8880}:8880"
@@ -369,7 +368,7 @@ services:
       - memmachine-network
 
   memmachine_service:
-    image: ${MEMMACHINE_SERVICE_IMAGE:-${REGISTRY:-}memmachine/memmachine_service:latest}
+    image: registry.ndsl/memmachine/memmachine_service:latest
     depends_on:
       memmachine:
         condition: service_healthy
