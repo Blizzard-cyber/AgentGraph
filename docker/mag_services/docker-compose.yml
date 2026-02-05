@@ -56,22 +56,63 @@ services:
 
   # GPUStack 模型部署平台
   gpustack-server:
-    image: ${IMAGE_REGISTRY:-docker.io}/${IMAGE_NAMESPACE:-gpustack}/gpustack:${GPUSTACK_TAG:-latest}
+    image: gpustack-dev:v2.0.3
     container_name: gpustack-server
     restart: unless-stopped
+    ports:
+      - "${GPUSTACK_SERVER_PORT:-8899}:80"
+      - "10161:10161"
     volumes:
       - gpustack-data:/var/lib/gpustack
-    ports:
-      - "8899:80"
-      - "10161:10161"
+      - ${MODEL_PATH:-/home/wangtao/data/model}:/data/model
     networks:
       - mag_network
+    environment:
+      - TZ=Asia/Shanghai
+      - GPUSTACK_SERVER_EXTERNAL_URL=${GPUSTACK_SERVER_EXTERNAL_URL:-}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # GPUStack 初始化服务
+  gpustack-init:
+    image: gpustack-init:latest
+    container_name: gpustack-init
+    networks:
+      - mag_network
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - .:/scripts
+      - gpustack-init-data:/data
+    environment:
+      - GPUSTACK_SERVER_NAME=gpustack-server
+      - GPUSTACK_SERVER_PORT=${GPUSTACK_SERVER_PORT:-8899}
+      - GPUSTACK_SERVER_URL=http://gpustack-server:80
+      - GPUSTACK_SERVER_EXTERNAL_URL=${GPUSTACK_SERVER_EXTERNAL_URL:-http://localhost:8899}
+      - GPUSTACK_IMAGE=gpustack-dev:v2.0.3
+      - CLUSTER_NAME=${CLUSTER_NAME:-docker-cluster}
+      - GPUSTACK_ADMIN_PASSWORD=${GPUSTACK_ADMIN_PASSWORD:-Admin123!}
+      - WORKER_NAME=${WORKER_NAME:-gpustack-worker}
+      - WORKER_ADVERTISE_ADDRESS=${WORKER_ADVERTISE_ADDRESS:-}
+      - MODEL_PATH=${MODEL_PATH:-/home/wangtao/data/model}
+      - ENABLE_WORKER=${ENABLE_WORKER:-true}
+      - http_proxy=
+      - https_proxy=
+      - HTTP_PROXY=
+      - HTTPS_PROXY=
+      - no_proxy=*
+      - NO_PROXY=*
+    depends_on:
+      gpustack-server:
+        condition: service_healthy
+    restart: "no"
 
   # MAG 后端服务
   mag-backend:
-    build:
-      context: ../..
-      dockerfile: ./docker/mag_services/Dockerfile
+    image: mag-backend:latest
     container_name: mag-backend
     restart: unless-stopped
     env_file:
@@ -87,7 +128,7 @@ services:
       - mag_network
 
   # Nginx - 反向代理 + 前端静态资源服务
-  nginx:
+  mag-nginx:
     image: nginx:1.27-alpine
     container_name: mag-nginx
     restart: always
@@ -196,6 +237,7 @@ networks:
 volumes:
   redis-data:
   gpustack-data:
+  gpustack-init-data:
   mongodb_data:
   mongodb_config:
   minio_data:
