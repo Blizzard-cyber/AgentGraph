@@ -113,14 +113,16 @@ const WorkspaceLayout: React.FC<WorkspaceLayoutProps> = ({ children }) => {
   };
 
   const titleStyle: CSSProperties = {
-    fontSize: '15px',
-    fontWeight: 500,
-    color: '#2d2d2d',
+    fontSize: '18px',
+    fontWeight: 600,
     margin: 0,
     letterSpacing: '0.5px',
     opacity: collapsed ? 0 : 1,
     transition: 'opacity 0.3s ease',
-    whiteSpace: 'nowrap'
+    whiteSpace: 'normal',
+    wordBreak: 'keep-all',
+    lineHeight: '1.3',
+    maxWidth: '240px'
   };
 
   // 导航区域样式
@@ -189,6 +191,38 @@ const WorkspaceLayout: React.FC<WorkspaceLayoutProps> = ({ children }) => {
             from { opacity: 0; }
             to { opacity: 1; }
           }
+          
+          @keyframes titleGlow {
+            0%, 100% { text-shadow: 0 0 8px rgba(24, 144, 255, 0.2); }
+            50% { text-shadow: 0 0 12px rgba(24, 144, 255, 0.4); }
+          }
+          
+          @keyframes subtleSlide {
+            0% { transform: translateY(-2px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+          }
+          
+          .workspace-title {
+            color: #1890ff;
+            animation: titleGlow 3s ease-in-out infinite;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+          }
+          
+          .workspace-title-line:nth-child(1) {
+            animation: subtleSlide 0.6s ease-out;
+            color: #1890ff;
+            display: block;
+          }
+          
+          .workspace-title-line:nth-child(3) {
+            animation: subtleSlide 0.6s ease-out 0.15s backwards;
+            font-size: 0.9em;
+            letter-spacing: 1px;
+            color: #096dd9;
+            display: block;
+            text-align: center;
+            margin-top: -4px;
+          }
         `}
       </style>
 
@@ -198,7 +232,16 @@ const WorkspaceLayout: React.FC<WorkspaceLayoutProps> = ({ children }) => {
           {/* Header */}
           <div style={headerStyle}>
             <div style={headerDecorStyle} />
-            {!collapsed && <h3 style={titleStyle}>{t('pages.workspace.title')}</h3>}
+            {!collapsed && (
+              <h3 style={titleStyle} className="workspace-title">
+                {t('pages.workspace.title').split('\n').map((line, idx) => (
+                  <React.Fragment key={idx}>
+                    <span className="workspace-title-line">{line}</span>
+                    {idx === 0 && <br />}
+                  </React.Fragment>
+                ))}
+              </h3>
+            )}
             <Button
               type="text"
               icon={collapsed ? <ChevronRight size={16} strokeWidth={1.5} /> : <ChevronLeft size={16} strokeWidth={1.5} />}

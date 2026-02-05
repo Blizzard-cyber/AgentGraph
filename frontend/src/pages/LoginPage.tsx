@@ -112,10 +112,15 @@ const LoginPage: React.FC = () => {
             margin: '0 0 8px 0',
             color: '#2d2d2d',
             fontWeight: 500,
-            letterSpacing: '1px',
-            fontSize: '24px'
+            letterSpacing: '0.5px',
+            fontSize: '20px',
+            lineHeight: '1.4',
+            whiteSpace: 'normal',
+            wordBreak: 'break-word'
           }}>
-            {t('common.appName')}
+            {t('common.appName').split(' Agent Edge')[0]}
+            <br />
+            Agent Edge
           </Title>
           <Text style={{
             color: 'rgba(45, 45, 45, 0.65)',
