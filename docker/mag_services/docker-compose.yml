@@ -125,6 +125,7 @@ services:
         condition: service_healthy
     networks:
       - mag_network
+      - memmachine-network
 
   # Nginx - 反向代理 + 前端静态资源服务
   mag-nginx:
@@ -379,6 +380,7 @@ services:
       - memmachine_service_logs:/app/src/prodLogs
     networks:
       - memmachine-network
+      - mag_network
     environment:
       APP_ENV: "prod"
       LOG_PATH: "prodLogs"

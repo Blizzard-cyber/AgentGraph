@@ -1,28 +1,43 @@
-# 基于官方 python slim 镜像构建 FastAPI 后端
-FROM python:3.11-slim
+# 构建阶段 - 安装依赖
+FROM python:3.11-slim AS builder
 
-# 安装基础依赖，安装后清理
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends build-essential git curl && \
-    rm -rf /var/lib/apt/lists/*
+# 安装构建依赖（添加重试机制）
+RUN apt-get update -qq && \
+    apt-get install -y --no-install-recommends build-essential && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # 设置工作目录
 WORKDIR /app
 
-# 复制 Python 依赖列表
+# 复制依赖列表
 COPY requirements.txt .
 
-# 安装 Python 依赖
-RUN pip install --no-cache-dir -r requirements.txt && \
-    apt-get purge -y --auto-remove build-essential && \
-    rm -rf /root/.cache
+# 安装 Python 依赖到虚拟环境
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+RUN pip install --no-cache-dir -U pip setuptools wheel && \
+    pip install --no-cache-dir -r requirements.txt && \
+    find /opt/venv -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true && \
+    find /opt/venv -type f -name "*.pyc" -delete
 
-# 复制项目代码（只复制必要的文件）
-COPY mag ./mag
-COPY __version__.py .
+# 运行时阶段 - 只包含必要的文件
+FROM python:3.11-slim
+
+# 设置工作目录
+WORKDIR /app
+
+# 从构建阶段复制虚拟环境
+COPY --from=builder /opt/venv /opt/venv
 
 # 设置环境变量
-ENV PYTHONUNBUFFERED=1
+ENV PATH="/opt/venv/bin:$PATH" \
+    PYTHONUNBUFFERED=1 \
+    PYTHONPATH=/app/mag \
+    PYTHONDONTWRITEBYTECODE=1
+
+# 复制项目代码
+COPY mag ./mag
+COPY __version__.py .
 
 # 暴露端口
 EXPOSE 9999
