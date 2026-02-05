@@ -2,7 +2,7 @@
 services:
   # Higress 主服务
   higress-ai:
-    image: higress:v2.1.9
+    image: higress-registry.cn-hangzhou.cr.aliyuncs.com/higress/all-in-one:latest
     container_name: higress-ai
     environment:
       - O11Y=on
@@ -11,7 +11,7 @@ services:
       - "8088:8080"
       - "8443:8443"
     volumes:
-      - /home/wangtao/higress/higress:/data
+      - /home/wangtao/higress/edge/higress:/data
     networks:
       - mag_network
     depends_on:
@@ -33,7 +33,7 @@ services:
 
   # Plugin Server 服务
   higress-plugin-server:
-    image: higress-plugin-server:1.0.0
+    image: higress-plugin-server:dev
     container_name: higress-plugin-server
     ports:
       - "8090:8080"
@@ -49,7 +49,7 @@ services:
       - "6333:6333"
       - "6334:6334"
     volumes:
-      - /home/wangtao/higress/qdrant_storage:/qdrant/storage:z
+      - /home/wangtao/higress/edge/qdrant:/qdrant/storage:z
     networks:
       - mag_network
     restart: unless-stopped
