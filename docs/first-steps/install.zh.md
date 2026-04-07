@@ -8,7 +8,7 @@
 |------|---------------------------------|
 | 操作系统 | Linux、macOS 或 Windows (需要 WSL2) |
 | Docker | 20.10+ 版本,包含 Docker Compose     |
-| Python | 3.11+ 版本                        |
+| Python | 3.12+ 版本                        |
 | 内存 | 最低 4GB (推荐 8GB)                 |
 | 存储空间 | 至少 10GB 可用空间                    |
 
@@ -67,7 +67,7 @@ docker-compose up -d
 
 ```bash
 cd ../..  # 返回项目根目录
-uv sync
+UV_NO_BINARY=openshell uv sync
 
 # 启动后端服务
 cd mag
@@ -78,7 +78,7 @@ uv run python main.py
 
 ```bash
 cd ../..  # 返回项目根目录
-pip install -r requirements.txt
+PIP_NO_BINARY=openshell pip install -r requirements.txt
 
 # 启动后端服务
 cd mag

@@ -107,6 +107,30 @@ class Settings:
     TRAJECTORY_MULTI_AGENT_PATH: str = os.getenv("TRAJECTORY_MULTI_AGENT_PATH", "/trajectory/uploadMultiAgentTrajectory")
     TRAJECTORY_USE_HTTPS: bool = os.getenv("TRAJECTORY_USE_HTTPS", "false").lower() == "true"
 
+    # Agent runtime mode
+    AGENT_RUNTIME_MODE: str = (os.getenv("AGENT_RUNTIME_MODE", "local") or "local").strip().lower()
+    AGENT_RUNTIME_ALLOW_FALLBACK: bool = (
+        os.getenv("AGENT_RUNTIME_ALLOW_FALLBACK", "true").lower() == "true"
+    )
+
+    # OpenShell runtime settings (used when AGENT_RUNTIME_MODE=sandbox)
+    OPENSHELL_CLUSTER_NAME: str = (os.getenv("OPENSHELL_CLUSTER_NAME", "") or "").strip()
+    OPENSHELL_CLIENT_TIMEOUT: float = float(
+        (os.getenv("OPENSHELL_CLIENT_TIMEOUT", "30") or "30").strip()
+    )
+    OPENSHELL_READY_TIMEOUT_SECONDS: float = float(
+        (os.getenv("OPENSHELL_READY_TIMEOUT_SECONDS", "120") or "120").strip()
+    )
+    OPENSHELL_EXEC_TIMEOUT_SECONDS: int = int(
+        (os.getenv("OPENSHELL_EXEC_TIMEOUT_SECONDS", "20") or "20").strip()
+    )
+    OPENSHELL_DELETE_ON_EXIT: bool = (
+        os.getenv("OPENSHELL_DELETE_ON_EXIT", "true").lower() == "true"
+    )
+    AGENT_SANDBOX_EXEC_MODE: str = (
+        os.getenv("AGENT_SANDBOX_EXEC_MODE", "preflight").strip().lower()
+    )
+
     # 根据操作系统确定配置目录
     @property
     def MAG_DIR(self) -> Path:
@@ -145,6 +169,14 @@ class Settings:
         """获取指定MCP工具的目录路径"""
         return self.MCP_TOOLS_DIR / tool_name
 
+    def normalize_runtime_settings(self) -> None:
+        """标准化运行时相关配置，防止非法值导致运行期错误。"""
+        if self.AGENT_RUNTIME_MODE not in ("local", "sandbox"):
+            self.AGENT_RUNTIME_MODE = "local"
+        if self.AGENT_SANDBOX_EXEC_MODE not in ("preflight", "worker_probe", "worker_entry"):
+            self.AGENT_SANDBOX_EXEC_MODE = "preflight"
+
 
 # 创建全局设置实例
 settings = Settings()
+settings.normalize_runtime_settings()

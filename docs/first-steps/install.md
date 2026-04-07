@@ -8,7 +8,7 @@ Before installation, ensure your system meets these requirements:
 |-----------|-------------|
 | Operating System | Linux, macOS, or Windows (with WSL2) |
 | Docker | Version 20.10+ with Docker Compose |
-| Python | Version 3.11+ |
+| Python | Version 3.12+ |
 | Memory | Minimum 4GB RAM (8GB recommended) |
 | Storage | At least 10GB free disk space |
 
@@ -67,7 +67,7 @@ Navigate back to the project root and install backend dependencies:
 
 ```bash
 cd ../..  # Return to project root
-uv sync
+UV_NO_BINARY=openshell uv sync
 
 # Start backend service
 cd mag
@@ -78,7 +78,7 @@ uv run python main.py
 
 ```bash
 cd ../..  # Return to project root
-pip install -r requirements.txt
+PIP_NO_BINARY=openshell pip install -r requirements.txt
 
 # Start backend service
 cd mag

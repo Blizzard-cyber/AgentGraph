@@ -24,6 +24,7 @@ import tempfile
 import uuid
 from app.infrastructure.database.mongodb.client import mongodb_client
 from app.services.agent.agent_stream_executor import AgentStreamExecutor
+from app.services.agent.agent_runtime_router import AgentRuntimeRouter
 from app.services.agent.agent_import_service import agent_import_service
 from app.services.agent.agent_service import agent_service
 from app.core.config import settings
@@ -60,6 +61,7 @@ router = APIRouter(prefix="/agent", tags=["agent"])
 
 # Agent 流式执行器实例
 agent_stream_executor = AgentStreamExecutor()
+agent_runtime_router = AgentRuntimeRouter(agent_stream_executor)
 
 
 # ======= Agent 列表和查询 API接口 =======
@@ -490,7 +492,8 @@ async def agent_run(
                 # 创建agent执行流的异步任务
                 async def agent_stream_wrapper():
                     nonlocal stream_done
-                    async for chunk in agent_stream_executor.run_agent_stream(
+                    async for chunk in agent_runtime_router.run_agent_stream(
+                        runtime_mode=request.runtime_mode,
                         agent_name=request.agent_name,
                         user_prompt=request.user_prompt,
                         user_id=user_id,

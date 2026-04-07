@@ -96,6 +96,7 @@ plugins:
             Multi-Agent: Multi-Agent
             Memory: Memory
             Agent Creator: Agent Creator
+            Runtime & Sandbox: 运行时与沙箱
             Graph: 图工作流
             First Graph: First Graph
             Execution: Execution
@@ -230,6 +231,7 @@ nav:
       - Config: core-components/agent/config.md
       - Import: core-components/agent/import.md
       - Loop: core-components/agent/loop.md
+      - Runtime & Sandbox: core-components/agent/runtime-sandbox.md
       - Multi-Agent: core-components/agent/multi-agent.md
       - Memory: core-components/agent/memory.md
       - Agent Creator: core-components/agent/agent-creator.md

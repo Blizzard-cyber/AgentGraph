@@ -108,6 +108,7 @@ class AgentRunRequest(BaseModel):
     mcp_servers: Optional[List[str]] = Field(None, description="MCP服务器列表（添加到Agent配置）")
     system_tools: Optional[List[str]] = Field(None, description="系统工具列表（添加到Agent配置）")
     max_iterations: Optional[int] = Field(None, description="最大迭代次数（覆盖Agent配置）")
+    runtime_mode: Optional[str] = Field(None, description="运行时模式：local 或 sandbox")
 
     @field_validator('user_prompt')
     @classmethod
@@ -122,6 +123,16 @@ class AgentRunRequest(BaseModel):
         if v is not None and (v < 1 or v > 200):
             raise ValueError('max_iterations 必须在 1-200 范围内')
         return v
+
+    @field_validator('runtime_mode')
+    @classmethod
+    def validate_runtime_mode(cls, v):
+        if v is None:
+            return v
+        mode = v.strip().lower()
+        if mode not in ('local', 'sandbox'):
+            raise ValueError('runtime_mode 必须是 local 或 sandbox')
+        return mode
 
     @field_validator('model_name')
     @classmethod

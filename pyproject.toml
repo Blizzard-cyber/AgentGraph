@@ -7,7 +7,7 @@ name = "mcp-agent-graph"
 version = "3.0.0"
 description = "MCP Agent Graph - Python SDK for Agent Development Framework"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 license = "Apache-2.0"
 authors = [
     {name = "Yan Yixin", email = "yandeheng1@gmail.com"},
@@ -18,7 +18,8 @@ classifiers = [
     "Intended Audience :: Developers",
     "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Software Development :: Libraries",
     "Topic :: Software Development :: Libraries :: Application Frameworks",
 ]
@@ -28,6 +29,7 @@ dependencies = [
     "bs4",
     "fastapi",
     "fastmcp==2.8",
+    "openshell @ git+https://github.com/NVIDIA/OpenShell.git@v0.0.23 ; (sys_platform == 'darwin' and platform_machine == 'arm64') or (sys_platform == 'linux')",
     "langchain",
     "mcp[cli]==1.9.4",
     "openai",
@@ -63,6 +65,9 @@ Source = "https://github.com/keta1930/mcp-agent-graph"
 
 [tool.hatch.build.targets.wheel]
 packages = ["mag"]
+
+[tool.hatch.metadata]
+allow-direct-references = true
 
 [tool.hatch.build.targets.sdist]
 include = [

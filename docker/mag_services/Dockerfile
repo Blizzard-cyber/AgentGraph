@@ -1,5 +1,5 @@
 # 构建阶段 - 安装依赖
-FROM python:3.11-slim AS builder
+FROM python:3.12-slim AS builder
 
 # 安装构建依赖（添加重试机制）
 RUN apt-get update -qq && \
@@ -21,7 +21,7 @@ RUN pip install --no-cache-dir -U pip setuptools wheel && \
     find /opt/venv -type f -name "*.pyc" -delete
 
 # 运行时阶段 - 只包含必要的文件
-FROM python:3.11-slim
+FROM python:3.12-slim
 
 # 设置工作目录
 WORKDIR /app

@@ -3,6 +3,7 @@ asyncio==3.4.3
 beautifulsoup4
 fastapi
 fastmcp==2.8
+openshell @ git+https://github.com/NVIDIA/OpenShell.git@v0.0.23 ; (sys_platform == "darwin" and platform_machine == "arm64") or (sys_platform == "linux")
 langchain
 langgraph
 mcp[cli]==1.9.4
